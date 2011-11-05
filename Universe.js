@@ -5,6 +5,73 @@ SSI.Universe = function(options, container) {
     var core = new SSI.Core3D(container);
     var objectLibrary = new SSI.ObjectLibrary();
 
+    // options
+    var currentUniverseTime;
+    var playbackSpeed;
+
+    // function to call when we have a new state object
+    var stateChangedCallback = function(){};
+
+    // milliseconds between updating our state object that we broadcast
+    // to any listeners
+    var timeBetweenStateUpdatesMs = 1000;
+
+    // timeout for updating state
+    var updateStateTimeout;
+
+    controller.addGraphicsObject({
+        id : "simState",
+        objectName : "simState",
+        update : function(elapsedTime) {
+            currentUniverseTime = currentUniverseTime + elapsedTime;
+        },
+        draw : function() {
+        }
+    });
+
+    // fires a state changed event to the callback
+    function fireStateChanged(state) {
+        //console.log("Calling state changed callback " + JSON.stringify(state));
+        if (stateChangedCallback != null) {
+            stateChangedCallback(state);
+        }
+    }
+
+    function updateState() {
+        // create our state object and notify our listener
+        var state = {};
+        // TODO: this doens't work because it doesnt have visibility
+        // to the 'this' object... should this be a this. function?
+        state.currentUniverseTime = currentUniverseTime;
+
+        fireStateChanged(state);
+
+        // call update() again in a certain number of milliseconds
+        updateStateTimeout = setTimeout(function() {
+            updateState();
+        }, timeBetweenStateUpdatesMs);
+    }
+
+    // play the universe
+    this.play = function(options) {
+        currentUniverseTime = options.startTime.getTime();
+        playbackSpeed = options.playbackSpeed;
+        stateChangedCallback = options.stateChangedCallback;
+        console.log("Universe.play() called with time [" + currentUniverseTime +
+            "], speed: [" + playbackSpeed + "]");
+
+        // update state our first time
+        updateState();
+
+        controller.play();
+    };
+
+    // pause the universe
+    this.pause = function() {
+        clearTimeout(updateStateTimeout);
+        controller.pause();
+    };
+
     // earthOptions:
     // image
     //
@@ -41,7 +108,7 @@ SSI.Universe = function(options, container) {
         controller.addGraphicsObject({
             id : "earth",
             objectName : "earth",
-            update : function() {
+            update : function(elapsedTime) {
                 // retrieve earth rotation at a time and change rotation
                 earthMesh.rotation.y += 0.01;
             },
@@ -74,7 +141,7 @@ SSI.Universe = function(options, container) {
         controller.addGraphicsObject({
             id : spaceObject.id,
             objectName : spaceObject.objectName,
-            update : function() {
+            update : function(elapsedTime) {
                 // need to pass a time to the propogator
                 var location = spaceObject.propogator();
                 objectModel.position.set(location.x, location.y, location.z);
@@ -100,7 +167,7 @@ SSI.Universe = function(options, container) {
         controller.addGraphicsObject({
             id : groundObject.id,
             objectName : groundObject.objectName,
-            update : function() {
+            update : function(elapsedTime) {
                 // check earth rotation and update location
                 var position = groundObject.propogator();
                 groundObjectMesh.position.set(position.x, position.y, position.z);
@@ -133,23 +200,14 @@ SSI.Universe = function(options, container) {
         controller.addGraphicsObject({
             id : object.id + "_propogation",
             objectName : object.objectName,
-            update : function() {
-                //check that the current time isn't close to the end of my propogation and propogate further if necessary
+            update : function(elapsedTime) {
+            //check that the current time isn't close to the end of my propogation and propogate further if necessary
             },
             draw : function() {
                 core.draw(this.id, lineS);
             }
         })
-
     }
-
-    this.play = function() {
-        controller.play();
-    };
-
-    this.pause = function() {
-        controller.pause();
-    };
 };
 
 SSI.Universe.prototype.goToTime = function(time) {

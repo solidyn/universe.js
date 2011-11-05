@@ -6,15 +6,30 @@ SSI.UniverseController = function(options) {
     // Timeout that runs the animation, will be cleared when paused
     var refreshTimeout;
 
-    var refreshRate = options.refreshRate || 30; 	// milliseconds
+    // number of milliseconds between calls to update() (frame rate / refresh rate)
+    var refreshRate = options.refreshRate || 30;
 
-    function update(elapsedTime) {
+    // the last time we called update() in ms since jsDate epoch
+    var lastUpdateMs = 0;
+
+    function update() {
+        // determine how much time has elapsed since update has last been called
+        var nowMs = (new Date()).getTime();
+        var elapsedTime = nowMs - lastUpdateMs;
+        // save now as the last time we've updated
+        lastUpdateMs = nowMs;
+        // causes terrible performance... only enable if needed for debugging!
+        // console.log("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
+
+        // update and draw all graphics objects
         for(var i = 0; i < graphicsObjects.length; i++) {
             graphicsObjects[i].update(elapsedTime);
             graphicsObjects[i].draw();
         }
+
+        // call update() again in a certain number of milliseconds
         refreshTimeout = setTimeout(function() {
-            update()
+            update();
         }, refreshRate);
     }
 
@@ -34,7 +49,9 @@ SSI.UniverseController = function(options) {
     }
 
     this.play = function() {
-        update(null);
+        // set our last update time to now since this is the first update
+        lastUpdateMs = (new Date()).getTime();
+        update();
     };
 
     this.pause = function() {
