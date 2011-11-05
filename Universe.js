@@ -44,7 +44,6 @@ SSI.Universe = function(options, container) {
             update : function() {
                 // retrieve earth rotation at a time and change rotation
                 earthMesh.rotation.y += 0.01;
-                this.draw();
             },
             draw : function() {
                 core.draw(this.id, earthMesh);
@@ -79,7 +78,6 @@ SSI.Universe = function(options, container) {
                 // need to pass a time to the propogator
                 var location = spaceObject.propogator();
                 objectModel.position.set(location.x, location.y, location.z);
-                this.draw();
             },
             draw : function() {
                 core.draw(this.id, objectModel);
@@ -106,7 +104,6 @@ SSI.Universe = function(options, container) {
                 // check earth rotation and update location
                 var position = groundObject.propogator();
                 groundObjectMesh.position.set(position.x, position.y, position.z);
-                this.draw();
             },
             draw : function() {
                 core.draw(this.id, groundObjectMesh);
@@ -138,7 +135,6 @@ SSI.Universe = function(options, container) {
             objectName : object.objectName,
             update : function() {
                 //check that the current time isn't close to the end of my propogation and propogate further if necessary
-                this.draw();
             },
             draw : function() {
                 core.draw(this.id, lineS);
