@@ -1,13 +1,43 @@
 var SSI = SSI || {};
 
 SSI.ObjectLibrary = function() {
-	var objects = new Array();
+    var objects = new Array();
 
-	this.addObject = function(name, object) {
-		objects.push(name, object);
-	}
+    // adds a mesh object to the object library
+    // id -> unique id of the object
+    // url -> url used to retrieve the json of the model
+    // material -> material to apply to the model's geometry
+    this.addMeshObjectFromUrl = function(id, url, material, callback) {
+        console.log("Adding mesh object to library; id: [" + id + "] url: [" + 
+            url + "], material: [" + material + "]");
+        // if we have already loaded an onject with this id, return
+        if (objects[id] != null) {
+            console.log("Object with id [" + id + "] already exists so not adding");
+            return;
+        }
 
-	this.getObject = function(name) {
-		return objects[1];
-	}
+        // use a JSON loader to load the mesh from JSON
+        var jsonLoader = new THREE.JSONLoader();
+        jsonLoader.load({
+            model : url,
+            callback : function(geometry) {
+                var mesh = new THREE.Mesh(geometry, material);
+                
+                // add the object to our list of objects
+                objects[id] = mesh;
+
+                // execute the callback
+                callback();
+            }
+        });
+    }
+
+    // gets an object from the library based on the given id
+    this.getObjectById = function(id) {
+        console.log("Retrieving object with id [" + id + "] from library");
+        var object = objects[id];
+        if (object == null)
+            throw "Tried to retrieve object [" + id + "] from object library but didn't exist";
+        return object;
+    }
 }
