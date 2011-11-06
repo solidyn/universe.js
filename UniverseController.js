@@ -19,7 +19,7 @@ SSI.UniverseController = function(options) {
         // save now as the last time we've updated
         lastUpdateMs = nowMs;
         // causes terrible performance... only enable if needed for debugging!
-        // console.log("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
+        // logger.debug("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
 
         // update and draw all graphics objects
         for(var i = 0; i < graphicsObjects.length; i++) {

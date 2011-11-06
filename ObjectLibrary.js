@@ -8,11 +8,11 @@ SSI.ObjectLibrary = function() {
     // url -> url used to retrieve the json of the model
     // material -> material to apply to the model's geometry
     this.addMeshObjectFromUrl = function(id, url, material, callback) {
-        console.log("Adding mesh object to library; id: [" + id + "] url: [" + 
+        logger.debug("Adding mesh object to library; id: [" + id + "] url: [" + 
             url + "], material: [" + material + "]");
         // if we have already loaded an onject with this id, return
         if (objects[id] != null) {
-            console.log("Object with id [" + id + "] already exists so not adding");
+            logger.debug("Object with id [" + id + "] already exists so not adding");
             return;
         }
 
@@ -34,7 +34,7 @@ SSI.ObjectLibrary = function() {
 
     // gets an object from the library based on the given id
     this.getObjectById = function(id) {
-        console.log("Retrieving object with id [" + id + "] from library");
+        logger.debug("Retrieving object with id [" + id + "] from library");
         var object = objects[id];
         if (object == null)
             throw "Tried to retrieve object [" + id + "] from object library but didn't exist";

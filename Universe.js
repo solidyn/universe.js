@@ -31,7 +31,7 @@ SSI.Universe = function(options, container) {
 
     // fires a state changed event to the callback
     function fireStateChanged(state) {
-        //console.log("Calling state changed callback " + JSON.stringify(state));
+        //logger.debug("Calling state changed callback " + JSON.stringify(state));
         if (stateChangedCallback != null) {
             stateChangedCallback(state);
         }
@@ -57,7 +57,7 @@ SSI.Universe = function(options, container) {
         currentUniverseTime = options.startTime.getTime();
         playbackSpeed = options.playbackSpeed;
         stateChangedCallback = options.stateChangedCallback;
-        console.log("Universe.play() called with time [" + currentUniverseTime +
+        logger.debug("Universe.play() called with time [" + currentUniverseTime +
             "], speed: [" + playbackSpeed + "]");
 
         // update state our first time
@@ -121,7 +121,7 @@ SSI.Universe = function(options, container) {
     // adds a model to the universe with an ID and url to retrieve
     // the model's geometry
     this.addJsonMeshModel = function(modelId, modelUrl, material, callback) {
-        console.log("Adding mesh model to universe; id: [" + modelId +
+        logger.debug("Adding mesh model to universe; id: [" + modelId +
             "] url: [" + modelUrl + "], material: [" + material + "]");
         objectLibrary.addMeshObjectFromUrl(modelId, modelUrl, material, callback);
     };

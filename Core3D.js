@@ -185,7 +185,7 @@ SSI.Core3D = function(container) {
 	}
 
 	function onWindowResize(event) {
-		console.log('resize');
+		logger.debug('resize');
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -200,7 +200,7 @@ SSI.Core3D = function(container) {
 	// Priviledged Methods
 	this.draw = function(id, shape) {
 		if(drawnObjects[id] == undefined) {
-			console.log("drawing: " + id);
+			logger.debug("drawing: " + id);
 			scene.add(shape);
 			drawnObjects[id] = shape;
 			objects.push(shape);
