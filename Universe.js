@@ -109,7 +109,7 @@ SSI.Universe = function(options, container) {
             id : "earth",
             objectName : "earth",
             update : function(elapsedTime) {
-                // retrieve earth rotation at a time and change rotation
+                // TODO: retrieve earth rotation at a time and change rotation
                 earthMesh.rotation.y += 0.01;
             },
             draw : function() {
@@ -143,7 +143,7 @@ SSI.Universe = function(options, container) {
             objectName : spaceObject.objectName,
             update : function(elapsedTime) {
                 // need to pass a time to the propogator
-                var location = spaceObject.propogator();
+                var location = eciTo3DCoordinates(spaceObject.propogator());
                 objectModel.position.set(location.x, location.y, location.z);
             },
             draw : function() {
@@ -169,7 +169,7 @@ SSI.Universe = function(options, container) {
             objectName : groundObject.objectName,
             update : function(elapsedTime) {
                 // check earth rotation and update location
-                var position = groundObject.propogator();
+                var position = eciTo3DCoordinates(groundObject.propogator());
                 groundObjectMesh.position.set(position.x, position.y, position.z);
             },
             draw : function() {
@@ -183,9 +183,9 @@ SSI.Universe = function(options, container) {
 
         var geometry = new THREE.Geometry();
 
-        for(var j = 0; j < 1000; j++) {
+        for(var j = 0; j < 2000; j++) {
             // TODO: y and z are flipped for now
-            var location = object.propogator(j);
+            var location = eciTo3DCoordinates(object.propogator(j));
             var vx = location.x;
             var vy = location.y;
             var vz = location.z;
@@ -207,6 +207,13 @@ SSI.Universe = function(options, container) {
                 core.draw(this.id, lineS);
             }
         })
+    }
+    
+    // Compare these two websites for details on why we have to do this:
+    // http://celestrak.com/columns/v02n01/
+    // http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
+    function eciTo3DCoordinates(location) {
+    	return {x: -location.x, y: location.z, z: location.y};
     }
 };
 
