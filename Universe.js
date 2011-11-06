@@ -79,7 +79,7 @@ SSI.Universe = function(options, container) {
         var earthSphereRadius = 6371, earthSphereSegments = 40, earthSphereRings = 30;
 
         // Create the sphere
-        var geometry = new THREE.Sphere(earthSphereRadius, earthSphereSegments, earthSphereRings);
+        var geometry = new THREE.SphereGeometry(earthSphereRadius, earthSphereSegments, earthSphereRings);
 
         // Define the material to be used for the sphere surface by pulling the image and wrapping it around the sphere
         var shader = {
@@ -97,7 +97,7 @@ SSI.Universe = function(options, container) {
 
         uniforms['texture'].texture = THREE.ImageUtils.loadTexture(earthOptions.image);
 
-        var material = new THREE.MeshShaderMaterial({
+        var material = new THREE.ShaderMaterial({
             uniforms : uniforms,
             vertexShader : shader.vertexShader,
             fragmentShader : shader.fragmentShader
@@ -156,7 +156,7 @@ SSI.Universe = function(options, container) {
     // propogator
     // object
     this.addGroundObject = function(groundObject) {
-        var geometry = new THREE.Sphere(200, 20, 10);
+        var geometry = new THREE.SphereGeometry(200, 20, 10);
 
         var sphereMaterial = new THREE.MeshLambertMaterial({
             color : 0xCC0000

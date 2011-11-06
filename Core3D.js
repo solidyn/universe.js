@@ -2,8 +2,8 @@ var SSI = SSI || {};
 
 SSI.Core3D = function(container) {
 	// Variables used to draw the 3D elements
-	var camera, scene, renderer, w, h;
-	var vector;
+	var camera, scene, projector, renderer, w, h;
+	var vector, animate;
 
 	var overRenderer;
 
@@ -36,22 +36,24 @@ SSI.Core3D = function(container) {
 	var minZoom = 10000;
 
 	var drawnObjects = new Array();
+	var objects = new Array();
 
 	function init() {
 		w = container.offsetWidth || window.innerWidth;
 		h = container.offsetHeight || window.innerHeight;
 
+		setupRenderer();
+		
 		// Field of View (View Angle)
 		// Ratio between width and height, has to match aspect of CanvasRenderer
 		// Near, Far
-		camera = new THREE.Camera(30, w / h, 1, 315000);
+		camera = new THREE.PerspectiveCamera(30, w / h, 1, 315000);
+        
 		camera.position.z = distance;
 		vector = new THREE.Vector3();
 
 		// Scene into which the earth and other objects are displayed
 		scene = new THREE.Scene();
-
-		setupRenderer();
 
 		addEventListeners();
 
@@ -59,6 +61,8 @@ SSI.Core3D = function(container) {
 	}
 
 	function setupRenderer() {
+		projector = new THREE.Projector();
+		
 		renderer = new THREE.WebGLRenderer({
 			antialias : true
 		});
@@ -102,10 +106,11 @@ SSI.Core3D = function(container) {
 		rotation.x += (target.x - rotation.x) * 0.1;
 		rotation.y += (target.y - rotation.y) * 0.1;
 		distance += (distanceTarget - distance) * 0.3;
-
+	
 		camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
 		camera.position.y = distance * Math.sin(rotation.y);
 		camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
+		camera.lookAt( scene.position );
 
 		vector.copy(camera.position);
 
@@ -144,6 +149,8 @@ SSI.Core3D = function(container) {
 	}
 
 	function onMouseUp(event) {
+		event.preventDefault();
+		
 		container.removeEventListener('mousemove', onMouseMove, false);
 		container.removeEventListener('mouseup', onMouseUp, false);
 		container.removeEventListener('mouseout', onMouseOut, false);
@@ -193,8 +200,10 @@ SSI.Core3D = function(container) {
 	// Priviledged Methods
 	this.draw = function(id, shape) {
 		if(drawnObjects[id] == undefined) {
-			scene.addObject(shape);
+			console.log("drawing: " + id);
+			scene.add(shape);
 			drawnObjects[id] = shape;
+			objects.push(shape);
 		}
 	}
 	init();
