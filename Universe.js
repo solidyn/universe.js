@@ -35,7 +35,6 @@ SSI.Universe = function(options, container) {
 
 	// fires a state changed event to the callback
 	function fireStateChanged(state) {
-		//console.log("Calling state changed callback " + JSON.stringify(state));
 		if(stateChangedCallback != null) {
 			stateChangedCallback(state);
 		}
@@ -45,11 +44,7 @@ SSI.Universe = function(options, container) {
 		// create our state object and notify our listener
 		var universe = this;
 		var state = {};
-		// TODO: this doens't work because it doesnt have visibility
-		// to the 'this' object... should this be a this. function?
-		console.log("updateState currentUniverseTime: " + currentUniverseTime);
 		state.currentUniverseTime = new Date(currentUniverseTime);
-		console.log("state.currentUniverseTime: " + state.currentUniverseTime);
 
 		fireStateChanged(state);
 
@@ -64,7 +59,7 @@ SSI.Universe = function(options, container) {
 		currentUniverseTime = new Date(options.startTime);
 		playbackSpeed = options.playbackSpeed;
 		stateChangedCallback = options.stateChangedCallback;
-		console.log("Universe.play() called with time [" + currentUniverseTime + "], speed: [" + playbackSpeed + "]");
+		logger.debug("Universe.play() called with time [" + currentUniverseTime + "], speed: [" + playbackSpeed + "]");
 
 		// update state our first time
 		this.updateState();
@@ -124,7 +119,7 @@ SSI.Universe = function(options, container) {
 	// adds a model to the universe with an ID and url to retrieve
 	// the model's geometry
 	this.addJsonMeshModel = function(modelId, modelUrl, material, callback) {
-		console.log("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "], material: [" + material + "]");
+		logger.debug("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "], material: [" + material + "]");
 		objectLibrary.addMeshObjectFromUrl(modelId, modelUrl, material, callback);
 	};
 	// spaceObject:
@@ -154,7 +149,6 @@ SSI.Universe = function(options, container) {
 		});
 
 		if(spaceObject.showPropogationLine == true) {
-			console.log("addSpaceObject playbackSpeed: " + playbackSpeed);
 			this.addPropogationLineForObject(spaceObject);
 		}
 
@@ -267,7 +261,6 @@ SSI.Universe = function(options, container) {
 	}
 	
 	this.getCurrentUniverseTime = function() {
-		//console.log("")
 		return currentUniverseTime;
 	}
 };
