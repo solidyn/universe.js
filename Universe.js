@@ -9,7 +9,7 @@ SSI.Universe = function(options, container) {
 	var earthSphereRadius = 6371;
 
 	// options
-	
+
 	var currentUniverseTime = new Date(options.currentUniverseTime);
 	var playbackSpeed = 1;
 
@@ -27,7 +27,7 @@ SSI.Universe = function(options, container) {
 		id : "simState",
 		objectName : "simState",
 		update : function(elapsedTime) {
-			currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed*elapsedTime);
+			currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
 		},
 		draw : function() {
 		}
@@ -39,6 +39,7 @@ SSI.Universe = function(options, container) {
 			stateChangedCallback(state);
 		}
 	}
+
 
 	this.updateState = function() {
 		// create our state object and notify our listener
@@ -53,7 +54,6 @@ SSI.Universe = function(options, container) {
 			universe.updateState();
 		}, timeBetweenStateUpdatesMs);
 	}
-
 	// play the universe
 	this.play = function(options) {
 		currentUniverseTime = new Date(options.startTime);
@@ -110,10 +110,10 @@ SSI.Universe = function(options, container) {
 			update : function(elapsedTime) {
 				// TODO: retrieve earth rotation at a time and change rotation
 				var rotationAngle = convertTimeToGMST(currentUniverseTime);
-				earthMesh.rotation.y = rotationAngle * (2*Math.PI/360);
+				earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
 			},
 			draw : function() {
-				core.draw(this.id, earthMesh);
+				core.draw(this.id, earthMesh, false);
 			}
 		});
 	};
@@ -145,7 +145,7 @@ SSI.Universe = function(options, container) {
 				objectModel.position.set(location.x, location.y, location.z);
 			},
 			draw : function() {
-				core.draw(this.id, objectModel);
+				core.draw(this.id, objectModel, true);
 			}
 		});
 
@@ -179,23 +179,22 @@ SSI.Universe = function(options, container) {
 				groundObjectMesh.position.set(position.x, position.y, position.z);
 			},
 			draw : function() {
-				core.draw(this.id, groundObjectMesh);
+				core.draw(this.id, groundObjectMesh, true);
 			}
 		});
 	};
-	
 	// method to add an orbit line
 	this.addPropogationLineForObject = function(object) {
 		var geometry = new THREE.Geometry();
-		
+
 		var timeToPropogate = new Date(currentUniverseTime);
-		
+
 		// draw a vertex for each minute in a 24 hour period
 		for(var j = 0; j < 1440; j++) {
 			var location = eciTo3DCoordinates(object.propogator(timeToPropogate));
 			var vector = new THREE.Vector3(location.x, location.y, location.z);
 			geometry.vertices.push(new THREE.Vertex(vector));
-			
+
 			timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
 		}
 		var lineS = new THREE.Line(geometry, new THREE.LineBasicMaterial({
@@ -210,7 +209,7 @@ SSI.Universe = function(options, container) {
 				// add points onto the end of the track?
 			},
 			draw : function() {
-				core.draw(this.id, lineS);
+				core.draw(this.id, lineS, false);
 			}
 		})
 	}
@@ -229,20 +228,20 @@ SSI.Universe = function(options, container) {
 			objectName : object.objectName,
 			update : function(elapsedTime) {
 				var objectLocation = eciTo3DCoordinates(object.propogator());
-		
+
 				var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-		
+
 				// move the vector to the surface of the earth
 				vector.multiplyScalar(earthSphereRadius / vector.length())
-		
+
 				// give it a random x and y position between -500 and 500
 				groundObjectMesh.position.x = vector.x;
 				groundObjectMesh.position.y = vector.y;
 				groundObjectMesh.position.z = vector.z;
-				
+
 			},
 			draw : function() {
-				core.draw(this.id, groundObjectMesh);
+				core.draw(this.id, groundObjectMesh, true);
 			}
 		})
 	}
@@ -260,17 +259,15 @@ SSI.Universe = function(options, container) {
 			z : location.y
 		};
 	}
-	
+
+
 	this.getCurrentUniverseTime = function() {
 		return currentUniverseTime;
 	}
 };
 
-
-
 SSI.Universe.prototype.goToTime = function(time) {
 };
-
 // TODO refactor these to wherever Josh puts the common math libs
 function convertCurrentEpochToJulianDate(time) {
 	var JD = 0;
@@ -280,23 +277,27 @@ function convertCurrentEpochToJulianDate(time) {
 	var hour = time.getUTCHours();
 	var minute = time.getUTCMinutes();
 	var second = time.getUTCSeconds();
-	
 	JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) + (275 * month / 9) + (day) + 1721013.5 + ((second / 60 + minute) / 60 + hour) / 24;
 	return JD;
 }
 
-function convertTimeToGMST(time) { 
+function convertTimeToGMST(time) {
 	var JD = convertCurrentEpochToJulianDate(time);
-	
-	var TUT=(JD-2451545.0)/36525.0;  //julian centuries since January 1, 2000 12h UT1
-    var GMST=67310.54841+(876600.0*3600+8640184.812866)*TUT+0.093104*TUT*TUT-(0.0000062)*TUT*TUT*TUT;  //this is in seconds
-    
-    var multiples=Math.floor(GMST/86400.0);
-    GMST=GMST-multiples*86400.00;   //reduce it to be within the range of one day
-    
-    GMST=GMST/240.0;//convert to degrees
-    if (GMST<0){
-        GMST=GMST+360;
-    }
-    return GMST;  //degrees
+
+	var TUT = (JD - 2451545.0) / 36525.0;
+	//julian centuries since January 1, 2000 12h UT1
+	var GMST = 67310.54841 + (876600.0 * 3600 + 8640184.812866) * TUT + 0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;
+	//this is in seconds
+
+	var multiples = Math.floor(GMST / 86400.0);
+	GMST = GMST - multiples * 86400.00;
+	//reduce it to be within the range of one day
+
+	GMST = GMST / 240.0;
+	//convert to degrees
+	if(GMST < 0) {
+		GMST = GMST + 360;
+	}
+	return GMST;
+	//degrees
 }

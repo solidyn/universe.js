@@ -36,19 +36,18 @@ SSI.Core3D = function(container) {
 	var minZoom = 10000;
 
 	var drawnObjects = new Array();
-	var objects = new Array();
 
 	function init() {
 		w = container.offsetWidth || window.innerWidth;
 		h = container.offsetHeight || window.innerHeight;
 
 		setupRenderer();
-		
+
 		// Field of View (View Angle)
 		// Ratio between width and height, has to match aspect of CanvasRenderer
 		// Near, Far
 		camera = new THREE.PerspectiveCamera(30, w / h, 1, 315000);
-        
+
 		camera.position.z = distance;
 		vector = new THREE.Vector3();
 
@@ -62,7 +61,6 @@ SSI.Core3D = function(container) {
 
 	function setupRenderer() {
 		projector = new THREE.Projector();
-		
 		renderer = new THREE.WebGLRenderer({
 			antialias : true
 		});
@@ -106,16 +104,32 @@ SSI.Core3D = function(container) {
 		rotation.x += (target.x - rotation.x) * 0.1;
 		rotation.y += (target.y - rotation.y) * 0.1;
 		distance += (distanceTarget - distance) * 0.3;
-	
+
 		camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
 		camera.position.y = distance * Math.sin(rotation.y);
 		camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
-		camera.lookAt( scene.position );
+		camera.lookAt(scene.position);
 
 		vector.copy(camera.position);
 
+		scaleDrawnObjects();
+
 		renderer.clear();
 		renderer.render(scene, camera);
+	}
+
+	function scaleDrawnObjects() {
+		for(var i in drawnObjects) {
+			if(drawnObjects[i].scale == true) {
+				var objectPosition = drawnObjects[i].shape.position;
+				var xDiff = objectPosition.x - camera.position.x;
+				var yDiff = objectPosition.y - camera.position.y;
+				var zDiff = objectPosition.z - camera.position.z;
+				var distanceFromCamera = Math.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff);
+				var scaleFactor = distanceFromCamera / (6371 * 7);
+				drawnObjects[i].shape.scale.x = drawnObjects[i].shape.scale.y = drawnObjects[i].shape.scale.z = scaleFactor;
+			}
+		}
 	}
 
 	// Stock Behaviors like rotating and zooming
@@ -150,7 +164,7 @@ SSI.Core3D = function(container) {
 
 	function onMouseUp(event) {
 		event.preventDefault();
-		
+
 		container.removeEventListener('mousemove', onMouseMove, false);
 		container.removeEventListener('mouseup', onMouseUp, false);
 		container.removeEventListener('mouseout', onMouseOut, false);
@@ -174,11 +188,11 @@ SSI.Core3D = function(container) {
 	function onDocumentKeyDown(event) {
 		switch (event.keyCode) {
 			case 38:
-				zoom(earthSphereRadius / 2);
+				zoom(3200);
 				event.preventDefault();
 				break;
 			case 40:
-				zoom(-earthSphereRadius / 2);
+				zoom(-3200);
 				event.preventDefault();
 				break;
 		}
@@ -198,12 +212,14 @@ SSI.Core3D = function(container) {
 	}
 
 	// Priviledged Methods
-	this.draw = function(id, shape) {
+	this.draw = function(id, shape, scale) {
 		if(drawnObjects[id] == undefined) {
 			logger.debug("drawing: " + id);
 			scene.add(shape);
-			drawnObjects[id] = shape;
-			objects.push(shape);
+			drawnObjects[id] = {
+				shape : shape,
+				scale : scale
+			};
 		}
 	}
 	init();
