@@ -109,7 +109,8 @@ SSI.Universe = function(options, container) {
 			objectName : "earth",
 			update : function(elapsedTime) {
 				// TODO: retrieve earth rotation at a time and change rotation
-				earthMesh.rotation.y += 0.01;
+				var rotationAngle = convertTimeToGMST(currentUniverseTime);
+				earthMesh.rotation.y = rotationAngle * (2*Math.PI/360);
 			},
 			draw : function() {
 				core.draw(this.id, earthMesh);
@@ -269,3 +270,33 @@ SSI.Universe = function(options, container) {
 
 SSI.Universe.prototype.goToTime = function(time) {
 };
+
+// TODO refactor these to wherever Josh puts the common math libs
+function convertCurrentEpochToJulianDate(time) {
+	var JD = 0;
+	var year = time.getFullYear();
+	var month = time.getUTCMonth();
+	var day = time.getUTCDate();
+	var hour = time.getUTCHours();
+	var minute = time.getUTCMinutes();
+	var second = time.getUTCSeconds();
+	
+	JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) + (275 * month / 9) + (day) + 1721013.5 + ((second / 60 + minute) / 60 + hour) / 24;
+	return JD;
+}
+
+function convertTimeToGMST(time) { 
+	var JD = convertCurrentEpochToJulianDate(time);
+	
+	var TUT=(JD-2451545.0)/36525.0;  //julian centuries since January 1, 2000 12h UT1
+    var GMST=67310.54841+(876600.0*3600+8640184.812866)*TUT+0.093104*TUT*TUT-(0.0000062)*TUT*TUT*TUT;  //this is in seconds
+    
+    var multiples=Math.floor(GMST/86400.0);
+    GMST=GMST-multiples*86400.00;   //reduce it to be within the range of one day
+    
+    GMST=GMST/240.0;//convert to degrees
+    if (GMST<0){
+        GMST=GMST+360;
+    }
+    return GMST;  //degrees
+}
