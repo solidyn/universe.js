@@ -22,6 +22,8 @@ SSI.Universe = function(options, container) {
 
 	// timeout for updating state
 	var updateStateTimeout;
+	
+	var isShowOrbitLines = true;
 
 	controller.addGraphicsObject({
 		id : "simState",
@@ -246,6 +248,57 @@ SSI.Universe = function(options, container) {
 		})
 	}
 
+    this.showOrbitLines = function() {
+	    logger.debug("in show orbit lines");
+	    if (isShowOrbitLines) {
+	        logger.debug("hidding all orbit lines");
+		    core.hideObject("space_station_propogation");
+	        core.hideObject("dsp_propogation");
+	        core.hideObject("molniya_propogation");
+	        isShowOrbitLines = false;
+	    } else {
+	        logger.debug("showing all orbit lines");
+	    	core.showObject("space_station_propogation");
+	        core.showObject("dsp_propogation");
+	        core.showObject("molniya_propogation");
+	        isShowOrbitLines = true;
+	    }
+    }
+    
+    this.showVehicles = function() {
+        logger.debug("in show vehicles");
+        if (isShowOrbitLines) {
+            logger.debug("hidding all vehicles");
+            core.hideObject("space_station");
+            core.hideObject("dsp");
+            core.hideObject("molniya");
+            isShowOrbitLines = false;
+        } else {
+            logger.debug("showing all vehicles");
+            core.showObject("space_station");
+            core.showObject("dsp");
+            core.showObject("molniya");
+            isShowOrbitLines = true;
+        }   
+    }
+    
+    this.showGroundTracks = function() {
+        logger.debug("in show ground tracks");
+        if (isShowOrbitLines) {
+            logger.debug("hidding all ground tracks");
+            core.hideObject("space_station_groundPoint");
+            core.hideObject("dsp_groundPoint");
+            core.hideObject("molniya_groundPoint");
+            isShowOrbitLines = false;
+        } else {
+            logger.debug("showing all ground tracks");
+            core.showObject("space_station_groundPoint");
+            core.showObject("dsp_groundPoint");
+            core.showObject("molniya_groundPoint");
+            isShowOrbitLines = true;
+        }   
+    }
+    
 	this.addGroundTrackForObject = function(object) {
 		// This needs to be written to take into account earth rotation
 	}

@@ -214,7 +214,7 @@ SSI.Core3D = function(container) {
 	// Priviledged Methods
 	this.draw = function(id, shape, scale) {
 		if(drawnObjects[id] == undefined) {
-			logger.debug("drawing: " + id);
+			logger.debug(" adding and drawing: " + id);
 			scene.add(shape);
 			drawnObjects[id] = {
 				shape : shape,
@@ -222,6 +222,22 @@ SSI.Core3D = function(container) {
 			};
 		}
 	}
+	
+	this.showObject = function(id) {
+		// if object exists in drawnObjects then add back to scene
+		if (drawnObjects[id] != undefined) {
+	        logger.debug("adding shape back to scene for id " + id);
+		    scene.add(drawnObjects[id].shape);	
+		}
+	}
+	
+	this.hideObject = function(id) {
+		if (drawnObjects[id] != undefined) {
+			logger.debug("removing object from scene with id: " + id);
+			scene.remove(drawnObjects[id].shape);
+		}
+	}
+	
 	init();
 
 	return this;
