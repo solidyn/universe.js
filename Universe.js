@@ -10,7 +10,7 @@ SSI.Universe = function(options, container) {
 
 	// options
 
-	var currentUniverseTime = new Date(options.currentUniverseTime);
+	var currentUniverseTime = options.currentUniverseTime;
 	var playbackSpeed = 1;
 
 	// function to call when we have a new state object
