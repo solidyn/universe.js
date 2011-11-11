@@ -200,9 +200,11 @@ SSI.Core3D = function(container) {
 
 	function onWindowResize(event) {
 		logger.debug('resize');
-		camera.aspect = window.innerWidth / window.innerHeight;
+		w = container.offsetWidth || window.innerWidth;
+        h = container.offsetHeight || window.innerHeight;
+		camera.aspect = w / h;
 		camera.updateProjectionMatrix();
-		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.setSize(w, h);
 	}
 
 	function zoom(delta) {
