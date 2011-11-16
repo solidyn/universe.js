@@ -1,4 +1,4 @@
-var OrbitPropagator = {
+ var OrbitPropagator = {
 
     /**
      *
@@ -34,7 +34,9 @@ var OrbitPropagator = {
 
         N = elapsedTime / h;
 
-        for (int j = 1; j <= N; j++)
+        var j = 1;
+
+        for (j = 1; j <= N; j++)
         {
             newMilliseconds = newMilliseconds + (h * 1000.0); //keep in millis
             var simTime = new Date(newMilliseconds);

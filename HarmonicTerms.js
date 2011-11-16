@@ -7,7 +7,7 @@ var HarmonicTerms = {
      *
      * @returns Array of double
      */
-    calculatePerturbationTerms(state, GST)
+    calculatePerturbationTerms: function(state, GST)
     {
 
     }
