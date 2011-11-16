@@ -1,10 +1,10 @@
-var rswCoordinates = {
+var RswCoordinates = {
 
-    // define variables as <var name>: type = value
+    // define variables as <var name>: <value>
 
-    radial:     double = 0.0, //radial vector (km)
-    alongTrack: double = 0.0, //along track vector (km)
-    crossTrack: double = 0.0, //cross track vector (km)
+    radial:     0.0, //radial vector (km)
+    alongTrack: 0.0, //along track vector (km)
+    crossTrack: 0.0, //cross track vector (km)
 
     /**
      * Returns the along track value.

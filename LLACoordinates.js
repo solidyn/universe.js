@@ -1,10 +1,10 @@
-var llaCoordinates = {
+var LlaCoordinates = {
 
-    // define variables as <var name>: type = value
+    // define variables as <var name>: <value>
 
-    latitude:  double = 0.0, //deg
-    longitude: double = 0.0, //deg
-    altitude:  double = 0.0,  //km
+    latitude:  0.0, //deg
+    longitude: 0.0, //deg
+    altitude:  0.0,  //km
 
     /**
      * Returns the altitude value.

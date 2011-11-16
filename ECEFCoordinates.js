@@ -1,16 +1,16 @@
-var ecefCoordinates = {
+var EcefCoordinates = {
 
-    // define variables as <var name>: type = value
+    // define variables as <var name>: <value>
 
-    x:  double = 0.0, //km
-    y:  double = 0.0, //km
-    z:  double = 0.0, //km
-    vx: double = 0.0, //km/s
-    vy: double = 0.0, //km/s
-    vz: double = 0.0, //km/s
-    ax: double = 0.0, //km/s2
-    ay: double = 0.0, //km/s2
-    az: double = 0.0, //km/s2
+    x:  0.0, //km
+    y:  0.0, //km
+    z:  0.0, //km
+    vx: 0.0, //km/s
+    vy: 0.0, //km/s
+    vz: 0.0, //km/s
+    ax: 0.0, //km/s2
+    ay: 0.0, //km/s2
+    az: 0.0, //km/s2
 
     /**
      * Get the X value.
