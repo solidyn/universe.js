@@ -1,4 +1,4 @@
-var EciCoordinates = {
+var ECICoordinates = {
 
     // define variables as <var name>: <value>
 

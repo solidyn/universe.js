@@ -1,4 +1,4 @@
-var EcefCoordinates = {
+var ECEFCoordinates = {
 
     // define variables as <var name>: <value>
 

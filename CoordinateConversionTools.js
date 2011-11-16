@@ -2,11 +2,11 @@ var CoordinateConversionTools = {
 
     /**
      *
-     * @param
+     * @param currentEpoch Date
      *
      * @returns
      */
-    convertCurrentEpochToJulianDate(Date currentEpoch)
+    convertCurrentEpochToJulianDate: function(currentEpoch)
     {
         //convert a date to the Julian Date
         //this is the time since January 1, 4713 BC (12:00)
@@ -74,7 +74,7 @@ var CoordinateConversionTools = {
 
         //REFER TO VALLADO PAGE 144 and 150
         var cearth = Re / Math.sqrt(1 - eearth * eearth * sinLat * sinLat); //double
-        var searth = Re * (1 - eearth * eearth) / \
+        var searth = Re * (1 - eearth * eearth) / 
             Math.sqrt(1 - eearth * eearth * sinLat * sinLat); //double
 
         var x = (cearth + hellp) * (Math.cos(lat) * Math.cos(lon)); //double
@@ -386,7 +386,9 @@ var CoordinateConversionTools = {
         var coeff2 = MathTools.dotMultiply(r, v);                 //double
        
         var e = new Array(); //Double[3];
-        for (int i = 0; i < 3; i++)
+
+        var i = 0;
+        for (i = 0; i < 3; i++)
         {
             e[i] = (1 / Constants.getMuEarth()) * (coeff1 * r[i] - coeff2 * v[i]);
 

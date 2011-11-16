@@ -1,4 +1,4 @@
-var LlaCoordinates = {
+var LLACoordinates = {
 
     // define variables as <var name>: <value>
 

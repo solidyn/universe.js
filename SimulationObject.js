@@ -1,12 +1,12 @@
-var simulationObject = {
+var SimulationObject = {
 
     // define variables as <var name>: value
 
     name:         "",
-    eciCoords:    eciCoordinates,
-    ecefCoords:   ecefCoordinates,
-    keplerCoords: keplerianCoordinates,
-    llaCoords:    llaCoordinates,
+    eciCoords:    ECICoordinates,
+    ecefCoords:   ECEFCoordinates,
+    keplerCoords: KeplerianCoordinates,
+    llaCoords:    LLACoordinates,
     sensorList:   new Array(),
 
     /**

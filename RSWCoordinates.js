@@ -1,5 +1,5 @@
-var RswCoordinates = {
-
+var RSWCoordinates = {
+ 
     // define variables as <var name>: <value>
 
     radial:     0.0, //radial vector (km)
@@ -53,4 +53,4 @@ var RswCoordinates = {
     {
         radial = newRadial;
     }
-}
+};
