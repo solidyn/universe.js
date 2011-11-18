@@ -29,6 +29,7 @@ SSI.Universe = function(options, container) {
         id : "simState",
         objectName : "simState",
         update : function(elapsedTime) {
+            console.log("current playback speed: " + playbackSpeed);
             currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
         },
         draw : function() {
@@ -73,6 +74,9 @@ SSI.Universe = function(options, container) {
         clearTimeout(updateStateTimeout);
         controller.pause();
     };
+    this.setPlaybackSpeed = function(speed) {
+        playbackSpeed = speed;
+    }
     // earthOptions:
     // image
     //
