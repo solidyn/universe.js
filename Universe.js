@@ -250,7 +250,6 @@ SSI.Universe = function(options, container) {
                 // move the vector to the surface of the earth
                 vector.multiplyScalar(earthSphereRadius / vector.length())
 
-                // give it a random x and y position between -500 and 500
                 groundObjectMesh.position.copy(vector);
 
             },
@@ -362,6 +361,33 @@ SSI.Universe = function(options, container) {
             core.showObject("molniya_groundPoint");
             isShowOrbitLines = true;
         }   
+    }
+    
+    this.highlightObject = function(id) {
+        // var position = core.getObjectPosition(id);
+        // var geometry = new THREE.SphereGeometry(1000, 20, 10);
+// 
+        // var sphereMaterial = new THREE.MeshLambertMaterial({
+            // color : 0xff0000,
+            // opacity: .1
+        // });
+// 
+        // var highlightMeshObject = new THREE.Mesh(geometry, sphereMaterial);
+//         
+        // controller.addGraphicsObject({
+            // id : id + "_highlight",
+            // objectName : id + "_highlight",
+            // update : function(elapsedTime) {
+                // // get the position from the object its tracking
+                // var position = core.getObjectPosition(id);
+                // highlightMeshObject.position.set(position.x, position.y, position.z);
+            // },
+            // draw : function() {
+                // core.draw(this.id, highlightMeshObject, true);
+            // }
+        // });
+        
+        //var spotlight = new THREE.SpotLight()
     }
     
     this.addGroundTrackForObject = function(object) {

@@ -240,6 +240,10 @@ SSI.Core3D = function(container) {
 		}
 	}
 	
+	this.getObjectPosition = function(id) {
+	    return drawnObjects[id].shape.position;
+	}
+	
 	init();
 
 	return this;
