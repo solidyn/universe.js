@@ -387,7 +387,16 @@ SSI.Universe = function(options, container) {
             // }
         // });
         
-        //var spotlight = new THREE.SpotLight()
+        var pointLight = new THREE.PointLight( 0xFFFFFF , 1);
+
+        // set its position
+        pointLight.position.x = 150e7;
+        pointLight.position.y = 0;
+        pointLight.position.z = 0;
+        
+        // add to the scene
+        scene.add(pointLight);
+
     }
     
     this.addGroundTrackForObject = function(object) {
