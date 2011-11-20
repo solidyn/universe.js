@@ -24,6 +24,8 @@ SSI.Universe = function(options, container) {
     var updateStateTimeout;
 	
     var isShowOrbitLines = true;
+    var isShowVehicles = true;
+    var isShowGround = true;
 
     controller.addGraphicsObject({
         id : "simState",
@@ -160,6 +162,7 @@ SSI.Universe = function(options, container) {
         });
 
         if(spaceObject.showPropogationLine == true) {
+            logger.debug("show propogation line");
             this.addPropogationLineForObject(spaceObject);
         }
 
@@ -204,9 +207,13 @@ SSI.Universe = function(options, container) {
         var geometry = new THREE.Geometry();
 
         var timeToPropogate = new Date(currentUniverseTime);
-
+        var loopCount = 1440;
+        
+        if ("4ec96588246fc15d9a000002" == object.id) {
+            loopCount = 35000;
+        }
         // draw a vertex for each minute in a 24 hour period
-        for(var j = 0; j < 1440; j++) {
+        for(var j = 0; j < loopCount; j++) {
             var location = eciTo3DCoordinates(object.propogator(timeToPropogate));
             var vector = new THREE.Vector3(location.x, location.y, location.z);
             geometry.vertices.push(new THREE.Vertex(vector));
@@ -316,50 +323,50 @@ SSI.Universe = function(options, container) {
         logger.debug("in show orbit lines");
         if (isShowOrbitLines) {
             logger.debug("hidding all orbit lines");
-            core.hideObject("space_station_propogation");
-            core.hideObject("dsp_propogation");
-            core.hideObject("molniya_propogation");
+            core.hideObject("4ec0491c246fc143ae000005_propogation");
+            core.hideObject("4ec0491c246fc143ae000008_propogation");
+            core.hideObject("4ec0491c246fc143ae000002_propogation");
             isShowOrbitLines = false;
         } else {
             logger.debug("showing all orbit lines");
-            core.showObject("space_station_propogation");
-            core.showObject("dsp_propogation");
-            core.showObject("molniya_propogation");
+            core.showObject("4ec0491c246fc143ae000005_propogation");
+            core.showObject("4ec0491c246fc143ae000008_propogation");
+            core.showObject("4ec0491c246fc143ae000002_propogation");
             isShowOrbitLines = true;
         }
     }
     
     this.showVehicles = function() {
         logger.debug("in show vehicles");
-        if (isShowOrbitLines) {
+        if (isShowVehicles) {
             logger.debug("hidding all vehicles");
-            core.hideObject("space_station");
-            core.hideObject("dsp");
-            core.hideObject("molniya");
-            isShowOrbitLines = false;
+            core.hideObject("4ec0491c246fc143ae000005");
+            core.hideObject("4ec0491c246fc143ae000008");
+            core.hideObject("4ec0491c246fc143ae000002");
+            isShowVehicles = false;
         } else {
             logger.debug("showing all vehicles");
-            core.showObject("space_station");
-            core.showObject("dsp");
-            core.showObject("molniya");
-            isShowOrbitLines = true;
+            core.showObject("4ec0491c246fc143ae000005");
+            core.showObject("4ec0491c246fc143ae000008");
+            core.showObject("4ec0491c246fc143ae000002");
+            isShowVehicles = true;
         }   
     }
     
     this.showGroundTracks = function() {
         logger.debug("in show ground tracks");
-        if (isShowOrbitLines) {
+        if (isShowGround) {
             logger.debug("hidding all ground tracks");
-            core.hideObject("space_station_groundPoint");
-            core.hideObject("dsp_groundPoint");
-            core.hideObject("molniya_groundPoint");
-            isShowOrbitLines = false;
+            core.hideObject("4ec0491c246fc143ae000005_groundPoint");
+            core.hideObject("4ec0491c246fc143ae000008_groundPoint");
+            core.hideObject("4ec0491c246fc143ae000002_groundPoint");
+            isShowGround = false;
         } else {
             logger.debug("showing all ground tracks");
-            core.showObject("space_station_groundPoint");
-            core.showObject("dsp_groundPoint");
-            core.showObject("molniya_groundPoint");
-            isShowOrbitLines = true;
+            core.showObject("4ec0491c246fc143ae000005_groundPoint");
+            core.showObject("4ec0491c246fc143ae000008_groundPoint");
+            core.showObject("4ec0491c246fc143ae000002_groundPoint");
+            isShowGround = true;
         }   
     }
     
