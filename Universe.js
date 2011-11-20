@@ -363,40 +363,17 @@ SSI.Universe = function(options, container) {
         }   
     }
     
-    this.highlightObject = function(id) {
-        // var position = core.getObjectPosition(id);
-        // var geometry = new THREE.SphereGeometry(1000, 20, 10);
-// 
-        // var sphereMaterial = new THREE.MeshLambertMaterial({
-            // color : 0xff0000,
-            // opacity: .1
-        // });
-// 
-        // var highlightMeshObject = new THREE.Mesh(geometry, sphereMaterial);
-//         
-        // controller.addGraphicsObject({
-            // id : id + "_highlight",
-            // objectName : id + "_highlight",
-            // update : function(elapsedTime) {
-                // // get the position from the object its tracking
-                // var position = core.getObjectPosition(id);
-                // highlightMeshObject.position.set(position.x, position.y, position.z);
-            // },
-            // draw : function() {
-                // core.draw(this.id, highlightMeshObject, true);
-            // }
-        // });
+    this.snapToObject = function(id) {
+        // get the object's position and copy it into a vector
+        var position = core.getObjectPosition(id);
+        var vector = new THREE.Vector3();
+        vector.copy(position);
+       
+        // move the point the camera will be at out a bit so we are behind the object
+        vector.multiplyScalar(1.4);
         
-        var pointLight = new THREE.PointLight( 0xFFFFFF , 1);
-
-        // set its position
-        pointLight.position.x = 150e7;
-        pointLight.position.y = 0;
-        pointLight.position.z = 0;
-        
-        // add to the scene
-        scene.add(pointLight);
-
+        // tell the core to move to the vector
+        core.moveCameraTo(vector);
     }
     
     this.addGroundTrackForObject = function(object) {

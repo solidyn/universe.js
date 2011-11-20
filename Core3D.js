@@ -101,6 +101,7 @@ SSI.Core3D = function(container) {
 	function render() {
 		zoom(curZoomSpeed);
 
+        //console.log("target: " + JSON.stringify(target));
 		rotation.x += (target.x - rotation.x) * 0.1;
 		rotation.y += (target.y - rotation.y) * 0.1;
 		distance += (distanceTarget - distance) * 0.3;
@@ -242,6 +243,51 @@ SSI.Core3D = function(container) {
 	
 	this.getObjectPosition = function(id) {
 	    return drawnObjects[id].shape.position;
+	}
+	
+	this.moveCameraTo = function(position_vector) {
+	    // This method converts a position into the rotation coordinate system used to move the camera
+	    // The target.x parameter is the rotation angle from the positive Z axis
+	    // target.y is the rotation angle away from the z-x plane
+	    logger.debug("Moving camera to: " + JSON.stringify(position_vector));
+	    
+	    // sets the distance from the center of the scene the camera will end up
+	    distanceTarget = position_vector.length();
+	    
+	    // unit vectors along the z and y axis 
+	    var zAxisVector = new THREE.Vector3(0,0,1);
+	    var yAxisVector = new THREE.Vector3(0,1,0);
+	    
+	    // vector that removes the y component of the target vector for purpose of calculating the angle
+	    // between it the input position_vector and the y-z plane
+	    var positionY0Vector = new THREE.Vector3();
+	    positionY0Vector.copy(position_vector);
+        
+        // set the y to zero and normalize to unit length
+        positionY0Vector.y = 0;
+        positionY0Vector.normalize();
+        
+        //normalize the position_vector to unit length
+        position_vector.normalize();
+	    
+	    // calculates the angle between the positive y axis and the input position vector
+	    // then subtract this from 90 degrees to shift it to be from the z-x plane
+	    var y = (Math.PI/2) - Math.acos(yAxisVector.dot(position_vector));
+	    
+	    // calculate the angle between the input vector projected on the z-x plane and the z-axis
+	    var x = Math.acos(zAxisVector.dot(positionY0Vector));
+	    
+	    // since the above calculation will return between 0 and 180 degrees, invert it if we're in the 
+	    // negative x direction
+	    if(positionY0Vector.x < 0) {
+	        x = -x;
+	    }
+	    
+	    // set it to zero if NaN
+	    target.y = isNaN(y) ? 0 : y;
+	    target.x = isNaN(x) ? 0 : x;
+	    
+	    logger.debug("target: " + JSON.stringify(target));
 	}
 	
 	init();
