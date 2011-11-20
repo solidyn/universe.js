@@ -166,6 +166,12 @@ SSI.Universe = function(options, container) {
         if(spaceObject.showGroundTrackPoint) {
             this.addGroundTrackPointForObject(spaceObject);
         }
+
+        // TODO: enamble a real toggle button for this .showSensorPattern
+        if (true) {
+            this.addSensorProjection(spaceObject);
+        }
+
     };
     // groundObject:
     // id
@@ -245,13 +251,64 @@ SSI.Universe = function(options, container) {
                 vector.multiplyScalar(earthSphereRadius / vector.length())
 
                 // give it a random x and y position between -500 and 500
-                groundObjectMesh.position.x = vector.x;
-                groundObjectMesh.position.y = vector.y;
-                groundObjectMesh.position.z = vector.z;
+                groundObjectMesh.position.copy(vector);
 
             },
             draw : function() {
                 core.draw(this.id, groundObjectMesh, true);
+            }
+        })
+    }
+
+    // TODO: This really needs to be refactored into the Sensor code, but that seems kind
+    // of disfunctional right now....so I've got this instead
+    this.addSensorProjection = function(object) {
+        
+        // Determine the object's location in 3D space
+        var objectLocation = eciTo3DCoordinates(object.propogator());
+
+        // Now convert that to a Vector3 to use its mathy functions
+        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+        
+        // Create a SensorPattern that's the length of the vector to the object 
+        // (i.e. the length to the center of the earth)
+        var geometry = new SensorPatternGeometry(500, vector.length());
+
+        var material = new THREE.MeshLambertMaterial({
+            color : 0xffff00, 
+            opacity: 0.1,
+            overdraw: true
+        });
+
+        var sensorProjection = new THREE.Mesh(geometry, material);
+        sensorProjection.doubleSided=true;
+        
+
+        controller.addGraphicsObject({
+            id : object.id + "_sensorProjection",
+            objectName : object.objectName,
+            update : function(elapsedTime) {
+
+                var objectLocation = eciTo3DCoordinates(object.propogator());
+                var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+
+                // Rotate the beam so it points to the center of the earth
+                // TODO: this will have to be corrected with its actual look angles
+
+               var zRotationAngle = Math.asin(vector.x / (vector.length()));
+               var xRotationAngle = Math.asin(vector.z / (vector.length()));
+                //var zRotationAngle = Math.asin(vector.z / (vector.length()));
+                // no need to rotate along y; that's down the center of the cone
+                logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
+
+                sensorProjection.rotation.x = -xRotationAngle;
+                sensorProjection.rotation.z = -zRotationAngle;
+
+                sensorProjection.position.copy(vector);
+                
+            },
+            draw : function() {
+                core.draw(this.id, sensorProjection, true);
             }
         })
     }
