@@ -278,7 +278,7 @@ SSI.Universe = function(options, container) {
         
         // Create a SensorPattern that's the length of the vector to the object 
         // (i.e. the length to the center of the earth)
-        var geometry = new SensorPatternGeometry(500, vector.length());
+        var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
 
         var material = new THREE.MeshLambertMaterial({
             color : 0xffff00, 
@@ -303,11 +303,19 @@ SSI.Universe = function(options, container) {
 
                var zRotationAngle = Math.asin(vector.x / (vector.length()));
                var xRotationAngle = Math.asin(vector.z / (vector.length()));
+
+                // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
+                // from 180 deg
+                if ( vector.y < 0 )
+                {
+                    xRotationAngle = Math.PI - xRotationAngle;
+                }
+
                 //var zRotationAngle = Math.asin(vector.z / (vector.length()));
                 // no need to rotate along y; that's down the center of the cone
                 logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
 
-                sensorProjection.rotation.x = -xRotationAngle;
+                sensorProjection.rotation.x = xRotationAngle;
                 sensorProjection.rotation.z = -zRotationAngle;
 
                 sensorProjection.position.copy(vector);
