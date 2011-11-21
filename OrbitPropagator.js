@@ -60,7 +60,7 @@
 
             dtPrime = h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -75,7 +75,7 @@
 
             dtPrime = 0.25 * h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -90,7 +90,7 @@
 
             dtPrime = 0.375 * h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -106,7 +106,7 @@
 
             dtPrime = 0.9230769230769231 * h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -122,7 +122,7 @@
 
             dtPrime = h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -139,7 +139,7 @@
 
             dtPrime = (0.5) * h;
 
-            f = generateStateUpdate(deltaState, dtPrime, GST);
+            f = this.generateStateUpdate(deltaState, dtPrime, GST);
 
             for (i = 0; i < 9; i++)
             {
@@ -173,7 +173,7 @@
         //state is 9x1
         //state structure is x,y,z,vx,vy,vz,ax,ay,az
         var stateRateOfChange = new Array(); //double[9]
-        var mu = Constants.getMuEarth();     //double
+        var mu = Constants.muEarth;     //double
         var r = Math.sqrt((state[0] * state[0]) + (state[1] * state[1]) +
             (state[2] * state[2])); //double
 
@@ -195,7 +195,7 @@
      *
      * @param eci                      ECICoordinates
      * @param elapsedTime              double
-     * @param dt                       double
+     * @param dt                       double, time-step
      * @param timeAtStartOfPropagation Date
      *
      * @returns ECICoordinates
@@ -209,35 +209,36 @@
         }
         else
         {
-            var newEci = ECICoordinates; //ECICoordinates
             var state = new Array();     //double[9]
 
             //establish the starting state vector;
             state[0] = eci.getX();
             state[1] = eci.getY();
             state[2] = eci.getZ();
-            state[3] = eci.getVx();
-            state[4] = eci.getVy();
-            state[5] = eci.getVz();
-            state[6] = eci.getAx();
-            state[7] = eci.getAy();
-            state[8] = eci.getAz();
+            state[3] = eci.getVX();
+            state[4] = eci.getVY();
+            state[5] = eci.getVZ();
+            state[6] = eci.getAX();
+            state[7] = eci.getAY();
+            state[8] = eci.getAZ();
 
             //call the integrator
             var updatedState =  //double[]
-               rungeKuttaFehlbergIntegrator(state, elapsedTime, dt, timeAtStartOfPropagation);
+               this.rungeKuttaFehlbergIntegrator(state, elapsedTime, dt, timeAtStartOfPropagation);
 
+            //console.log("updatedState: " + JSON.stringify(updatedState));
             //translate the integrated values into the correct class structure
-            newEci.setX(updatedState[0]);
-            newEci.setY(updatedState[1]);
-            newEci.setZ(updatedState[2]);
-            newEci.setVx(updatedState[3]);
-            newEci.setVy(updatedState[4]);
-            newEci.setVz(updatedState[5]);
-            newEci.setAx(updatedState[6]);
-            newEci.setAy(updatedState[7]);
-            newEci.setAz(updatedState[8]);
-
+            var newEci = new ECICoordinates(
+                updatedState[0], 
+                updatedState[1], 
+                updatedState[2], 
+                updatedState[3], 
+                updatedState[4], 
+                updatedState[5], 
+                updatedState[6], 
+                updatedState[7], 
+                updatedState[8]); //ECICoordinates
+            //console.log("newEci: " + JSON.stringify(newEci));
             return newEci;
         }
     }
