@@ -1,158 +1,158 @@
-var ECICoordinates = {
-
+function ECICoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal) {
+    
     // define variables as <var name>: <value>
 
-    x:  0.0, //km
-    y:  0.0, //km
-    z:  0.0, //km
-    vx: 0.0, //km/s
-    vy: 0.0, //km/s
-    vz: 0.0, //km/s
-    ax: 0.0, //km/s2
-    ay: 0.0, //km/s2
-    az: 0.0, //km/s2
-
+    this.x = xVal ? xVal : 0.0, //km
+    this.y =  yVal ? yVal : 0.0, //km
+    this.z =  zVal ? zVal : 0.0, //km
+    this.vx = vxVal ? vxVal : 0.0, //km
+    this.vy = vyVal ? vyVal : 0.0, //km
+    this.vz = vzVal ? vzVal : 0.0, //km
+    this.ax = axVal ? axVal : 0.0, //km
+    this.ay = ayVal ? ayVal : 0.0, //km
+    this.az = azVal ? azVal : 0.0 //km
+    
     /**
      * Get the X value.
      */
-    getX: function()
+    this.getX = function()
     {
-        return x;
-    },
+        return this.x;
+    }
 
     /**
      * Set the X value.
      */
-    setX: function(newX)
+    this.setX = function(newX)
     {
-        x = newX;
-    },
+        this.x = newX;
+    }
 
     /**
      * Get the Y value.
      */
-    getY: function()
+    this.getY = function()
     {
-        return y;
-    },
+        return this.y;
+    }
 
     /**
      * Set the Y value.
      */
-    setY: function(newY)
+    this.setY = function(newY)
     {
-        y = newY;
-    },
+        this.y = newY;
+    }
 
     /**
      * Get the Z value.
      */
-    getZ: function()
+    this.getZ = function()
     {
-        return z;
-    },
+        return this.z;
+    }
 
     /**
      * Set the Z value.
      */
-    setZ: function(newZ)
+    this.setZ = function(newZ)
     {
-        z = newZ;
-    },
+        this.z = newZ;
+    }
 
    /**
      * Get the VX value.
      */
-    getVX: function()
+    this.getVX = function()
     {
-        return vx;
-    },
+        return this.vx;
+    }
 
     /**
      * Set the VX value.
      */
-    setVX: function(newVX)
+    this.setVX = function(newVX)
     {
-        vx = newVX;
-    },
+        this.vx = newVX;
+    }
 
     /**
      * Get the VY value.
      */
-    getVY: function()
+    this.getVY = function()
     {
-        return vy;
-    },
+        return this.vy;
+    }
 
     /**
      * Set the VY value.
      */
-    setVY: function(newVY)
+    this.setVY = function(newVY)
     {
-        vy = newVY;
-    },
+        this.vy = newVY;
+    }
 
     /**
      * Get the VZ value.
      */
-    getVZ: function()
+    this.getVZ = function()
     {
-        return vz;
-    },
+        return this.vz;
+    }
 
     /**
      * Set the VZ value.
      */
-    setVZ: function(newVZ)
+    this.setVZ = function(newVZ)
     {
-        vz = newVZ;
-    },
+        this.vz = newVZ;
+    }
 
     /**
      * Get the AX value.
      */
-    getAX: function()
+    this.getAX = function()
     {
-        return ax;
-    },
+        return this.ax;
+    }
 
     /**
      * Set the AX value.
      */
-    setAX: function(newAX)
+    this.setAX = function(newAX)
     {
-        ax = newAX;
-    },
+        this.ax = newAX;
+    }
 
     /**
      * Get the AY value.
      */
-    getAY: function()
+    this.getAY = function()
     {
-        return ay;
-    },
+        return this.ay;
+    }
 
     /**
      * Set the AY value.
      */
-    setAY: function(newAY)
+    this.setAY = function(newAY)
     {
-        ay = newAY;
-    },
+        this.ay = newAY;
+    }
 
     /**
      * Get the AZ value.
      */
-    getAZ: function()
+    this.getAZ = function()
     {
-        return az;
-    },
+        return this.az;
+    }
 
     /**
      * Set the AZ value.
      */
-    setAZ: function(newAZ)
+    this.setAZ = function(newAZ)
     {
-        az = newAZ;
+        this.az = newAZ;
     }
 }
