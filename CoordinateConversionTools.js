@@ -65,10 +65,10 @@ var CoordinateConversionTools = {
         //lon = ground station longitude (deg)
         //alt = ground station altitude (km)
 
-        var lat = Math.toRadians(lla.getLatitude());  //double
-        var lon = Math.toRadians(lla.getLongitude()); //double
-        var Re = Constants.getRadiusEarth();          //double - radius of the earth (mean) in kilometers
-        var eearth = Constants.getEccEarthSphere();   //double - eccentricity of the Earth's shape
+        var lat = MathTools.toRadians(lla.getLatitude());  //double
+        var lon = MathTools.toRadians(lla.getLongitude()); //double
+        var Re = Constants.radiusEarth;          //double - radius of the earth (mean) in kilometers
+        var eearth = Constants.eccEarthSphere;   //double - eccentricity of the Earth's shape
         var sinLat = Math.sin(lat);                   //double
         var hellp = lla.getAltitude();                //double - height above the elliptical earth
 
@@ -81,16 +81,7 @@ var CoordinateConversionTools = {
         var y = (cearth + hellp) * (Math.cos(lat) * Math.sin(lon)); //double
         var z = (searth + hellp) * (Math.sin(lat));                 //double
 
-        var ecef = new ECEFCoordinates();
-        ecef.setX(x);
-        ecef.setY(y);
-        ecef.setZ(z);
-        ecef.setVx(0.0);
-        ecef.setVy(0.0);
-        ecef.setVz(0.0);
-        ecef.setAx(0.0);
-        ecef.setAy(0.0);
-        ecef.setAz(0.0);
+        var ecef = new ECEFCoordinates(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
         return ecef;
     },
@@ -244,27 +235,27 @@ var CoordinateConversionTools = {
 
         //convert the velocity
         var eciVel = new Array(); //Double[3];
-        eciVel[0] = ecef.getVx();
-        eciVel[1] = ecef.getVy();
-        eciVel[2] = ecef.getVz();
+        eciVel[0] = ecef.getVX();
+        eciVel[1] = ecef.getVY();
+        eciVel[2] = ecef.getVZ();
 
         xyz = MathTools.rot3(-GST, eciVel);
 
-        eci.setVx(xyz[0]);
-        eci.setVy(xyz[1]);
-        eci.setVz(xyz[2]);
+        eci.setVX(xyz[0]);
+        eci.setVY(xyz[1]);
+        eci.setVZ(xyz[2]);
 
         //convert the acceleration
         var eciAcc = new Array(); //Double[3];
-        eciAcc[0] = ecef.getAx();
-        eciAcc[1] = ecef.getAy();
-        eciAcc[2] = ecef.getAz();
+        eciAcc[0] = ecef.getAX();
+        eciAcc[1] = ecef.getAY();
+        eciAcc[2] = ecef.getAZ();
 
         xyz = MathTools.rot3(-GST, eciAcc);
 
-        eci.setAx(xyz[0]);
-        eci.setAy(xyz[1]);
-        eci.setAz(xyz[2]);
+        eci.setAX(xyz[0]);
+        eci.setAY(xyz[1]);
+        eci.setAZ(xyz[2]);
 
         return eci;
     },
@@ -291,8 +282,8 @@ var CoordinateConversionTools = {
      */
     convertLLAtoECI: function(lla, GST)
     {
-        var ecef = convertLLAtoECEF(lla); //ECEFCoordinates
-        return convertECEFtoECI(ecef, GST);
+        var ecef = this.convertLLAtoECEF(lla); //ECEFCoordinates
+        return this.convertECEFtoECI(ecef, GST);
     },
 
     /**

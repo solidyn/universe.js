@@ -108,7 +108,7 @@ var MathTools = {
      */
     rot1: function(x, vec)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
 
         var result = new Array(); //Double[3];
         result[0] = vec[0];
@@ -127,7 +127,7 @@ var MathTools = {
      */
     rot2: function(x, vec)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         
         var result = new Array(); //Double[3];
 
@@ -147,7 +147,7 @@ var MathTools = {
      */
     rot3: function(x, vec)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
 
         var result = new Array(); //Double[3];
 
@@ -156,5 +156,9 @@ var MathTools = {
         result[2] = vec[2];
 
         return result;
+    },
+    
+    toRadians: function(valueInDegrees) {
+        return valueInDegrees * Math.PI / 180.0;
     }
 }

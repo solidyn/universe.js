@@ -1,56 +1,56 @@
-var LLACoordinates = {
+function LLACoordinates(lat, lon, alt) {
 
     // define variables as <var name>: <value>
 
-    latitude:  0.0, //deg
-    longitude: 0.0, //deg
-    altitude:  0.0,  //km
+    this.latitude =  lat ? lat : 0.0, //deg
+    this.longitude = lon ? lon : 0.0, //deg
+    this.altitude =  alt ? alt : 0.0  //km
 
     /**
      * Returns the altitude value.
      */
-    getAltitude: function()
+    this.getAltitude = function()
     {
-        return altitude;
-    },
+        return this.altitude;
+    }
 
     /**
      * Sets a new altitude value.
      */
-    setAltitude: function(newAltitude)
+    this.setAltitude = function(newAltitude)
     {
-        altitude = newAltitude;
-    },
+        this.altitude = newAltitude;
+    }
 
     /**
      * Returns the latitude value.
      */
-    getLatitude: function()
+    this.getLatitude = function()
     {
-        return latitude;
-    },
+        return this.latitude;
+    }
 
     /**
      * Sets a new latitude value.
      */
-    setLatitude: function(newLatitude)
+    this.setLatitude = function(newLatitude)
     {
-        latitude = newLatitude;
-    },
+        this.latitude = newLatitude;
+    }
 
     /**
      * Returns the longitude value.
      */
-    getLongitude: function()
+    this.getLongitude = function()
     {
-        return longitude;
-    },
+        return this.longitude;
+    }
 
     /**
      * Sets a new longitude value.
      */
-    setLongitude: function(setLongitude)
+    this.setLongitude = function(setLongitude)
     {
-        longitude = setLongitude;
+        this.longitude = setLongitude;
     }
 }
