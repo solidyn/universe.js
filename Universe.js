@@ -141,7 +141,7 @@ SSI.Universe = function(options, container) {
     //   time
     //   x, y, z
     // objectName
-    // propogator
+    // propagator
     // modelId
     // showPropogationLine
     // showGroundTrackPoint
@@ -152,9 +152,11 @@ SSI.Universe = function(options, container) {
             id : spaceObject.id,
             objectName : spaceObject.objectName,
             update : function(elapsedTime) {
-                // need to pass a time to the propogator
-                var location = eciTo3DCoordinates(spaceObject.propogator());
-                objectModel.position.set(location.x, location.y, location.z);
+                // need to pass a time to the propagator
+                spaceObject.propagator(null, function(location) {
+                    var convertedLocation = eciTo3DCoordinates(location);
+                    objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                });
             },
             draw : function() {
                 core.draw(this.id, objectModel, true);
@@ -178,7 +180,7 @@ SSI.Universe = function(options, container) {
     };
     // groundObject:
     // id
-    // propogator
+    // propagator
     // object
     this.addGroundObject = function(groundObject) {
         var geometry = new THREE.SphereGeometry(300, 20, 10);
@@ -194,7 +196,7 @@ SSI.Universe = function(options, container) {
             objectName : groundObject.objectName,
             update : function(elapsedTime) {
                 // check earth rotation and update location
-                var position = eciTo3DCoordinates(groundObject.propogator());
+                var position = eciTo3DCoordinates(groundObject.propagator());
                 groundObjectMesh.position.set(position.x, position.y, position.z);
             },
             draw : function() {
@@ -214,9 +216,11 @@ SSI.Universe = function(options, container) {
         }
         // draw a vertex for each minute in a 24 hour period
         for(var j = 0; j < loopCount; j++) {
-            var location = eciTo3DCoordinates(object.propogator(timeToPropogate));
-            var vector = new THREE.Vector3(location.x, location.y, location.z);
-            geometry.vertices.push(new THREE.Vertex(vector));
+            object.propagator(timeToPropogate, function(location) {
+                var convertedLocation = eciTo3DCoordinates(location);
+                var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                geometry.vertices.push(new THREE.Vertex(vector));
+            });
 
             timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
         }
@@ -250,15 +254,16 @@ SSI.Universe = function(options, container) {
             id : object.id + "_groundPoint",
             objectName : object.objectName,
             update : function(elapsedTime) {
-                var objectLocation = eciTo3DCoordinates(object.propogator());
+                object.propagator(undefined, function(location) {
+                    var objectLocation = eciTo3DCoordinates(location);
 
-                var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-
-                // move the vector to the surface of the earth
-                vector.multiplyScalar(earthSphereRadius / vector.length())
-
-                groundObjectMesh.position.copy(vector);
-
+                    var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+    
+                    // move the vector to the surface of the earth
+                    vector.multiplyScalar(earthSphereRadius / vector.length())
+    
+                    groundObjectMesh.position.copy(vector);
+                });
             },
             draw : function() {
                 core.draw(this.id, groundObjectMesh, true);
@@ -269,62 +274,64 @@ SSI.Universe = function(options, container) {
     // TODO: This really needs to be refactored into the Sensor code, but that seems kind
     // of disfunctional right now....so I've got this instead
     this.addSensorProjection = function(object) {
+        object.propagator(undefined, function(location) {
+            // Determine the object's location in 3D space
+            var objectLocation = eciTo3DCoordinates(location);
+    
+            // Now convert that to a Vector3 to use its mathy functions
+            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+            
+            // Create a SensorPattern that's the length of the vector to the object 
+            // (i.e. the length to the center of the earth)
+            var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
+    
+            var material = new THREE.MeshLambertMaterial({
+                color : 0xffff00, 
+                opacity: 0.1,
+                overdraw: true
+            });
+    
+            var sensorProjection = new THREE.Mesh(geometry, material);
+            sensorProjection.doubleSided=true;
+            
+    
+            controller.addGraphicsObject({
+                id : object.id + "_sensorProjection",
+                objectName : object.objectName,
+                update : function(elapsedTime) {
+                    object.propagator(undefined, function(location) {
+                        var objectLocation = eciTo3DCoordinates(location);
+                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
         
-        // Determine the object's location in 3D space
-        var objectLocation = eciTo3DCoordinates(object.propogator());
-
-        // Now convert that to a Vector3 to use its mathy functions
-        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+                        // Rotate the beam so it points to the center of the earth
+                        // TODO: this will have to be corrected with its actual look angles
         
-        // Create a SensorPattern that's the length of the vector to the object 
-        // (i.e. the length to the center of the earth)
-        var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
-
-        var material = new THREE.MeshLambertMaterial({
-            color : 0xffff00, 
-            opacity: 0.1,
-            overdraw: true
-        });
-
-        var sensorProjection = new THREE.Mesh(geometry, material);
-        sensorProjection.doubleSided=true;
+                       var zRotationAngle = Math.asin(vector.x / (vector.length()));
+                       var xRotationAngle = Math.asin(vector.z / (vector.length()));
         
-
-        controller.addGraphicsObject({
-            id : object.id + "_sensorProjection",
-            objectName : object.objectName,
-            update : function(elapsedTime) {
-
-                var objectLocation = eciTo3DCoordinates(object.propogator());
-                var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-
-                // Rotate the beam so it points to the center of the earth
-                // TODO: this will have to be corrected with its actual look angles
-
-               var zRotationAngle = Math.asin(vector.x / (vector.length()));
-               var xRotationAngle = Math.asin(vector.z / (vector.length()));
-
-                // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
-                // from 180 deg
-                if ( vector.y < 0 )
-                {
-                    xRotationAngle = Math.PI - xRotationAngle;
+                        // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
+                        // from 180 deg
+                        if ( vector.y < 0 )
+                        {
+                            xRotationAngle = Math.PI - xRotationAngle;
+                        }
+        
+                        //var zRotationAngle = Math.asin(vector.z / (vector.length()));
+                        // no need to rotate along y; that's down the center of the cone
+                        logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
+        
+                        sensorProjection.rotation.x = xRotationAngle;
+                        sensorProjection.rotation.z = -zRotationAngle;
+        
+                        sensorProjection.position.copy(vector);
+                    });
+                },
+                draw : function() {
+                    core.draw(this.id, sensorProjection, true);
                 }
-
-                //var zRotationAngle = Math.asin(vector.z / (vector.length()));
-                // no need to rotate along y; that's down the center of the cone
-                logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
-
-                sensorProjection.rotation.x = xRotationAngle;
-                sensorProjection.rotation.z = -zRotationAngle;
-
-                sensorProjection.position.copy(vector);
-                
-            },
-            draw : function() {
-                core.draw(this.id, sensorProjection, true);
-            }
-        })
+            });
+        });
+        
     }
 
     this.showOrbitLines = function() {
