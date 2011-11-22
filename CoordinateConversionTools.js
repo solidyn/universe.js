@@ -33,7 +33,7 @@ var CoordinateConversionTools = {
      */
     convertTimeToGMST: function(currentEpoch)
     {
-        var JD = convertCurrentEpochToJulianDate(currentEpoch); //double
+        var JD = this.convertCurrentEpochToJulianDate(currentEpoch); //double
         var TUT = (JD-2451545.0)/36525.0;  //double - julian centuries since January 1, 2000 12h UT1
 
         var GMST = 0; //double
