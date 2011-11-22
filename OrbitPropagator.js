@@ -212,15 +212,15 @@
             var state = new Array();     //double[9]
 
             //establish the starting state vector;
-            state[0] = eci.getX();
-            state[1] = eci.getY();
-            state[2] = eci.getZ();
-            state[3] = eci.getVX();
-            state[4] = eci.getVY();
-            state[5] = eci.getVZ();
-            state[6] = eci.getAX();
-            state[7] = eci.getAY();
-            state[8] = eci.getAZ();
+            state[0] = eci.x;
+            state[1] = eci.y;
+            state[2] = eci.z;
+            state[3] = eci.vx;
+            state[4] = eci.vy;
+            state[5] = eci.vz;
+            state[6] = eci.ax;
+            state[7] = eci.ay;
+            state[8] = eci.az;
 
             //call the integrator
             var updatedState =  //double[]
