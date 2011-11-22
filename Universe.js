@@ -181,7 +181,7 @@ SSI.Universe = function(options, container) {
     // propogator
     // object
     this.addGroundObject = function(groundObject) {
-        var geometry = new THREE.SphereGeometry(100, 20, 10);
+        var geometry = new THREE.SphereGeometry(300, 20, 10);
 
         var sphereMaterial = new THREE.MeshLambertMaterial({
             color : 0xCC0000
