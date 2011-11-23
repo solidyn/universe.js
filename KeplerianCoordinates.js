@@ -88,10 +88,10 @@ function KeplerianCoordinates(theSemimajorAxis, theMeanAnomaly, theEccentricAnom
     }
     
     this.setArgOfPerigee = function(theArgOfPerigee) {
-         this.argOfPerigee;
+         this.argOfPerigee = theArgOfPerigee;
     }
     
     this.setMeanMotion = function(theMeanMotion) {
-         this.meanMotion;
+         this.meanMotion = theMeanMotion;
     }
 }

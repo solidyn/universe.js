@@ -369,19 +369,16 @@ var CoordinateConversionTools = {
         khat[0] = 0.0;
         khat[1] = 0.0;
         khat[2] = 1.0;
-        console.log("h: " + JSON.stringify(h));
-        console.log("hmag: " + JSON.stringify(hmag));
-        console.log("rmag: " + JSON.stringify(rmag));
-        console.log("vmag: " + JSON.stringify(vmag));
+
         var n = new Array(); //Double[3];
         n = MathTools.cross(khat, h);
         
-        console.log("r: " + JSON.stringify(r) + " v: " + JSON.stringify(v))
+        
 
         var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
         var coeff2 = MathTools.dotMultiply(r, v);                 //double
         
-        console.log("coeff1: " + JSON.stringify(coeff1) + " coeff2: " + JSON.stringify(coeff2));
+        //console.log("coeff1: " + JSON.stringify(coeff1) + " coeff2: " + JSON.stringify(coeff2));
        
         var e = new Array(); //Double[3];
 
@@ -426,8 +423,13 @@ var CoordinateConversionTools = {
         {
             arg = 360 - arg;
         }
-        
+        // console.log("r: " + JSON.stringify(r) + " v: " + JSON.stringify(v) + " e: " + e);
+        // console.log("n: " + JSON.stringify(n))
+//         
+        // console.log("Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)))
+        // console.log("emag: " + emag + " rmag: " + rmag);
         var nu = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag))); //double
+        // console.log("nu: " + nu);
         if (MathTools.dotMultiply(v, r) < 0)
         {
             nu = 360 - nu;
@@ -450,6 +452,16 @@ var CoordinateConversionTools = {
         kepler.setInclination(inc);
         kepler.setMeanMotion(MathTools.toDegrees(Math.sqrt(Constants.muEarth / (a * a * a))));
         kepler.setArgOfPerigee(arg);
+        
+        //figure out the mean anomaly
+        var sinNu=Math.sin(MathTools.toRadians(nu));
+        var cosNu=Math.cos(MathTools.toRadians(nu));
+        var sinEA=((sinNu*Math.sqrt(1-emag*emag))/(1+emag*cosNu));
+        var cosEA=((emag+cosNu)/(1+emag*cosNu));
+        var EA=Math.atan2(sinEA, cosEA);
+        var MA=EA-emag*sinEA;
+        MA=MathTools.toDegrees(MA);
+        kepler.setMeanAnomaly(MA);
 
         return kepler;
     },
