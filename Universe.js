@@ -168,7 +168,6 @@ SSI.Universe = function(options, container) {
             objectLibrary.getObjectById("default_material", function(retrieved_material) {
                 material = retrieved_material;
                 
-                console.log("creating mesh");
                 var objectModel = new THREE.Mesh(objectGeometry, material);
         
                 controller.addGraphicsObject({
@@ -220,7 +219,6 @@ SSI.Universe = function(options, container) {
                     update : function(elapsedTime) {
                         // check earth rotation and update location
                         var position = eciTo3DCoordinates(groundObject.propagator());
-                        console.log("position: " + JSON.stringify(position));
                         groundObjectMesh.position.set(position.x, position.y, position.z);
                     },
                     draw : function() {

@@ -12,9 +12,7 @@ SSI.ObjectLibrary = function() {
         logger.debug("Adding mesh object to library; id: [" + id + "] url: [" + 
             url + "]");
         // if we have already loaded an onject with this id, return
-        console.log("numberOfElements at start: " + JSON.stringify(numberOfElements))
         if (objects[id] != undefined) {
-            console.log("got here");
             logger.debug("Object with id [" + id + "] already exists so not adding");
             callback();
             return;
