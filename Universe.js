@@ -36,6 +36,10 @@ SSI.Universe = function(options, container) {
         draw : function() {
         }
     });
+    
+    objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
+    objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
+    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
 
     // fires a state changed event to the callback
     function fireStateChanged(state) {
@@ -126,10 +130,10 @@ SSI.Universe = function(options, container) {
     };
     // adds a model to the universe with an ID and url to retrieve
     // the model's geometry
-    this.addJsonMeshModel = function(modelId, modelUrl, material, callback) {
-        logger.debug("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "], material: [" + material + "]");
+    this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
+        logger.debug("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "]");
         if (modelId != undefined){
-            objectLibrary.addMeshObjectFromUrl(modelId, modelUrl, material, callback);
+            objectLibrary.addGeometryObjectFromUrl(modelId, modelUrl, callback);
         } else {
             callback();
         }
@@ -146,7 +150,10 @@ SSI.Universe = function(options, container) {
     // showPropogationLine
     // showGroundTrackPoint
     this.addSpaceObject = function(spaceObject) {
-        var objectModel = objectLibrary.getObjectById(spaceObject.modelId);
+        var objectGeometry = objectLibrary.getObjectById(spaceObject.modelId);
+        var material = objectLibrary.getObjectById("default_material");
+        console.log("creating mesh");
+        var objectModel = new THREE.Mesh(objectGeometry, material);
 
         controller.addGraphicsObject({
             id : spaceObject.id,
@@ -183,13 +190,9 @@ SSI.Universe = function(options, container) {
     // propagator
     // object
     this.addGroundObject = function(groundObject) {
-        var geometry = new THREE.SphereGeometry(300, 20, 10);
+        
 
-        var sphereMaterial = new THREE.MeshLambertMaterial({
-            color : 0xCC0000
-        });
-
-        var groundObjectMesh = new THREE.Mesh(geometry, sphereMaterial);
+        var groundObjectMesh = new THREE.Mesh(objectLibrary.getObjectById("default_ground_object_geometry"), objectLibrary.getObjectById("default_ground_object_material"));
 
         controller.addGraphicsObject({
             id : groundObject.id,
@@ -318,7 +321,7 @@ SSI.Universe = function(options, container) {
         
                         //var zRotationAngle = Math.asin(vector.z / (vector.length()));
                         // no need to rotate along y; that's down the center of the cone
-                        logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
+                        //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
         
                         sensorProjection.rotation.x = xRotationAngle;
                         sensorProjection.rotation.z = -zRotationAngle;
