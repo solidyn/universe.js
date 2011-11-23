@@ -7,7 +7,7 @@ SSI.UniverseController = function(options) {
     var refreshTimeout;
 
     // number of milliseconds between calls to update() (frame rate / refresh rate)
-    var refreshRate = options.refreshRate || 30;
+    var refreshRate = options.refreshRate || 100;
 
     // the last time we called update() in ms since jsDate epoch
     var lastUpdateMs = 0;
