@@ -195,7 +195,7 @@ SSI.Universe = function(options, container) {
                 }
         
                 // TODO: enamble a real toggle button for this .showSensorPattern
-                if (true) {
+                if (spaceObject.showSensorProjections) {
                     universe.addSensorProjection(spaceObject);
                 }
             });
