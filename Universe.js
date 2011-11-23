@@ -62,7 +62,7 @@ SSI.Universe = function(options, container) {
 
 
     this.updateState = function() {
-        // create our state object and notify our listener
+        //create our state object and notify our listener
         var universe = this;
         var state = {};
         state.currentUniverseTime = new Date(currentUniverseTime);
