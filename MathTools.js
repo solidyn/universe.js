@@ -160,5 +160,9 @@ var MathTools = {
     
     toRadians: function(valueInDegrees) {
         return valueInDegrees * Math.PI / 180.0;
+    },
+    
+    toDegrees: function(valueInRadians) {
+        return valueInRadians * 180 / Math.PI;
     }
 }

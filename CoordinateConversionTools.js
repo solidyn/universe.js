@@ -153,8 +153,8 @@ var CoordinateConversionTools = {
             lambda = lambda - 2 * Math.PI;
         }
 
-        lla.setLatitude(Math.toDegrees(lat));
-        lla.setLongitude(Math.toDegrees(lambda));
+        lla.setLatitude(MathTools.toDegrees(lat));
+        lla.setLongitude(MathTools.toDegrees(lambda));
         lla.setAltitude(rdelta / Math.cos(lat) - c);
 
         return lla;
@@ -185,9 +185,9 @@ var CoordinateConversionTools = {
 
         //convert the velocity
         var eciVel = new Array(); //Double[3];
-        eciVel[0] = eci.getVx();
-        eciVel[1] = eci.getVy();
-        eciVel[2] = eci.getVz();
+        eciVel[0] = eci.getVX();
+        eciVel[1] = eci.getVY();
+        eciVel[2] = eci.getVZ();
 
         xyz = MathTools.rot3(GST, eciVel);
 
@@ -323,8 +323,8 @@ var CoordinateConversionTools = {
         eci.setZ(eciValues[2]);
 
         //determine the velocity conversion;                             //double
-        var VXpqw = -Math.sqrt(Constants.getMuEarth() / p) * sinNu;      //double
-        var VYpqw = Math.sqrt(Constants.getMuEarth() / p) * (e + cosNu); //double
+        var VXpqw = -Math.sqrt(Constants.muEarth / p) * sinNu;      //double
+        var VYpqw = Math.sqrt(Constants.muEarth / p) * (e + cosNu); //double
         var VZpqw = 0;                                                   //double
         pqw[0] = VXpqw;
         pqw[1] = VYpqw;
@@ -356,9 +356,9 @@ var CoordinateConversionTools = {
         r[2] = eci.getZ();
         
         var v = new Array(); //Double[3];
-        v[0] = eci.getVx();
-        v[1] = eci.getVy();
-        v[2] = eci.getVz();
+        v[0] = eci.getVX();
+        v[1] = eci.getVY();
+        v[2] = eci.getVZ();
 
         var h = MathTools.cross(r, v); //Double[3]
         var hmag = MathTools.magnitude(h); //double
@@ -373,7 +373,7 @@ var CoordinateConversionTools = {
         var n = new Array(); //Double[3];
         n = MathTools.cross(khat, h);
 
-        var coeff1 = vmag * vmag - Constants.getMuEarth() / rmag; //double
+        var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
         var coeff2 = MathTools.dotMultiply(r, v);                 //double
        
         var e = new Array(); //Double[3];
@@ -381,36 +381,39 @@ var CoordinateConversionTools = {
         var i = 0;
         for (i = 0; i < 3; i++)
         {
-            e[i] = (1 / Constants.getMuEarth()) * (coeff1 * r[i] - coeff2 * v[i]);
+            e[i] = (1 / Constants.muEarth) * (coeff1 * r[i] - coeff2 * v[i]);
 
         }
-
+        
+        
+        console.log("e: " + JSON.stringify(e));
+        
         var emag = MathTools.magnitude(e);                            //double
-        var energy = vmag * vmag / 2 - Constants.getMuEarth() / rmag; //double
-
+        var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
+        
         var p = 0.0; //double
         var a = 0.0; //double
 
         if (emag == 1.0)
         {
             a = Infinity;
-            p = hmag * hmag / Constants.getMuEarth();
+            p = hmag * hmag / Constants.muEarth;
         }
         else
         {
-            a = -Constants.getMuEarth() / (2 * energy);
+            a = -Constants.muEarth / (2 * energy);
             p = a * (1 - emag * emag);
         }
 
-        var inc = Math.toDegrees(Math.acos(h[2] / hmag));                    //double
-        var raan = Math.toDegrees(Math.acos(n[0] / MathTools.magnitude(n))); //double
+        var inc = MathTools.toDegrees(Math.acos(h[2] / hmag));                    //double
+        var raan = MathTools.toDegrees(Math.acos(n[0] / MathTools.magnitude(n))); //double
 
         if (n[1] < 0)
         {
             raan = 360 - raan;
         }
 
-        var arg = Math.toDegrees(Math.acos(MathTools.dotMultiply(n, e) /
+        var arg = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(n, e) /
             (MathTools.magnitude(n) * emag)));  //double
 
         if (e[2] < 0)
@@ -418,28 +421,28 @@ var CoordinateConversionTools = {
             arg = 360 - arg;
         }
         
-        var nu = Math.toDegrees(Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag))); //double
+        var nu = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag))); //double
         if (MathTools.dotMultiply(v, r) < 0)
         {
             nu = 360 - nu;
         }
 
-        if(Double.isNaN(raan))
+        if(isNaN(raan))
         {
             raan=0.00001;
         }
 
-        if(Double.isNaN(arg))
+        if(isNaN(arg))
         {
             arg=0.00001;
         }
-
+        
         kepler.setSemimajorAxis(a);
         kepler.setEccentricity(emag);
         kepler.setTrueAnomaly(nu);
         kepler.setRaan(raan);
         kepler.setInclination(inc);
-        kepler.setMeanMotion(Math.sqrt(Constants.getMuEarth() / (a * a * a)));
+        kepler.setMeanMotion(Math.sqrt(Constants.muEarth / (a * a * a)));
         kepler.setArgOfPerigee(arg);
 
         return kepler;
