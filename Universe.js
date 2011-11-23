@@ -184,20 +184,18 @@ SSI.Universe = function(options, container) {
                         core.draw(this.id, objectModel, true);
                     }
                 });
+                universe.addPropogationLineForObject(spaceObject);
+                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject._id)
+
+                universe.addGroundTrackPointForObject(spaceObject);
+                universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject._id)
+                universe.addSensorProjection(spaceObject);
                 
-                if(spaceObject.showPropogationLine == true) {
-                    logger.debug("show propogation line");
-                    universe.addPropogationLineForObject(spaceObject);
-                }
-        
-                if(spaceObject.showGroundTrackPoint) {
-                    universe.addGroundTrackPointForObject(spaceObject);
-                }
         
                 // TODO: enamble a real toggle button for this .showSensorPattern
-                if (spaceObject.showSensorProjections) {
-                    universe.addSensorProjection(spaceObject);
-                }
+                // if (spaceObject.showSensorProjections) {
+                    // universe.addSensorProjection(spaceObject);
+                // }
             });
         });
     };
@@ -364,54 +362,30 @@ SSI.Universe = function(options, container) {
         
     }
 
-    this.showOrbitLines = function() {
+    this.showOrbitLineForObject = function(isEnabled, id) {
         logger.debug("in show orbit lines");
-        if (isShowOrbitLines) {
-            logger.debug("hidding all orbit lines");
-            core.hideObject("4ec0491c246fc143ae000005_propogation");
-            core.hideObject("4ec0491c246fc143ae000008_propogation");
-            core.hideObject("4ec0491c246fc143ae000002_propogation");
-            isShowOrbitLines = false;
+        if (!isEnabled) {
+            core.hideObject(id + "_propogation");
         } else {
-            logger.debug("showing all orbit lines");
-            core.showObject("4ec0491c246fc143ae000005_propogation");
-            core.showObject("4ec0491c246fc143ae000008_propogation");
-            core.showObject("4ec0491c246fc143ae000002_propogation");
-            isShowOrbitLines = true;
+            core.showObject(id + "_propogation");
         }
     }
     
-    this.showVehicles = function() {
-        logger.debug("in show vehicles");
-        if (isShowVehicles) {
-            logger.debug("hidding all vehicles");
-            core.hideObject("4ec0491c246fc143ae000005");
-            core.hideObject("4ec0491c246fc143ae000008");
-            core.hideObject("4ec0491c246fc143ae000002");
-            isShowVehicles = false;
+    this.showModelForId = function(isEnabled, id) {
+        console.log("show/hiding model");
+        if (!isEnabled) {
+            core.hideObject(id);
         } else {
-            logger.debug("showing all vehicles");
-            core.showObject("4ec0491c246fc143ae000005");
-            core.showObject("4ec0491c246fc143ae000008");
-            core.showObject("4ec0491c246fc143ae000002");
-            isShowVehicles = true;
+            core.showObject(id);
         }   
     }
     
-    this.showGroundTracks = function() {
-        logger.debug("in show ground tracks");
-        if (isShowGround) {
-            logger.debug("hidding all ground tracks");
-            core.hideObject("4ec0491c246fc143ae000005_groundPoint");
-            core.hideObject("4ec0491c246fc143ae000008_groundPoint");
-            core.hideObject("4ec0491c246fc143ae000002_groundPoint");
-            isShowGround = false;
+    this.showGroundTrackForId = function(isEnabled, id) {
+        console.log("show/hiding groundTrack");
+        if (!isEnabled) {
+            core.hideObject(id + "_groundPoint");
         } else {
-            logger.debug("showing all ground tracks");
-            core.showObject("4ec0491c246fc143ae000005_groundPoint");
-            core.showObject("4ec0491c246fc143ae000008_groundPoint");
-            core.showObject("4ec0491c246fc143ae000002_groundPoint");
-            isShowGround = true;
+            core.showObject(id + "_groundPoint");
         }   
     }
     
