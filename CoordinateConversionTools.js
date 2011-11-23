@@ -351,14 +351,14 @@ var CoordinateConversionTools = {
         //reference Vallado 120
         var kepler = new KeplerianCoordinates();
         var r = new Array(); //Double[3];
-        r[0] = eci.getX();
-        r[1] = eci.getY();
-        r[2] = eci.getZ();
+        r[0] = eci.x;
+        r[1] = eci.y;
+        r[2] = eci.z;
         
         var v = new Array(); //Double[3];
-        v[0] = eci.getVX();
-        v[1] = eci.getVY();
-        v[2] = eci.getVZ();
+        v[0] = eci.vx;
+        v[1] = eci.vy;
+        v[2] = eci.vz;
 
         var h = MathTools.cross(r, v); //Double[3]
         var hmag = MathTools.magnitude(h); //double
@@ -369,12 +369,19 @@ var CoordinateConversionTools = {
         khat[0] = 0.0;
         khat[1] = 0.0;
         khat[2] = 1.0;
-
+        console.log("h: " + JSON.stringify(h));
+        console.log("hmag: " + JSON.stringify(hmag));
+        console.log("rmag: " + JSON.stringify(rmag));
+        console.log("vmag: " + JSON.stringify(vmag));
         var n = new Array(); //Double[3];
         n = MathTools.cross(khat, h);
+        
+        console.log("r: " + JSON.stringify(r) + " v: " + JSON.stringify(v))
 
         var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
         var coeff2 = MathTools.dotMultiply(r, v);                 //double
+        
+        console.log("coeff1: " + JSON.stringify(coeff1) + " coeff2: " + JSON.stringify(coeff2));
        
         var e = new Array(); //Double[3];
 
@@ -386,7 +393,6 @@ var CoordinateConversionTools = {
         }
         
         
-        console.log("e: " + JSON.stringify(e));
         
         var emag = MathTools.magnitude(e);                            //double
         var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
@@ -442,7 +448,7 @@ var CoordinateConversionTools = {
         kepler.setTrueAnomaly(nu);
         kepler.setRaan(raan);
         kepler.setInclination(inc);
-        kepler.setMeanMotion(Math.sqrt(Constants.muEarth / (a * a * a)));
+        kepler.setMeanMotion(MathTools.toDegrees(Math.sqrt(Constants.muEarth / (a * a * a))));
         kepler.setArgOfPerigee(arg);
 
         return kepler;

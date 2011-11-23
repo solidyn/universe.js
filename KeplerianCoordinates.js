@@ -32,12 +32,12 @@ function KeplerianCoordinates(theSemimajorAxis, theMeanAnomaly, theEccentricAnom
 
     this.getInclination = function()
     {
-        return this.trueAnomaly;
+        return this.inclination;
     }
     
     this.getEccentricity = function()
     {
-        return this.trueAnomaly;
+        return this.eccentricity;
     }
     
     this.getRaan = function() {

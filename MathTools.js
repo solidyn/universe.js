@@ -31,6 +31,7 @@ var MathTools = {
     {
         if (x.length != y.length)
         {
+            console.log("lengths not the same");
             return 0.0;
         }
         else
@@ -40,7 +41,11 @@ var MathTools = {
 
             for (var i = 0; i < N; i++)
             {
-                xDotY += x[i] * y[i];
+                console.log("x[" + i + "]: " + x[i])
+                console.log("y[" + i + "]: " + y[i])
+
+                xDotY += (x[i] * y[i]);
+                console.log("xDotY: " + xDotY);
             }
 
             return xDotY;
