@@ -204,7 +204,7 @@
     {
         
         var kep = CoordinateConversionTools.convertECIToKeplerian(eci);
-console.log('eccentricity: ' + JSON.stringify(kep));
+//console.log('eccentricity: ' + JSON.stringify(kep));
         //timespan is in seconds
         if (elapsedTime == 0.0)
         {
@@ -219,7 +219,7 @@ console.log('eccentricity: ' + JSON.stringify(kep));
             var ecc=kep.getEccentricity();
             var mu=Constants.muEarth;
             //System.out.println("elapsed time: "+elapsedTime+" dt: "+dt+" ecc: "+kep.getEccentricity());
-            console.log("MA: "+kep.getMeanAnomaly()+" meanMotion: "+kep.getMeanMotion()+" new MA: "+MA);
+            //console.log("MA: "+kep.getMeanAnomaly()+" meanMotion: "+kep.getMeanMotion()+" new MA: "+MA + " elapsedTime: " + elapsedTime);
             MA = MathTools.toRadians(MA);  //convert the mean anomaly to radians
             //iterate to solve for the eccentric anomaly
             var EA = MA * 0.95; //fist guess at the eccentric anomaly (rads)
