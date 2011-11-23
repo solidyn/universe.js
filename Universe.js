@@ -26,6 +26,8 @@ SSI.Universe = function(options, container) {
     var isShowOrbitLines = true;
     var isShowVehicles = true;
     var isShowGround = true;
+    
+    var universe = this;
 
     controller.addGraphicsObject({
         id : "simState",
@@ -37,9 +39,19 @@ SSI.Universe = function(options, container) {
         }
     });
     
+    objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
     objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
+    objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshLambertMaterial({
+                color : 0xDF0101, 
+                opacity: 0.5,
+                overdraw: true
+            }));
+    objectLibrary.setObject("default_orbit_line_material", new THREE.LineBasicMaterial({
+                color : 0x990000,
+                opacity : 1
+            }));
 
     // fires a state changed event to the callback
     function fireStateChanged(state) {
@@ -150,134 +162,152 @@ SSI.Universe = function(options, container) {
     // showPropogationLine
     // showGroundTrackPoint
     this.addSpaceObject = function(spaceObject) {
-        var objectGeometry = objectLibrary.getObjectById(spaceObject.modelId);
-        var material = objectLibrary.getObjectById("default_material");
-        console.log("creating mesh");
-        var objectModel = new THREE.Mesh(objectGeometry, material);
-
-        controller.addGraphicsObject({
-            id : spaceObject.id,
-            objectName : spaceObject.objectName,
-            update : function(elapsedTime) {
-                // need to pass a time to the propagator
-                spaceObject.propagator(null, function(location) {
-                    var convertedLocation = eciTo3DCoordinates(location);
-                    objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+        var objectGeometry, material;
+        objectLibrary.getObjectById(spaceObject.modelId, function(retrieved_geometry) {
+            objectGeometry = retrieved_geometry;
+            objectLibrary.getObjectById("default_material", function(retrieved_material) {
+                material = retrieved_material;
+                
+                console.log("creating mesh");
+                var objectModel = new THREE.Mesh(objectGeometry, material);
+        
+                controller.addGraphicsObject({
+                    id : spaceObject.id,
+                    objectName : spaceObject.objectName,
+                    update : function(elapsedTime) {
+                        // need to pass a time to the propagator
+                        spaceObject.propagator(null, function(location) {
+                            var convertedLocation = eciTo3DCoordinates(location);
+                            objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                        });
+                    },
+                    draw : function() {
+                        core.draw(this.id, objectModel, true);
+                    }
                 });
-            },
-            draw : function() {
-                core.draw(this.id, objectModel, true);
-            }
+                
+                if(spaceObject.showPropogationLine == true) {
+                    logger.debug("show propogation line");
+                    universe.addPropogationLineForObject(spaceObject);
+                }
+        
+                if(spaceObject.showGroundTrackPoint) {
+                    universe.addGroundTrackPointForObject(spaceObject);
+                }
+        
+                // TODO: enamble a real toggle button for this .showSensorPattern
+                if (true) {
+                    universe.addSensorProjection(spaceObject);
+                }
+            });
         });
-
-        if(spaceObject.showPropogationLine == true) {
-            logger.debug("show propogation line");
-            this.addPropogationLineForObject(spaceObject);
-        }
-
-        if(spaceObject.showGroundTrackPoint) {
-            this.addGroundTrackPointForObject(spaceObject);
-        }
-
-        // TODO: enamble a real toggle button for this .showSensorPattern
-        if (true) {
-            this.addSensorProjection(spaceObject);
-        }
-
     };
     // groundObject:
     // id
     // propagator
     // object
     this.addGroundObject = function(groundObject) {
-        
-
-        var groundObjectMesh = new THREE.Mesh(objectLibrary.getObjectById("default_ground_object_geometry"), objectLibrary.getObjectById("default_ground_object_material"));
-
-        controller.addGraphicsObject({
-            id : groundObject.id,
-            objectName : groundObject.objectName,
-            update : function(elapsedTime) {
-                // check earth rotation and update location
-                var position = eciTo3DCoordinates(groundObject.propagator());
-                groundObjectMesh.position.set(position.x, position.y, position.z);
-            },
-            draw : function() {
-                core.draw(this.id, groundObjectMesh, true);
-            }
+        var objectGeometry, objectMaterial;
+        objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
+            objectGeometry = retrieved_geometry;
+            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+                objectMaterial = retrieved_material;
+             
+                var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
+                controller.addGraphicsObject({
+                    id : groundObject.id,
+                    objectName : groundObject.objectName,
+                    update : function(elapsedTime) {
+                        // check earth rotation and update location
+                        var position = eciTo3DCoordinates(groundObject.propagator());
+                        console.log("position: " + JSON.stringify(position));
+                        groundObjectMesh.position.set(position.x, position.y, position.z);
+                    },
+                    draw : function() {
+                        core.draw(this.id, groundObjectMesh, true);
+                    }
+                });
+            });
         });
     };
     // method to add an orbit line
     this.addPropogationLineForObject = function(object) {
-        var geometry = new THREE.Geometry();
-
-        var timeToPropogate = new Date(currentUniverseTime);
-        var loopCount = 1440;
+        var objectGeometry, objectMaterial;
+        objectLibrary.getObjectById("default_geometry", function(retrieved_geometry) {
+            objectGeometry = retrieved_geometry;
+            objectLibrary.getObjectById("default_orbit_line_material", function(retrieved_material) {
+                objectMaterial = retrieved_material;
+                var timeToPropogate = new Date(currentUniverseTime);
+                var loopCount = 1440;
+                
+                if ("4ec96588246fc15d9a000002" == object.id) {
+                    loopCount = 35000;
+                }
+                // draw a vertex for each minute in a 24 hour period
+                for(var j = 0; j < loopCount; j++) {
+                    object.propagator(timeToPropogate, function(location) {
+                        var convertedLocation = eciTo3DCoordinates(location);
+                        var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                        objectGeometry.vertices.push(new THREE.Vertex(vector));
+                    });
         
-        if ("4ec96588246fc15d9a000002" == object.id) {
-            loopCount = 35000;
-        }
-        // draw a vertex for each minute in a 24 hour period
-        for(var j = 0; j < loopCount; j++) {
-            object.propagator(timeToPropogate, function(location) {
-                var convertedLocation = eciTo3DCoordinates(location);
-                var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-                geometry.vertices.push(new THREE.Vertex(vector));
+                    timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
+                }
+                var lineS = new THREE.Line(objectGeometry, objectMaterial);
+        
+                controller.addGraphicsObject({
+                    id : object.id + "_propogation",
+                    objectName : object.objectName,
+                    update : function(elapsedTime) {
+                    // add points onto the end of the track?
+                    },
+                    draw : function() {
+                        core.draw(this.id, lineS, false);
+                    }
+                });
             });
-
-            timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
-        }
-        var lineS = new THREE.Line(geometry, new THREE.LineBasicMaterial({
-            color : 0x990000,
-            opacity : 1
-        }));
-
-        controller.addGraphicsObject({
-            id : object.id + "_propogation",
-            objectName : object.objectName,
-            update : function(elapsedTime) {
-            // add points onto the end of the track?
-            },
-            draw : function() {
-                core.draw(this.id, lineS, false);
-            }
-        })
+        });
     }
 
     this.addGroundTrackPointForObject = function(object) {
-        var geometry = new THREE.SphereGeometry(300, 20, 10);
+        var objectGeometry, objectMaterial;
+        objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
+            objectGeometry = retrieved_geometry;
+            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+                objectMaterial = retrieved_material;
+        
 
-        var sphereMaterial = new THREE.MeshLambertMaterial({
-            color : 0xCC0000
-        });
-
-        var groundObjectMesh = new THREE.Mesh(geometry, sphereMaterial);
-
-        controller.addGraphicsObject({
-            id : object.id + "_groundPoint",
-            objectName : object.objectName,
-            update : function(elapsedTime) {
-                object.propagator(undefined, function(location) {
-                    var objectLocation = eciTo3DCoordinates(location);
-
-                    var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-    
-                    // move the vector to the surface of the earth
-                    vector.multiplyScalar(earthSphereRadius / vector.length())
-    
-                    groundObjectMesh.position.copy(vector);
+                var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
+        
+                controller.addGraphicsObject({
+                    id : object.id + "_groundPoint",
+                    objectName : object.objectName,
+                    update : function(elapsedTime) {
+                        object.propagator(undefined, function(location) {
+                            var objectLocation = eciTo3DCoordinates(location);
+        
+                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+            
+                            // move the vector to the surface of the earth
+                            vector.multiplyScalar(earthSphereRadius / vector.length())
+            
+                            groundObjectMesh.position.copy(vector);
+                        });
+                    },
+                    draw : function() {
+                        core.draw(this.id, groundObjectMesh, true);
+                    }
                 });
-            },
-            draw : function() {
-                core.draw(this.id, groundObjectMesh, true);
-            }
-        })
+            });
+        });
     }
 
     // TODO: This really needs to be refactored into the Sensor code, but that seems kind
     // of disfunctional right now....so I've got this instead
     this.addSensorProjection = function(object) {
         object.propagator(undefined, function(location) {
+            var objectGeometry, objectMaterial;
+            
             // Determine the object's location in 3D space
             var objectLocation = eciTo3DCoordinates(location);
     
@@ -288,50 +318,49 @@ SSI.Universe = function(options, container) {
             // (i.e. the length to the center of the earth)
             var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
     
-            var material = new THREE.MeshLambertMaterial({
-                color : 0xffff00, 
-                opacity: 0.1,
-                overdraw: true
-            });
-    
-            var sensorProjection = new THREE.Mesh(geometry, material);
-            sensorProjection.doubleSided=true;
+            objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
+                objectMaterial = retrieved_material;
             
     
-            controller.addGraphicsObject({
-                id : object.id + "_sensorProjection",
-                objectName : object.objectName,
-                update : function(elapsedTime) {
-                    object.propagator(undefined, function(location) {
-                        var objectLocation = eciTo3DCoordinates(location);
-                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+                var sensorProjection = new THREE.Mesh(geometry, objectMaterial);
+                sensorProjection.doubleSided=true;
+                
         
-                        // Rotate the beam so it points to the center of the earth
-                        // TODO: this will have to be corrected with its actual look angles
-        
-                       var zRotationAngle = Math.asin(vector.x / (vector.length()));
-                       var xRotationAngle = Math.asin(vector.z / (vector.length()));
-        
-                        // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
-                        // from 180 deg
-                        if ( vector.y < 0 )
-                        {
-                            xRotationAngle = Math.PI - xRotationAngle;
-                        }
-        
-                        //var zRotationAngle = Math.asin(vector.z / (vector.length()));
-                        // no need to rotate along y; that's down the center of the cone
-                        //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
-        
-                        sensorProjection.rotation.x = xRotationAngle;
-                        sensorProjection.rotation.z = -zRotationAngle;
-        
-                        sensorProjection.position.copy(vector);
-                    });
-                },
-                draw : function() {
-                    core.draw(this.id, sensorProjection, true);
-                }
+                controller.addGraphicsObject({
+                    id : object.id + "_sensorProjection",
+                    objectName : object.objectName,
+                    update : function(elapsedTime) {
+                        object.propagator(undefined, function(location) {
+                            var objectLocation = eciTo3DCoordinates(location);
+                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+            
+                            // Rotate the beam so it points to the center of the earth
+                            // TODO: this will have to be corrected with its actual look angles
+            
+                           var zRotationAngle = Math.asin(vector.x / (vector.length()));
+                           var xRotationAngle = Math.asin(vector.z / (vector.length()));
+            
+                            // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
+                            // from 180 deg
+                            if ( vector.y < 0 )
+                            {
+                                xRotationAngle = Math.PI - xRotationAngle;
+                            }
+            
+                            //var zRotationAngle = Math.asin(vector.z / (vector.length()));
+                            // no need to rotate along y; that's down the center of the cone
+                            //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
+            
+                            sensorProjection.rotation.x = xRotationAngle;
+                            sensorProjection.rotation.z = -zRotationAngle;
+            
+                            sensorProjection.position.copy(vector);
+                        });
+                    },
+                    draw : function() {
+                        core.draw(this.id, sensorProjection, true);
+                    }
+                });
             });
         });
         

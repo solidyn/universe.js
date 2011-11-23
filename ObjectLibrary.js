@@ -48,13 +48,14 @@ SSI.ObjectLibrary = function() {
         logger.debug("Retrieving object with id [" + id + "] from library");
         //console.log("number of elements: " + numberOfElements);
         var object = objects[id];
+        var objectLib = this;
         if(object == "loading") {
-            setTimeout(this.getObjectById(id), 100)
+            setTimeout(function() {objectLib.getObjectById(id, callback)}, 1000)
         }
         else if (object == null)
             throw "Tried to retrieve object [" + id + "] from object library but didn't exist";
         else
-            return object;
+            callback(object);
     }
     
     this.setObject = function(id, object) {
