@@ -204,14 +204,14 @@
     {
         
         var kep = CoordinateConversionTools.convertECIToKeplerian(eci);
-//console.log('eccentricity: ' + JSON.stringify(kep));
+        //console.log('eccentricity: ' + JSON.stringify(kep.getEccentricity()));
         //timespan is in seconds
-        if (elapsedTime == 0.0)
+        if (elapsedTime == 0.0 || isNaN(kep.getEccentricity()))
         {
             return eci;
         }
         else if(kep.getEccentricity() <= 0.05) {
-            
+            //console.log('keping it up');
             var MA = kep.getMeanAnomaly()+kep.getMeanMotion()*elapsedTime; //update the mean anomaly (deg)
             var w = MathTools.toRadians(kep.getArgOfPerigee());
             var ra = MathTools.toRadians(kep.getRaan());
@@ -261,7 +261,7 @@
 
             //System.out.println(vehicleName+","+x+","+y+","+z+","+xdot+","+ydot+","+zdot);
             var eciState = new ECICoordinates();
-
+            
             eciState.setX(x);
             eciState.setY(y);
             eciState.setZ(z);
@@ -275,6 +275,7 @@
         }
         else
         {
+            //console.log('runging it up: ' + + JSON.stringify(kep.getEccentricity()));
             var state = new Array();     //double[9]
 
             //establish the starting state vector;
