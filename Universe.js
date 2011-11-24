@@ -42,7 +42,8 @@ SSI.Universe = function(options, container) {
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
-    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
+    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0x00CC00}));
+    objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
     objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshLambertMaterial({
                 color : 0xDF0101, 
                 opacity: 0.5,
@@ -183,7 +184,6 @@ SSI.Universe = function(options, container) {
                     }
                 });
                 universe.addPropogationLineForObject(spaceObject);
-                console.log("showOrbitLine: " + spaceObject.showPropogationLine)
                 universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject._id)
  
                 universe.addGroundTrackPointForObject(spaceObject);
@@ -262,7 +262,7 @@ SSI.Universe = function(options, container) {
         var objectGeometry, objectMaterial;
         objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+            objectLibrary.getObjectById("default_ground_track_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
         
 
