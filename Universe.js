@@ -95,6 +95,16 @@ SSI.Universe = function(options, container) {
     this.setPlaybackSpeed = function(speed) {
         playbackSpeed = speed;
     }
+    
+    this.setCurrentUniverseTime = function(newUniverseTime) {
+        currentUniverseTime = new Date(newUniverseTime);
+        controller.updateOnce();
+    }
+
+    this.getCurrentUniverseTime = function() {
+        return currentUniverseTime;
+    }
+    
     // earthOptions:
     // image
     //
@@ -403,10 +413,5 @@ SSI.Universe = function(options, container) {
             y : location.z,
             z : location.y
         };
-    }
-
-
-    this.getCurrentUniverseTime = function() {
-        return currentUniverseTime;
     }
 };

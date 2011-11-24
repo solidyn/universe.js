@@ -33,7 +33,7 @@ SSI.UniverseController = function(options) {
         }, refreshRate);
     }
 
-    function updateOnce() {
+    this.updateOnce =function() {
         for(var i = 0; i < graphicsObjects.length; i++) {
             graphicsObjects[i].update(null);
             graphicsObjects[i].draw();
@@ -45,7 +45,7 @@ SSI.UniverseController = function(options) {
     // updateFunction
     this.addGraphicsObject = function(graphicsObject) {
         graphicsObjects.push(graphicsObject);
-        updateOnce();
+        this.updateOnce();
     }
 
     this.play = function() {
@@ -58,10 +58,6 @@ SSI.UniverseController = function(options) {
         clearTimeout(refreshTimeout);
     };
 };
-
-SSI.UniverseController.prototype.updateOnce = function() {
-    this.updateOnce();
-}
 
 SSI.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
     this.refreshRate = rateInMilliseconds;
