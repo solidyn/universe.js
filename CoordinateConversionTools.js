@@ -12,12 +12,12 @@ var CoordinateConversionTools = {
         //this is the time since January 1, 4713 BC (12:00)
         //unit of measure = days
         var JD = 0;                               //double
-        var year = currentEpoch.getYear() + 1900; //int
-        var month = currentEpoch.getMonth();      //int
-        var day = currentEpoch.getDate();         //int
-        var hour = currentEpoch.getHours();       //int
-        var minute = currentEpoch.getMinutes();   //int
-        var second = currentEpoch.getSeconds();   //double
+        var year = currentEpoch.getFullYear();    //int
+        var month = currentEpoch.getUTCMonth();      //int
+        var day = currentEpoch.getUTCDate();         //int
+        var hour = currentEpoch.getUTCHours();       //int
+        var minute = currentEpoch.getUTCMinutes();   //int
+        var second = currentEpoch.getUTCSeconds();   //double
         JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) +
             (275 * month / 9) + (day) + 1721013.5 +
             ((second / 60 + minute) / 60 + hour) / 24;
@@ -378,7 +378,7 @@ var CoordinateConversionTools = {
         var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
         var coeff2 = MathTools.dotMultiply(r, v);                 //double
         
-        //console.log("coeff1: " + JSON.stringify(coeff1) + " coeff2: " + JSON.stringify(coeff2));
+        
        
         var e = new Array(); //Double[3];
 
@@ -423,13 +423,9 @@ var CoordinateConversionTools = {
         {
             arg = 360 - arg;
         }
-        // console.log("r: " + JSON.stringify(r) + " v: " + JSON.stringify(v) + " e: " + e);
-        // console.log("n: " + JSON.stringify(n))
-//         
-        // console.log("Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)))
-        // console.log("emag: " + emag + " rmag: " + rmag);
+
         var nu = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag))); //double
-        // console.log("nu: " + nu);
+        
         if (MathTools.dotMultiply(v, r) < 0)
         {
             nu = 360 - nu;
