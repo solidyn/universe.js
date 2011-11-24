@@ -81,7 +81,8 @@ SSI.Core3D = function(container) {
         container.addEventListener('mousedown', onMouseDown, false);
 
         container.addEventListener('mousewheel', onMouseWheel, false);
-
+        container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
+        
         document.addEventListener('keydown', onDocumentKeyDown, false);
 
         window.addEventListener('resize', onWindowResize, false);
@@ -184,6 +185,15 @@ SSI.Core3D = function(container) {
         event.preventDefault();
         if(overRenderer) {
             zoom(event.wheelDeltaY * (10));
+        }
+        return false;
+    }
+    
+    function onMouseWheelFF(event) {
+        event.preventDefault();
+        if(overRenderer) {
+            var delta = event.detail? event.detail*(-120) : event.wheelDelta
+            zoom(delta * (10));
         }
         return false;
     }
