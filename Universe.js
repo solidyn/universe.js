@@ -186,18 +186,21 @@ SSI.Universe = function(options, container) {
                     objectName : spaceObject.objectName,
                     update : function(elapsedTime) {
                         // need to pass a time to the propagator
-                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator(), true);
-                        objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, true));
+                        if(convertedLocation != undefined) {
+                            objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
                         
-                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                        objectModel.lookAt(earthCenterPoint);
+                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+                            objectModel.lookAt(earthCenterPoint);
+                        }
+                        
                     },
                     draw : function() {
                         core.draw(this.id, objectModel, false);
                     }
                 });
-                // universe.addPropogationLineForObject(spaceObject);
-                // universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
+                universe.addPropogationLineForObject(spaceObject);
+                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
  
                 universe.addGroundTrackPointForObject(spaceObject);
                 universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
@@ -258,9 +261,11 @@ SSI.Universe = function(options, container) {
             // draw a vertex for each minute in a 24 hour period
             for(var j = 0; j < loopCount; j++) {
                 var convertedLocation = eciTo3DCoordinates(object.propagator(timeToPropogate, false));
-                var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-                objectGeometry.vertices.push(new THREE.Vertex(vector));
-    
+                if(convertedLocation != undefined) {
+                    var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                    objectGeometry.vertices.push(new THREE.Vertex(vector));
+                }
+                
                 timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
             }
             
@@ -294,13 +299,14 @@ SSI.Universe = function(options, container) {
                     objectName : object.objectName,
                     update : function(elapsedTime) {
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                        if(objectLocation != undefined) {
+                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
         
-                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-        
-                        // move the vector to the surface of the earth
-                        vector.multiplyScalar(earthSphereRadius / vector.length())
-        
-                        groundObjectMesh.position.copy(vector);
+                            // move the vector to the surface of the earth
+                            vector.multiplyScalar(earthSphereRadius / vector.length())
+            
+                            groundObjectMesh.position.copy(vector);
+                        }
                     },
                     draw : function() {
                         core.draw(this.id, groundObjectMesh, true);
@@ -314,11 +320,11 @@ SSI.Universe = function(options, container) {
     // of disfunctional right now....so I've got this instead
     this.addSensorProjection = function(object) {
         
-            var objectGeometry, objectMaterial;
-            
-            // Determine the object's location in 3D space
-            var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
-    
+        var objectGeometry, objectMaterial;
+        
+        // Determine the object's location in 3D space
+        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+        if(objectLocation != undefined) {
             // Now convert that to a Vector3 to use its mathy functions
             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
             
@@ -341,37 +347,40 @@ SSI.Universe = function(options, container) {
                     update : function(elapsedTime) {
                         
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
-                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+                        if(objectLocation != undefined) {
+                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
 
-                        // Move the tip of the sensor projection to the vehicle's location
-                        sensorProjection.position.copy(vector);
-
-                        var sensor_boresite = new THREE.Vector3(0,0,0);
-
-                        sensorProjection.lookAt(sensor_boresite);
-
-                       /*
-                        // Rotate the beam so it points to the center of the earth
-                        // TODO: this will have to be corrected with its actual look angles
-        
-                       var zRotationAngle = Math.asin(vector.x / (vector.length()));
-                       var xRotationAngle = Math.asin(vector.z / (vector.length()));
-        
-                        // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
-                        // from 180 deg
-                        if ( vector.y < 0 )
-                        {
-                            xRotationAngle = Math.PI - xRotationAngle;
+                            // Move the tip of the sensor projection to the vehicle's location
+                            sensorProjection.position.copy(vector);
+    
+                            var sensor_boresite = new THREE.Vector3(0,0,0);
+    
+                            sensorProjection.lookAt(sensor_boresite);
+    
+                           /*
+                            // Rotate the beam so it points to the center of the earth
+                            // TODO: this will have to be corrected with its actual look angles
+            
+                           var zRotationAngle = Math.asin(vector.x / (vector.length()));
+                           var xRotationAngle = Math.asin(vector.z / (vector.length()));
+            
+                            // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
+                            // from 180 deg
+                            if ( vector.y < 0 )
+                            {
+                                xRotationAngle = Math.PI - xRotationAngle;
+                            }
+            
+                            //var zRotationAngle = Math.asin(vector.z / (vector.length()));
+                            // no need to rotate along y; that's down the center of the cone
+                            //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
+            
+                            sensorProjection.rotation.x = xRotationAngle;
+                            sensorProjection.rotation.z = -zRotationAngle;
+    
+                            */
                         }
-        
-                        //var zRotationAngle = Math.asin(vector.z / (vector.length()));
-                        // no need to rotate along y; that's down the center of the cone
-                        //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
-        
-                        sensorProjection.rotation.x = xRotationAngle;
-                        sensorProjection.rotation.z = -zRotationAngle;
-
-                        */
+                        
                         
                     },
                     draw : function() {
@@ -379,7 +388,7 @@ SSI.Universe = function(options, container) {
                     }
                 });
             });
-        
+        }
     }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
@@ -435,6 +444,9 @@ SSI.Universe = function(options, container) {
     // http://celestrak.com/columns/v02n01/
     // http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
     function eciTo3DCoordinates(location) {
+        if(location == undefined) {
+            return undefined;
+        }
         return {
             x : -location.x,
             y : location.z,
