@@ -42,7 +42,7 @@ SSI.Universe = function(options, container) {
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
-    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0x00CC00}));
+    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial());
     objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
     objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshLambertMaterial({
                 color : 0xDF0101, 
@@ -214,12 +214,16 @@ SSI.Universe = function(options, container) {
     // object
     this.addGroundObject = function(groundObject) {
         var objectGeometry, objectMaterial;
-        objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
+        if(!groundObject.modelId) {
+            groundObject.modelId = "default_ground_object_geometry";
+        }
+        objectLibrary.getObjectById(groundObject.modelId, function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+            objectLibrary.getObjectById("default_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
-             
+                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
                 var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
+                
                 controller.addGraphicsObject({
                     id : groundObject.id,
                     objectName : groundObject.objectName,
@@ -227,6 +231,13 @@ SSI.Universe = function(options, container) {
                         // check earth rotation and update location
                         var position = eciTo3DCoordinates(groundObject.propagator());
                         groundObjectMesh.position.set(position.x, position.y, position.z);
+
+                        var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
+                        
+                        // arbitrary size, just a point along the position vector further out for the object to lookAt
+                        scaled_position_vector.multiplyScalar(1.4);
+                        
+                        groundObjectMesh.lookAt(scaled_position_vector);
                     },
                     draw : function() {
                         core.draw(this.id, groundObjectMesh, true);
@@ -414,4 +425,47 @@ SSI.Universe = function(options, container) {
             z : location.y
         };
     }
+};
+//http://mrdoob.github.com/three.js/examples/misc_lookat.html
+// https://github.com/mrdoob/three.js/issues/382
+function lookat(vecstart,vecEnd,vecUp){
+
+    var temp = new THREE.Matrix4()
+    temp.lookAt(vecEnd,vecstart,vecUp);
+
+    var m00 = temp.n11, m10 = temp.n21, m20 = temp.n31,
+    m01 = temp.n12, m11 = temp.n22, m21 = temp.n32,
+    m02 = temp.n13, m12 = temp.n23, m22 = temp.n33;
+
+    var t = m00 + m11 + m22,s,x,y,z,w;
+
+    if (t > 0) { 
+      s =  Math.sqrt(t+1)*2; 
+      w = 0.25 * s;            
+      x = (m21 - m12) / s;
+      y = (m02 - m20) / s;
+      z = (m10 - m01) / s;
+    } else if ((m00 > m11) && (m00 > m22)) {
+      s =  Math.sqrt(1.0 + m00 - m11 - m22)*2;
+      x = s * 0.25;
+      y = (m10 + m01) / s;
+      z = (m02 + m20) / s;
+      w = (m21 - m12) / s;
+    } else if (m11 > m22) {
+      s =  Math.sqrt(1.0 + m11 - m00 - m22) *2; 
+      y = s * 0.25;
+      x = (m10 + m01) / s;
+      z = (m21 + m12) / s;
+      w = (m02 - m20) / s;
+    } else {
+      s =  Math.sqrt(1.0 + m22 - m00 - m11) *2; 
+      z = s * 0.25;
+      x = (m02 + m20) / s;
+      y = (m21 + m12) / s;
+      w = (m10 - m01) / s;
+    }
+
+    var rotation = new THREE.Quaternion(x,y,z,w);
+    rotation.normalize();
+    return rotation;
 };
