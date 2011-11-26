@@ -22,24 +22,10 @@ SSI.Universe = function(options, container) {
 
     // timeout for updating state
     var updateStateTimeout;
-	
-    var isShowOrbitLines = true;
-    var isShowVehicles = true;
-    var isShowGround = true;
     
     var universe = this;
     
     var earthCenterPoint = new THREE.Vector3(0,0,0);
-
-    controller.addGraphicsObject({
-        id : "simState",
-        objectName : "simState",
-        update : function(elapsedTime) {
-            currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
-        },
-        draw : function() {
-        }
-    });
     
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
@@ -61,6 +47,18 @@ SSI.Universe = function(options, container) {
         if(stateChangedCallback != null) {
             stateChangedCallback(state);
         }
+    }
+    
+    this.addSimStateObject = function() {
+        controller.addGraphicsObject({
+            id : "simState",
+            objectName : "simState",
+            update : function(elapsedTime) {
+                currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
+            },
+            draw : function() {
+            }
+        });
     }
 
 
@@ -144,7 +142,6 @@ SSI.Universe = function(options, container) {
             id : "earth",
             objectName : "earth",
             update : function(elapsedTime) {
-                // TODO: retrieve earth rotation at a time and change rotation
                 var rotationAngle = CoordinateConversionTools.convertTimeToGMST(currentUniverseTime);
                 earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
             },
@@ -200,17 +197,13 @@ SSI.Universe = function(options, container) {
                     }
                 });
                 universe.addPropogationLineForObject(spaceObject);
-                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject._id)
+                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
  
                 universe.addGroundTrackPointForObject(spaceObject);
-                universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject._id)
-                universe.addSensorProjection(spaceObject);
+                universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
                 
-        
-                // TODO: enamble a real toggle button for this .showSensorPattern
-                // if (spaceObject.showSensorProjections) {
-                    // universe.addSensorProjection(spaceObject);
-                // }
+                universe.addSensorProjection(spaceObject);
+                universe.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
             });
         });
     };
@@ -408,11 +401,20 @@ SSI.Universe = function(options, container) {
     }
     
     this.showGroundTrackForId = function(isEnabled, id) {
-        //console.log("show/hiding groundTrack");
+        //console.log("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
         if (!isEnabled) {
             core.hideObject(id + "_groundPoint");
         } else {
             core.showObject(id + "_groundPoint");
+        }   
+    }
+    
+    this.showSensorProjectionForId = function(isEnabled, id) {
+        //console.log("show/hiding sensorProjection");
+        if (!isEnabled) {
+            core.hideObject(id + "_sensorProjection");
+        } else {
+            core.showObject(id + "_sensorProjection");
         }   
     }
     
@@ -429,9 +431,6 @@ SSI.Universe = function(options, container) {
         core.moveCameraTo(vector);
     }
     
-    this.addGroundTrackForObject = function(object) {
-    // This needs to be written to take into account earth rotation
-    }
     // Compare these two websites for details on why we have to do this:
     // http://celestrak.com/columns/v02n01/
     // http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
@@ -442,4 +441,17 @@ SSI.Universe = function(options, container) {
             z : location.y
         };
     }
+    
+    // Removes all elements from the universe
+    this.removeAll = function() {
+        core.removeAllObjects();
+        controller.removeAllGraphicsObjects();
+    }
+    
+    this.setup = function() {
+        this.removeAll();
+        this.addSimStateObject();
+    }
+    
+    this.setup();
 };

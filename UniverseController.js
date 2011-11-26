@@ -57,6 +57,10 @@ SSI.UniverseController = function(options) {
     this.pause = function() {
         clearTimeout(refreshTimeout);
     };
+    
+    this.removeAllGraphicsObjects = function () {
+        graphicsObjects = new Array();
+    }
 };
 
 SSI.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {

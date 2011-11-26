@@ -263,6 +263,13 @@ SSI.Core3D = function(container) {
             scene.remove(drawnObjects[id].shape);
         }
     }
+    
+    this.removeAllObjects = function() {
+        for(var i in drawnObjects) {
+            scene.remove(drawnObjects[i].shape);
+        }
+        drawnObjects = new Array();
+    }
 	
     this.getObjectPosition = function(id) {
         return drawnObjects[id].shape.position;
