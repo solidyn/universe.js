@@ -324,15 +324,16 @@ SSI.Universe = function(options, container) {
             
             // Create a SensorPattern that's the length of the vector to the object 
             // (i.e. the length to the center of the earth)
-            var geometry = new SensorPatternGeometry(1500, vector.length());
+            objectGeometry = new SensorPatternGeometry(1500, vector.length());
     
             objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
-            
-    
-                var sensorProjection = new THREE.Mesh(geometry, objectMaterial);
+
+                // Apply a matrix to the shape to allow us to call .lookAt() to set the boresite.
+                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( -1 * Math.PI/2 , 0, 0 ) ));
+
+                var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
                 sensorProjection.doubleSided=true;
-                
         
                 controller.addGraphicsObject({
                     id : object.id + "_sensorProjection",
@@ -341,7 +342,15 @@ SSI.Universe = function(options, container) {
                         
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
                         var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-        
+
+                        // Move the tip of the sensor projection to the vehicle's location
+                        sensorProjection.position.copy(vector);
+
+                        var sensor_boresite = new THREE.Vector3(0,0,0);
+
+                        sensorProjection.lookAt(sensor_boresite);
+
+                       /*
                         // Rotate the beam so it points to the center of the earth
                         // TODO: this will have to be corrected with its actual look angles
         
@@ -361,8 +370,9 @@ SSI.Universe = function(options, container) {
         
                         sensorProjection.rotation.x = xRotationAngle;
                         sensorProjection.rotation.z = -zRotationAngle;
-        
-                        sensorProjection.position.copy(vector);
+
+                        */
+                        
                     },
                     draw : function() {
                         core.draw(this.id, sensorProjection, false);
