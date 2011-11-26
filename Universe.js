@@ -196,8 +196,8 @@ SSI.Universe = function(options, container) {
                         core.draw(this.id, objectModel, false);
                     }
                 });
-                universe.addPropogationLineForObject(spaceObject);
-                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
+                // universe.addPropogationLineForObject(spaceObject);
+                // universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
  
                 universe.addGroundTrackPointForObject(spaceObject);
                 universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
