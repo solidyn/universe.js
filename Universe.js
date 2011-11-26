@@ -313,7 +313,7 @@ SSI.Universe = function(options, container) {
             
             // Create a SensorPattern that's the length of the vector to the object 
             // (i.e. the length to the center of the earth)
-            var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
+            var geometry = new SensorPatternGeometry(1500, vector.length());
     
             objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
