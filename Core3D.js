@@ -264,6 +264,13 @@ SSI.Core3D = function(container) {
         }
     }
     
+    this.removeObject = function(id) {
+        if(drawnObjects[id] != undefined) {
+            scene.remove(drawnObjects[id].shape);
+            delete drawnObjects[id];
+        }
+    }
+    
     this.removeAllObjects = function() {
         for(var i in drawnObjects) {
             scene.remove(drawnObjects[i].shape);

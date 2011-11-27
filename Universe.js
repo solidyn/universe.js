@@ -186,7 +186,7 @@ SSI.Universe = function(options, container) {
                     objectName : spaceObject.objectName,
                     update : function(elapsedTime) {
                         // need to pass a time to the propagator
-                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, true));
+                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
                         if(convertedLocation != undefined) {
                             objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
                         
@@ -427,6 +427,11 @@ SSI.Universe = function(options, container) {
         }   
     }
     
+    this.removeObject = function(id) {
+        controller.removeGraphicsObject(id);
+        core.removeObject(id);
+    }
+    
     this.snapToObject = function(id) {
         // get the object's position and copy it into a vector
         var position = core.getObjectPosition(id);
@@ -458,6 +463,10 @@ SSI.Universe = function(options, container) {
     this.removeAll = function() {
         core.removeAllObjects();
         controller.removeAllGraphicsObjects();
+    }
+    
+    this.updateObject = function(id, propertyName, propertyValue) {
+        
     }
     
     this.setup = function() {

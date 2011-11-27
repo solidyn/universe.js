@@ -22,7 +22,7 @@ SSI.UniverseController = function(options) {
         // logger.debug("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
 
         // update and draw all graphics objects
-        for(var i = 0; i < graphicsObjects.length; i++) {
+        for(var i in graphicsObjects) {
             graphicsObjects[i].update(elapsedTime);
             graphicsObjects[i].draw();
         }
@@ -34,7 +34,7 @@ SSI.UniverseController = function(options) {
     }
 
     this.updateOnce =function() {
-        for(var i = 0; i < graphicsObjects.length; i++) {
+        for(var i in graphicsObjects) {
             graphicsObjects[i].update(null);
             graphicsObjects[i].draw();
         }
@@ -44,8 +44,12 @@ SSI.UniverseController = function(options) {
     // objectName
     // updateFunction
     this.addGraphicsObject = function(graphicsObject) {
-        graphicsObjects.push(graphicsObject);
+        graphicsObjects[graphicsObject.id] = graphicsObject;
         this.updateOnce();
+    }
+    
+    this.removeGraphicsObject = function(id) {
+        delete graphicsObjects[id];
     }
 
     this.play = function() {
