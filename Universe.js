@@ -259,14 +259,17 @@ SSI.Universe = function(options, container) {
             var loopCount = 1440;
             
             // draw a vertex for each minute in a 24 hour period
-            for(var j = 0; j < loopCount; j++) {
+            // dropped this to a vertex for every 5 minutes.  This seems to be about the max that you can use for a LEO
+            // and still look decent.  HEOs and GEOs look fine with much greater spans.  For performance reasons, may want
+            // to make this a param that can be set per vehicle
+            for(var j = 0; j < loopCount; j += 5) {
                 var convertedLocation = eciTo3DCoordinates(object.propagator(timeToPropogate, false));
                 if(convertedLocation != undefined) {
                     var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
                     objectGeometry.vertices.push(new THREE.Vertex(vector));
                 }
                 
-                timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
+                timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 5);
             }
             
             var lineS = new THREE.Line(objectGeometry, objectMaterial);
