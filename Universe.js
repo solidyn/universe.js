@@ -43,12 +43,23 @@ SSI.Universe = function(options, container) {
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
     objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial());
-    objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
-    objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshLambertMaterial({
-                color : 0xDF0101, 
-                opacity: 0.5,
-                overdraw: true
+    //objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
+    
+    objectLibrary.setObject("default_ground_track_material", new THREE.MeshBasicMaterial({
+        color : 0xCC0000,
+        transparent:true,
+        opacity: 0.4,
+        blending: THREE.AdditiveBlending
+    }));
+
+     objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshBasicMaterial({
+         color: 0xffaa00,
+         transparent: true,
+         blending: THREE.AdditiveBlending,
+         overdraw: true,
+         opacity: 0.15
             }));
+
     objectLibrary.setObject("default_orbit_line_material", new THREE.LineBasicMaterial({
                 color : 0x990000,
                 opacity : 1
@@ -316,23 +327,15 @@ SSI.Universe = function(options, container) {
         
             var objectGeometry, objectMaterial;
             
-            // Determine the object's location in 3D space
-            var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
-    
-            // Now convert that to a Vector3 to use its mathy functions
-            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-            
             // Create a SensorPattern that's the length of the vector to the object 
             // (i.e. the length to the center of the earth)
-            objectGeometry = new SensorPatternGeometry(1500, vector.length());
+            objectGeometry = new SensorPatternGeometry(3500);
     
             objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
 
-                // Apply a matrix to the shape to allow us to call .lookAt() to set the boresite.
-                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( -1 * Math.PI/2 , 0, 0 ) ));
-
                 var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
+
                 sensorProjection.doubleSided=true;
         
                 controller.addGraphicsObject({
@@ -346,33 +349,13 @@ SSI.Universe = function(options, container) {
                         // Move the tip of the sensor projection to the vehicle's location
                         sensorProjection.position.copy(vector);
 
+                        // the sensor projections are along the z axis and a length of 1, so scaling it
+                        // arbitarily along z will extend the length
+                        sensorProjection.scale.z = vector.length() - earthSphereRadius + 200;
+
                         var sensor_boresite = new THREE.Vector3(0,0,0);
 
                         sensorProjection.lookAt(sensor_boresite);
-
-                       /*
-                        // Rotate the beam so it points to the center of the earth
-                        // TODO: this will have to be corrected with its actual look angles
-        
-                       var zRotationAngle = Math.asin(vector.x / (vector.length()));
-                       var xRotationAngle = Math.asin(vector.z / (vector.length()));
-        
-                        // The equation above neglects which quadrant the angle is.  If y is negative, you need to subtract the angle
-                        // from 180 deg
-                        if ( vector.y < 0 )
-                        {
-                            xRotationAngle = Math.PI - xRotationAngle;
-                        }
-        
-                        //var zRotationAngle = Math.asin(vector.z / (vector.length()));
-                        // no need to rotate along y; that's down the center of the cone
-                        //logger.debug("xRotation: "+xRotationAngle + "  x:" + vector.x + "  y:" + vector.y + "  z:" + vector.z);
-        
-                        sensorProjection.rotation.x = xRotationAngle;
-                        sensorProjection.rotation.z = -zRotationAngle;
-
-                        */
-                        
                     },
                     draw : function() {
                         core.draw(this.id, sensorProjection, false);
