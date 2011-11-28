@@ -22,27 +22,16 @@ SSI.Universe = function(options, container) {
 
     // timeout for updating state
     var updateStateTimeout;
-	
-    var isShowOrbitLines = true;
-    var isShowVehicles = true;
-    var isShowGround = true;
     
     var universe = this;
-
-    controller.addGraphicsObject({
-        id : "simState",
-        objectName : "simState",
-        update : function(elapsedTime) {
-            currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
-        },
-        draw : function() {
-        }
-    });
+    
+    var earthCenterPoint = new THREE.Vector3(0,0,0);
     
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
-    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
+    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial());
+    objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
     objectLibrary.setObject("default_sensor_projection_material",new THREE.MeshLambertMaterial({
                 color : 0xDF0101, 
                 opacity: 0.5,
@@ -59,10 +48,22 @@ SSI.Universe = function(options, container) {
             stateChangedCallback(state);
         }
     }
+    
+    this.addSimStateObject = function() {
+        controller.addGraphicsObject({
+            id : "simState",
+            objectName : "simState",
+            update : function(elapsedTime) {
+                currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
+            },
+            draw : function() {
+            }
+        });
+    }
 
 
     this.updateState = function() {
-        // create our state object and notify our listener
+        //create our state object and notify our listener
         var universe = this;
         var state = {};
         state.currentUniverseTime = new Date(currentUniverseTime);
@@ -94,6 +95,16 @@ SSI.Universe = function(options, container) {
     this.setPlaybackSpeed = function(speed) {
         playbackSpeed = speed;
     }
+    
+    this.setCurrentUniverseTime = function(newUniverseTime) {
+        currentUniverseTime = new Date(newUniverseTime);
+        controller.updateOnce();
+    }
+
+    this.getCurrentUniverseTime = function() {
+        return currentUniverseTime;
+    }
+    
     // earthOptions:
     // image
     //
@@ -131,8 +142,7 @@ SSI.Universe = function(options, container) {
             id : "earth",
             objectName : "earth",
             update : function(elapsedTime) {
-                // TODO: retrieve earth rotation at a time and change rotation
-                var rotationAngle = convertTimeToGMST(currentUniverseTime);
+                var rotationAngle = CoordinateConversionTools.convertTimeToGMST(currentUniverseTime);
                 earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
             },
             draw : function() {
@@ -168,6 +178,7 @@ SSI.Universe = function(options, container) {
             objectLibrary.getObjectById("default_material", function(retrieved_material) {
                 material = retrieved_material;
                 
+                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( 0, Math.PI, 0 ) ));
                 var objectModel = new THREE.Mesh(objectGeometry, material);
         
                 controller.addGraphicsObject({
@@ -175,27 +186,27 @@ SSI.Universe = function(options, container) {
                     objectName : spaceObject.objectName,
                     update : function(elapsedTime) {
                         // need to pass a time to the propagator
-                        spaceObject.propagator(null, function(location) {
-                            var convertedLocation = eciTo3DCoordinates(location);
+                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
+                        if(convertedLocation != undefined) {
                             objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-                        });
+                        
+                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+                            objectModel.lookAt(earthCenterPoint);
+                        }
+                        
                     },
                     draw : function() {
-                        core.draw(this.id, objectModel, true);
+                        core.draw(this.id, objectModel, false);
                     }
                 });
                 universe.addPropogationLineForObject(spaceObject);
-                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject._id)
-
+                universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
+ 
                 universe.addGroundTrackPointForObject(spaceObject);
-                universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject._id)
-                universe.addSensorProjection(spaceObject);
+                universe.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
                 
-        
-                // TODO: enamble a real toggle button for this .showSensorPattern
-                // if (spaceObject.showSensorProjections) {
-                    // universe.addSensorProjection(spaceObject);
-                // }
+                universe.addSensorProjection(spaceObject);
+                universe.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
             });
         });
     };
@@ -205,12 +216,16 @@ SSI.Universe = function(options, container) {
     // object
     this.addGroundObject = function(groundObject) {
         var objectGeometry, objectMaterial;
-        objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
+        if(!groundObject.modelId) {
+            groundObject.modelId = "default_ground_object_geometry";
+        }
+        objectLibrary.getObjectById(groundObject.modelId, function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+            objectLibrary.getObjectById("default_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
-             
+                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
                 var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
+                
                 controller.addGraphicsObject({
                     id : groundObject.id,
                     objectName : groundObject.objectName,
@@ -218,6 +233,14 @@ SSI.Universe = function(options, container) {
                         // check earth rotation and update location
                         var position = eciTo3DCoordinates(groundObject.propagator());
                         groundObjectMesh.position.set(position.x, position.y, position.z);
+
+                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+                        var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
+                        
+                        // arbitrary size, just a point along the position vector further out for the object to lookAt
+                        scaled_position_vector.multiplyScalar(1.4);
+                        
+                        groundObjectMesh.lookAt(scaled_position_vector);
                     },
                     draw : function() {
                         core.draw(this.id, groundObjectMesh, true);
@@ -229,38 +252,37 @@ SSI.Universe = function(options, container) {
     // method to add an orbit line
     this.addPropogationLineForObject = function(object) {
         var objectGeometry, objectMaterial;
-        objectLibrary.getObjectById("default_geometry", function(retrieved_geometry) {
-            objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_orbit_line_material", function(retrieved_material) {
-                objectMaterial = retrieved_material;
-                var timeToPropogate = new Date(currentUniverseTime);
-                var loopCount = 1440;
+        objectGeometry = new THREE.Geometry();
+        objectLibrary.getObjectById("default_orbit_line_material", function(retrieved_material) {
+            objectMaterial = retrieved_material;
+            var timeToPropogate = new Date(currentUniverseTime);
+            var loopCount = 1440;
+            
+            // draw a vertex for each minute in a 24 hour period
+            // dropped this to a vertex for every 5 minutes.  This seems to be about the max that you can use for a LEO
+            // and still look decent.  HEOs and GEOs look fine with much greater spans.  For performance reasons, may want
+            // to make this a param that can be set per vehicle
+            for(var j = 0; j < loopCount; j += 5) {
+                var convertedLocation = eciTo3DCoordinates(object.propagator(timeToPropogate, false));
+                if(convertedLocation != undefined) {
+                    var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+                    objectGeometry.vertices.push(new THREE.Vertex(vector));
+                }
                 
-                if ("4ec96588246fc15d9a000002" == object.id) {
-                    loopCount = 35000;
+                timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 5);
+            }
+            
+            var lineS = new THREE.Line(objectGeometry, objectMaterial);
+    
+            controller.addGraphicsObject({
+                id : object.id + "_propogation",
+                objectName : object.objectName,
+                update : function(elapsedTime) {
+                // add points onto the end of the track?
+                },
+                draw : function() {
+                    core.draw(this.id, lineS, false);
                 }
-                // draw a vertex for each minute in a 24 hour period
-                for(var j = 0; j < loopCount; j++) {
-                    object.propagator(timeToPropogate, function(location) {
-                        var convertedLocation = eciTo3DCoordinates(location);
-                        var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-                        objectGeometry.vertices.push(new THREE.Vertex(vector));
-                    });
-        
-                    timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 1);
-                }
-                var lineS = new THREE.Line(objectGeometry, objectMaterial);
-        
-                controller.addGraphicsObject({
-                    id : object.id + "_propogation",
-                    objectName : object.objectName,
-                    update : function(elapsedTime) {
-                    // add points onto the end of the track?
-                    },
-                    draw : function() {
-                        core.draw(this.id, lineS, false);
-                    }
-                });
             });
         });
     }
@@ -269,7 +291,7 @@ SSI.Universe = function(options, container) {
         var objectGeometry, objectMaterial;
         objectLibrary.getObjectById("default_ground_object_geometry", function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_ground_object_material", function(retrieved_material) {
+            objectLibrary.getObjectById("default_ground_track_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
         
 
@@ -279,16 +301,15 @@ SSI.Universe = function(options, container) {
                     id : object.id + "_groundPoint",
                     objectName : object.objectName,
                     update : function(elapsedTime) {
-                        object.propagator(undefined, function(location) {
-                            var objectLocation = eciTo3DCoordinates(location);
-        
+                        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                        if(objectLocation != undefined) {
                             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-            
+        
                             // move the vector to the surface of the earth
                             vector.multiplyScalar(earthSphereRadius / vector.length())
             
                             groundObjectMesh.position.copy(vector);
-                        });
+                        }
                     },
                     draw : function() {
                         core.draw(this.id, groundObjectMesh, true);
@@ -301,35 +322,45 @@ SSI.Universe = function(options, container) {
     // TODO: This really needs to be refactored into the Sensor code, but that seems kind
     // of disfunctional right now....so I've got this instead
     this.addSensorProjection = function(object) {
-        object.propagator(undefined, function(location) {
-            var objectGeometry, objectMaterial;
-            
-            // Determine the object's location in 3D space
-            var objectLocation = eciTo3DCoordinates(location);
-    
+        
+        var objectGeometry, objectMaterial;
+        
+        // Determine the object's location in 3D space
+        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+        if(objectLocation != undefined) {
             // Now convert that to a Vector3 to use its mathy functions
             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
             
             // Create a SensorPattern that's the length of the vector to the object 
             // (i.e. the length to the center of the earth)
-            var geometry = new SensorPatternGeometry(1500, vector.length()*(2/3));
+            objectGeometry = new SensorPatternGeometry(1500, vector.length());
     
             objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
-            
-    
-                var sensorProjection = new THREE.Mesh(geometry, objectMaterial);
+
+                // Apply a matrix to the shape to allow us to call .lookAt() to set the boresite.
+                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( -1 * Math.PI/2 , 0, 0 ) ));
+
+                var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
                 sensorProjection.doubleSided=true;
-                
         
                 controller.addGraphicsObject({
                     id : object.id + "_sensorProjection",
                     objectName : object.objectName,
                     update : function(elapsedTime) {
-                        object.propagator(undefined, function(location) {
-                            var objectLocation = eciTo3DCoordinates(location);
+                        
+                        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                        if(objectLocation != undefined) {
                             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-            
+
+                            // Move the tip of the sensor projection to the vehicle's location
+                            sensorProjection.position.copy(vector);
+    
+                            var sensor_boresite = new THREE.Vector3(0,0,0);
+    
+                            sensorProjection.lookAt(sensor_boresite);
+    
+                           /*
                             // Rotate the beam so it points to the center of the earth
                             // TODO: this will have to be corrected with its actual look angles
             
@@ -349,17 +380,18 @@ SSI.Universe = function(options, container) {
             
                             sensorProjection.rotation.x = xRotationAngle;
                             sensorProjection.rotation.z = -zRotationAngle;
-            
-                            sensorProjection.position.copy(vector);
-                        });
+    
+                            */
+                        }
+                        
+                        
                     },
                     draw : function() {
-                        core.draw(this.id, sensorProjection, true);
+                        core.draw(this.id, sensorProjection, false);
                     }
                 });
             });
-        });
-        
+        }
     }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
@@ -372,7 +404,7 @@ SSI.Universe = function(options, container) {
     }
     
     this.showModelForId = function(isEnabled, id) {
-        console.log("show/hiding model");
+        //console.log("show/hiding model");
         if (!isEnabled) {
             core.hideObject(id);
         } else {
@@ -381,12 +413,26 @@ SSI.Universe = function(options, container) {
     }
     
     this.showGroundTrackForId = function(isEnabled, id) {
-        console.log("show/hiding groundTrack");
+        //console.log("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
         if (!isEnabled) {
             core.hideObject(id + "_groundPoint");
         } else {
             core.showObject(id + "_groundPoint");
         }   
+    }
+    
+    this.showSensorProjectionForId = function(isEnabled, id) {
+        //console.log("show/hiding sensorProjection");
+        if (!isEnabled) {
+            core.hideObject(id + "_sensorProjection");
+        } else {
+            core.showObject(id + "_sensorProjection");
+        }   
+    }
+    
+    this.removeObject = function(id) {
+        controller.removeGraphicsObject(id);
+        core.removeObject(id);
     }
     
     this.snapToObject = function(id) {
@@ -402,58 +448,34 @@ SSI.Universe = function(options, container) {
         core.moveCameraTo(vector);
     }
     
-    this.addGroundTrackForObject = function(object) {
-    // This needs to be written to take into account earth rotation
-    }
     // Compare these two websites for details on why we have to do this:
     // http://celestrak.com/columns/v02n01/
     // http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
     function eciTo3DCoordinates(location) {
+        if(location == undefined) {
+            return undefined;
+        }
         return {
             x : -location.x,
             y : location.z,
             z : location.y
         };
     }
-
-
-    this.getCurrentUniverseTime = function() {
-        return currentUniverseTime;
+    
+    // Removes all elements from the universe
+    this.removeAll = function() {
+        core.removeAllObjects();
+        controller.removeAllGraphicsObjects();
     }
+    
+    this.updateObject = function(id, propertyName, propertyValue) {
+        
+    }
+    
+    this.setup = function() {
+        this.removeAll();
+        this.addSimStateObject();
+    }
+    
+    this.setup();
 };
-
-SSI.Universe.prototype.goToTime = function(time) {
-    };
-// TODO refactor these to wherever Josh puts the common math libs
-function convertCurrentEpochToJulianDate(time) {
-    var JD = 0;
-    var year = time.getFullYear();
-    var month = time.getUTCMonth();
-    var day = time.getUTCDate();
-    var hour = time.getUTCHours();
-    var minute = time.getUTCMinutes();
-    var second = time.getUTCSeconds();
-    JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) + (275 * month / 9) + (day) + 1721013.5 + ((second / 60 + minute) / 60 + hour) / 24;
-    return JD;
-}
-
-function convertTimeToGMST(time) {
-    var JD = convertCurrentEpochToJulianDate(time);
-
-    var TUT = (JD - 2451545.0) / 36525.0;
-    //julian centuries since January 1, 2000 12h UT1
-    var GMST = 67310.54841 + (876600.0 * 3600 + 8640184.812866) * TUT + 0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;
-    //this is in seconds
-
-    var multiples = Math.floor(GMST / 86400.0);
-    GMST = GMST - multiples * 86400.00;
-    //reduce it to be within the range of one day
-
-    GMST = GMST / 240.0;
-    //convert to degrees
-    if(GMST < 0) {
-        GMST = GMST + 360;
-    }
-    return GMST;
-//degrees
-}

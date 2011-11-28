@@ -81,7 +81,8 @@ SSI.Core3D = function(container) {
         container.addEventListener('mousedown', onMouseDown, false);
 
         container.addEventListener('mousewheel', onMouseWheel, false);
-
+        container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
+        
         document.addEventListener('keydown', onDocumentKeyDown, false);
 
         window.addEventListener('resize', onWindowResize, false);
@@ -187,6 +188,15 @@ SSI.Core3D = function(container) {
         }
         return false;
     }
+    
+    function onMouseWheelFF(event) {
+        event.preventDefault();
+        if(overRenderer) {
+            var delta = event.detail? event.detail*(-120) : event.wheelDelta
+            zoom(delta * (10));
+        }
+        return false;
+    }
 
     function onDocumentKeyDown(event) {
         switch (event.keyCode) {
@@ -252,6 +262,20 @@ SSI.Core3D = function(container) {
             logger.debug("removing object from scene with id: " + id);
             scene.remove(drawnObjects[id].shape);
         }
+    }
+    
+    this.removeObject = function(id) {
+        if(drawnObjects[id] != undefined) {
+            scene.remove(drawnObjects[id].shape);
+            delete drawnObjects[id];
+        }
+    }
+    
+    this.removeAllObjects = function() {
+        for(var i in drawnObjects) {
+            scene.remove(drawnObjects[i].shape);
+        }
+        drawnObjects = new Array();
     }
 	
     this.getObjectPosition = function(id) {
