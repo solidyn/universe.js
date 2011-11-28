@@ -363,7 +363,7 @@ SSI.Universe = function(options, container) {
     }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
-        logger.debug("in show orbit lines");
+        logger.debug("in show orbit lines " + isEnabled);
         if (!isEnabled) {
             core.hideObject(id + "_propogation");
         } else {
