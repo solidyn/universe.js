@@ -31,7 +31,6 @@ SSI.Universe = function(options, container) {
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
     objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial());
-    //objectLibrary.setObject("default_ground_track_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
 
     objectLibrary.setObject("default_ground_track_material", new THREE.MeshBasicMaterial({
         color : 0xCC0000,
@@ -226,13 +225,17 @@ SSI.Universe = function(options, container) {
     // propagator
     // object
     this.addGroundObject = function(groundObject) {
-        var objectGeometry, objectMaterial;
+        var objectGeometry, objectMaterial, material;
         if(!groundObject.modelId) {
             groundObject.modelId = "default_ground_object_geometry";
+            material = "default_ground_object_material";
+        }
+        else {
+            material = "default_material";
         }
         objectLibrary.getObjectById(groundObject.modelId, function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
-            objectLibrary.getObjectById("default_material", function(retrieved_material) {
+            objectLibrary.getObjectById(material, function(retrieved_material) {
                 objectMaterial = retrieved_material;
                 objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
                 var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
