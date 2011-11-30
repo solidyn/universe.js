@@ -214,6 +214,7 @@ SSI.Universe = function(options, container) {
                         core.draw(this.id, objectModel, false);
                     }
                 });
+
                 universe.addPropogationLineForObject(spaceObject);
                 universe.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
 
@@ -479,7 +480,7 @@ SSI.Universe = function(options, container) {
     }
 
     this.showGroundTrackForId = function(isEnabled, id) {
-        //console.log("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
+        logger.debug("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
         if (!isEnabled) {
             core.hideObject(id + "_groundPoint");
         } else {
