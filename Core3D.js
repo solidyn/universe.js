@@ -266,7 +266,6 @@ SSI.Core3D = function(container) {
     
     this.removeObject = function(id) {
         if(drawnObjects[id] != undefined) {
-            console.log("removing: " + id);
             scene.remove(drawnObjects[id].shape);
             delete drawnObjects[id];
         }
@@ -280,6 +279,9 @@ SSI.Core3D = function(container) {
     }
 	
     this.getObjectPosition = function(id) {
+        if(drawnObjects[id] == undefined) {
+            return undefined;
+        }
         return drawnObjects[id].shape.position;
     }
 	

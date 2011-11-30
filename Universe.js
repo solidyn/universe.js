@@ -412,7 +412,6 @@ SSI.Universe = function(options, container) {
                          
                     if(closestGroundObject != undefined) {
                         objectGeometry = new THREE.Geometry();
-                        console.log("objectLocation: " + JSON.stringify(objectLocation));
                         var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
                         objectGeometry.vertices.push(new THREE.Vertex(vector));
                         
@@ -433,7 +432,6 @@ SSI.Universe = function(options, container) {
     }
     
     function findClosestGroundObject(location) {
-        console.log("location: " + JSON.stringify(location));
         var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
         // move the vector to the surface of the earth
@@ -452,7 +450,6 @@ SSI.Universe = function(options, container) {
             if(graphicsObjects[i].currentLocation != undefined) {
                 var vector = new THREE.Vector3(graphicsObjects[i].currentLocation.x, graphicsObjects[i].currentLocation.y, graphicsObjects[i].currentLocation.z);
                 var distance_to = vector.distanceTo(location_vector);
-                console.log("distance_to: " + graphicsObjects[i].id + " "+ distance_to);
                 if(closestDistance == undefined || distance_to < closestDistance) {
                     closestObject = graphicsObjects[i];
                     closestDistance = distance_to;
@@ -460,7 +457,6 @@ SSI.Universe = function(options, container) {
             }
         }
         
-        console.log("closestObject.location: " + JSON.stringify(closestObject));
         return closestObject;
     }
 
@@ -508,14 +504,19 @@ SSI.Universe = function(options, container) {
     this.snapToObject = function(id) {
         // get the object's position and copy it into a vector
         var position = core.getObjectPosition(id);
-        var vector = new THREE.Vector3();
-        vector.copy(position);
-
-        // move the point the camera will be at out a bit so we are behind the object
-        vector.multiplyScalar(1.4);
-
-        // tell the core to move to the vector
-        core.moveCameraTo(vector);
+        if(position != undefined) {
+            var vector = new THREE.Vector3();
+            vector.copy(position);
+    
+            // move the point the camera will be at out a bit so we are behind the object
+            vector.multiplyScalar(1.4);
+    
+            // tell the core to move to the vector
+            core.moveCameraTo(vector);
+        }
+        else {
+            logger.debug(id + " not added to the core")
+        }
     }
 
     // Compare these two websites for details on why we have to do this:
