@@ -165,6 +165,50 @@ SSI.Universe = function(options, container) {
             }
         });
     };
+    
+    this.addMoon = function(options) {
+        var moonSphereSegments = 40, moonSphereRings = 30;
+        var moonSphereRadius = 1737.1;
+
+        // Create the sphere
+        var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
+
+        // Define the material to be used for the sphere surface by pulling the image and wrapping it around the sphere
+        var shader = {
+            uniforms : {
+                'texture' : {
+                    type : 't',
+                    value : 0,
+                    texture : null
+                }
+            },
+            vertexShader : ['varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );', 'vNormal = normalize( normalMatrix * normal );', 'vUv = uv;', '}'].join('\n'),
+            fragmentShader : ['uniform sampler2D texture;', 'varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'vec3 diffuse = texture2D( texture, vUv ).xyz;', 'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );', 'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );', 'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );', '}'].join('\n')
+        };
+        var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+
+        uniforms['texture'].texture = THREE.ImageUtils.loadTexture(earthOptions.image);
+
+        var material = new THREE.ShaderMaterial({
+            uniforms : uniforms,
+            vertexShader : shader.vertexShader,
+            fragmentShader : shader.fragmentShader
+        });
+
+        var earthMesh = new THREE.Mesh(geometry, material);
+
+        controller.addGraphicsObject({
+            id : "earth",
+            objectName : "earth",
+            update : function(elapsedTime) {
+                var rotationAngle = CoordinateConversionTools.convertTimeToGMST(currentUniverseTime);
+                earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
+            },
+            draw : function() {
+                core.draw(this.id, earthMesh, false);
+            }
+        });
+    }
     // adds a model to the universe with an ID and url to retrieve
     // the model's geometry
     this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
