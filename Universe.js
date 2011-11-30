@@ -212,6 +212,7 @@ SSI.Universe = function(options, container) {
                     },
                     draw : function() {
                         core.draw(this.id, objectModel, false);
+                        universe.showModelForId(spaceObject.showVehicle, this.id);
                     }
                 });
 
@@ -471,7 +472,7 @@ SSI.Universe = function(options, container) {
     }
 
     this.showModelForId = function(isEnabled, id) {
-        //console.log("show/hiding model");
+        logger.debug("show/hiding vehicle model " + isEnabled);
         if (!isEnabled) {
             core.hideObject(id);
         } else {
