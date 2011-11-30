@@ -266,6 +266,7 @@ SSI.Core3D = function(container) {
     
     this.removeObject = function(id) {
         if(drawnObjects[id] != undefined) {
+            console.log("removing: " + id);
             scene.remove(drawnObjects[id].shape);
             delete drawnObjects[id];
         }

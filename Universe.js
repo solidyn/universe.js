@@ -30,7 +30,7 @@ SSI.Universe = function(options, container) {
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
-    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial());
+    objectLibrary.setObject("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0x00CC00}));
 
     objectLibrary.setObject("default_ground_track_material", new THREE.MeshBasicMaterial({
         color : 0xCC0000,
@@ -217,6 +217,8 @@ SSI.Universe = function(options, container) {
 
                 universe.addSensorProjection(spaceObject);
                 universe.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
+                
+                universe.addClosestGroundObjectTracingLine(spaceObject);
             });
         });
     };
@@ -243,10 +245,12 @@ SSI.Universe = function(options, container) {
                 controller.addGraphicsObject({
                     id : groundObject.id,
                     objectName : groundObject.objectName,
+                    currentLocation: undefined,
                     update : function(elapsedTime) {
                         // check earth rotation and update location
                         var position = eciTo3DCoordinates(groundObject.propagator());
                         groundObjectMesh.position.set(position.x, position.y, position.z);
+                        this.currentLocation = {x: position.x, y: position.y, z: position.z};
 
                         //http://mrdoob.github.com/three.js/examples/misc_lookat.html
                         var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
@@ -382,6 +386,79 @@ SSI.Universe = function(options, container) {
                 });
             });
         }
+    }
+    
+    this.addClosestGroundObjectTracingLine = function(object) {
+        var objectGeometry, objectMaterial;
+        
+        
+        objectLibrary.getObjectById("default_orbit_line_material", function(retrieved_material) {
+            objectMaterial = retrieved_material;
+
+            var line = undefined;
+            controller.addGraphicsObject({
+                id : object.id + "_connection",
+                objectName : object.objectName,
+                update : function(elapsedTime) {
+                    
+                    var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                    
+                    var closestGroundObject = findClosestGroundObject(objectLocation);
+                    
+                    
+                    
+                    if(closestGroundObject != undefined) {
+                        objectGeometry = new THREE.Geometry();
+                        console.log("objectLocation: " + JSON.stringify(objectLocation));
+                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+                        objectGeometry.vertices.push(new THREE.Vertex(vector));
+                        
+                        var vector2 = new THREE.Vector3(closestGroundObject.currentLocation.x, closestGroundObject.currentLocation.y, closestGroundObject.currentLocation.z);
+                        objectGeometry.vertices.push(new THREE.Vertex(vector2));
+                        
+                        line = new THREE.Line(objectGeometry, objectMaterial);
+                    }
+                },
+                draw : function() {
+                    core.removeObject(this.id);
+                    if(line != undefined) {
+                        core.draw(this.id, line, false);
+                    }
+                }
+            });
+        });
+    }
+    
+    function findClosestGroundObject(location) {
+        console.log("location: " + JSON.stringify(location));
+        var location_vector = new THREE.Vector3(location.x, location.y, location.z);
+
+        // move the vector to the surface of the earth
+        location_vector.multiplyScalar(earthSphereRadius / location_vector.length())
+        
+        return findClosestObject(location_vector);
+    }
+    
+    function findClosestObject(location_vector) {
+        var graphicsObjects = controller.getGraphicsObjects();
+        
+        var closestDistance = undefined;
+        var closestObject = undefined;
+        
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].currentLocation != undefined) {
+                var vector = new THREE.Vector3(graphicsObjects[i].currentLocation.x, graphicsObjects[i].currentLocation.y, graphicsObjects[i].currentLocation.z);
+                var distance_to = vector.distanceTo(location_vector);
+                console.log("distance_to: " + graphicsObjects[i].id + " "+ distance_to);
+                if(closestDistance == undefined || distance_to < closestDistance) {
+                    closestObject = graphicsObjects[i];
+                    closestDistance = distance_to;
+                }
+            }
+        }
+        
+        console.log("closestObject.location: " + JSON.stringify(closestObject));
+        return closestObject;
     }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
