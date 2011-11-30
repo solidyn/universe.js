@@ -419,7 +419,8 @@ var CoordinateConversionTools = {
         {
             raan = 360 - raan;
         }
-
+        
+        
         var arg = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(n, e) /
             (MathTools.magnitude(n) * emag)));  //double
 
@@ -427,9 +428,17 @@ var CoordinateConversionTools = {
         {
             arg = 360 - arg;
         }
-
-        var nu = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag))); //double
         
+        // console.log("MathTools.dotMultiply(e, r) / (emag * rmag): " + MathTools.dotMultiply(e, r) / (emag * rmag) )
+        // console.log("Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)));
+        
+        var value = MathTools.dotMultiply(e, r) / (emag * rmag);
+        if(value > 1) {
+            // console.log("setting to 1");
+            value = 1;
+        }
+        var nu = MathTools.toDegrees(Math.acos(value)); //double
+        // console.log("nu: " + nu);
         if (MathTools.dotMultiply(v, r) < 0)
         {
             nu = 360 - nu;
@@ -444,6 +453,7 @@ var CoordinateConversionTools = {
         {
             arg = 0.00001;
         }
+        
         
         kepler.setSemimajorAxis(a);
         kepler.setEccentricity(emag);
