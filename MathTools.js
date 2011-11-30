@@ -157,12 +157,547 @@ var MathTools = {
 
         return result;
     },
-    
-    toRadians: function(valueInDegrees) {
+
+    /**
+     *
+     * @param valueInDegrees   double
+     *
+     * @returns double
+     */
+    toRadians: function(valueInDegrees)
+    {
         return valueInDegrees * Math.PI / 180.0;
     },
-    
-    toDegrees: function(valueInRadians) {
+
+    /**
+     *
+     * @param valueInRadians double
+     *
+     * @returns double
+     */
+    toDegrees: function(valueInRadians)
+    {
         return valueInRadians * 180 / Math.PI;
+    },
+
+    /**
+     *
+     * @param x double
+     *
+     * @returns double[3][3]
+     */
+    buildRotationMatrix1: function(x)
+    {
+        x = Math.toRadians(x);
+        var result = new Array(); //Double[3][3];
+
+        var i = 0;
+        for(i = 0; i < 3; i++)
+        {
+           result[i] = new Array();
+        }
+
+        result[0][0] = 1.0;
+        result[0][1] = 0.0;
+        result[0][2] = 0.0;
+        result[1][0] = 0.0;
+        result[1][1] = Math.cos(x);
+        result[1][2] = -Math.sin(x);
+        result[2][0] = 0.0;
+        result[2][1] = Math.sin(x);
+        result[2][2] = Math.cos(x);
+
+        return result;
+    },
+
+    /**
+     *
+     * @param x double
+     *
+     * @returns double[3][3]
+     */
+    buildRotationMatrix2: function(x)
+    {
+        x = Math.toRadians(x);
+        var result = new Array(); //Double[3][3];
+
+        var i = 0;
+        for(i = 0; i < 3; i++)
+        {
+           result[i] = new Array();
+        }
+
+        result[0][0] = Math.cos(x);
+        result[0][1] = 0.0;
+        result[0][2] = Math.sin(x);
+        result[1][0] = 0.0;
+        result[1][1] = 1.0;
+        result[1][2] = 0.0;
+        result[2][0] = -Math.sin(x);
+        result[2][1] = 0.0;
+        result[2][2] = Math.cos(x);
+
+        return result;
+    },
+
+    /**
+     *
+     * @param x double
+     *
+     * @returns Double[][]
+     */
+    buildRotationMatrix3: function(x)
+    {
+        x = Math.toRadians(x);
+        var result = new Array(); //Double[3][3];
+
+        var i = 0;
+        for(i = 0; i < 3; i++)
+        {
+           result[i] = new Array();
+        }
+
+        result[0][0] = Math.cos(x);
+        result[0][1] = -Math.sin(x);
+        result[0][2] = 0.0;
+        result[1][0] = Math.sin(x);
+        result[1][1] = Math.cos(x);
+        result[1][2] = 0.0;
+        result[2][0] = 0.0;
+        result[2][1] = 0.0;
+        result[2][2] = 1.0;
+
+        return result;
+    },
+
+    /**
+     *
+     * @param N int
+     *
+     * @returns Double[][]
+     */
+    ones: function(N)
+    {
+        var x = new Array(); //Double[N][N];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < N; i++)
+        {
+           result[i] = new Array(N);
+        }
+
+        for (i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                if (i != j)
+                {
+                    x[i][j] = 0.0;
+                }
+                else
+                {
+                    x[i][j] = 1.0;
+                }
+            }
+        }
+
+        return x;
+    },
+
+    /**
+     *
+     * @param N int
+     *
+     * @returns Double[][]
+     */
+    zeros: function(N)
+    {
+        var x = new Array(N); //Double[3][3];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < N; i++)
+        {
+           result[i] = new Array(N);
+        }
+
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                x[i][j] = 0.0;
+            }
+        }
+
+        return x;
+    },
+
+    /**
+     *
+     * @param M int
+     * @param N int
+     *
+     * @returns Double[][]
+     */
+    zeros: function(M, N)
+    {
+        var x = new Array(M); //Double[M][N];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < M; i++)
+        {
+           result[i] = new Array(N);
+        }
+
+        for (int i = 0; i < M; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                x[i][j] = 0.0;
+            }
+        }
+
+        return x;
+    },
+
+    /**
+     *
+     * @param x 1d array
+     * @param y 2d array
+     *
+     * @returns Double[]
+     */
+    multiply1dBy2d: function(x, y)
+    {
+        var x1 = x.length;
+        var y1 = y.length;
+        var y2 = y[0].length;
+
+        if (x1 != y1)
+        {
+            return null;
+        }
+
+        var returnVal = new Array(y2); //Double[y2];
+
+        for (var i = 0; i < y2; i++)
+        {
+            var val = 0;
+
+            for (var j = 0; j < x1; j++)
+            {
+                val = val + x[j] * y[j][i];
+            }
+
+            returnVal[i] = val;
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x 2d array
+     * @param y 1d array
+     *
+     * @returns Double[]
+     */
+    multiply2dBy1d: function(x, y)
+    {
+        //where x is MxN and Y is Nx1
+        var M_x1 = x.length;
+        var N_x2 = x[0].length;
+        var N_y1 = y.length;
+
+        if (N_x2 != N_y1)
+        {
+            return null;
+        }
+
+        var returnVal = new Array(M_x1); //Double[M_x1];
+
+        for (var i = 0; i < M_x1; i++)
+        {
+            var val = 0;
+
+            for (var j = 0; j < N_y1; j++)
+            {
+                val = val + x[i][j] * y[j];
+            }
+
+            returnVal[i] = val;
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param h double
+     * @param x 2d array
+     *
+     * @returns Double[][]
+     */
+    multiplyDoubleBy2d: function(h, x)
+    {
+        var M = x.length;
+        var N = x[0].length;
+        var hTimesX = new Array(M); //Double[M][N];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < M; i++)
+        {
+           hTimesX[i] = new Array(N);
+        }
+
+        for (i = 0; i < M; i++)
+        {
+            for (j = 0; j < N; j++)
+            {
+                if (x[i][j] == 0)
+                {
+                    hTimesX[i][j] = 0.0;
+                }
+                else
+                {
+                    hTimesX[i][j] = h * x[i][j];
+                }
+            }
+        }
+
+        return hTimesX;
+    },
+
+    /**
+     *
+     * @param x Double[][]
+     * @param y Double[][]
+     *
+     * @returns Double[][] 
+     */
+    multiply2dBy2d: function(x, y)
+    {
+        var x1 = x.length;
+        var x2 = x[0].length;
+        var y1 = y.length;
+        var y2 = y[0].length;
+
+        if (x2 != y1)
+        {
+            return null;
+        }
+
+        var returnVal = new Array(x1); //Double[3][3];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < x1; i++)
+        {
+           result[i] = new Array(y2);
+        }
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {
+            //each column of the target matrix
+            for (j = 0; j < y2; j++)
+            {
+                var val = 0;
+                var k = 0;
+
+                //the components of the target cell
+                for (k = 0; k < y1; k++)
+                {
+                    val = val + x[i][k] * y[k][j];
+                }
+
+                returnVal[i][j] = val;
+            }
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x Double[][]
+     *
+     * @returns Double[][]
+     */
+    transposeMatrix: function(x)
+    {
+        var x1 = x.length;
+        var x2 = x[0].length;
+
+        var returnVal = new Array(x2); //Double[x2][x1];
+
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < x2; i++)
+        {
+           returnVal[i] = new Array(x1);
+        }
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {  
+            //each column of the target matrix
+            for (j = 0; j < x2; j++)
+            { 
+                returnVal[j][i] = x[i][j];
+            }
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x Double[]
+     * @param y Double[]
+     *
+     * @returns Double[]
+     */
+    add1dTo1d: function(x, y)
+    {
+        var x1 = x.length;
+        var y1 = y.length;
+
+        if (x1 != y1)
+        {
+            return null;
+        }
+
+        var returnVal = new Array(x1); //Double[x1];
+        var i = 0;
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {  
+            returnVal[i] = x[i] + y[i];
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x Double[][]
+     * @param y Double[][]
+     *
+     *
+     * @returns Double[][]
+     */
+    add2dTo2d: function(x, y)
+    {
+        var x1 = x.length;
+        var x2 = x[0].length;
+        var y1 = y.length;
+        var y2 = y[0].length;
+
+        if ((x1 != y1) || (x2 != y2))
+        {
+            return null;
+        }
+
+        var returnVal = new Array(x1); //Double[x1][x2];
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < x1; i++)
+        {
+           returnVal[i] = new Array(x2);
+        }
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {
+            //each column of the target matrix
+            for (j = 0; j < x2; j++)
+            { 
+                returnVal[i][j] = x[i][j] + y[i][j];
+            }
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x Double[][]
+     * @param y Double[][]
+     *
+     * @returns Double[][]
+     */
+    subtract2dMinus2d: function(x, y)
+    {
+        var x1 = x.length;
+        var x2 = x[0].length;
+        var y1 = y.length;
+        var y2 = y[0].length;
+
+        if ((x1 != y1) || (x2 != y2))
+        {
+            return null;
+        }
+
+        var returnVal = new Array(x1); //Double[x1][x2];
+        var i = 0;
+        var j = 0;
+
+        for(i = 0; i < x1; i++)
+        {
+           returnVal[i] = new Array(x2);
+        }
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {
+            //each column of the target matrix
+            for (j = 0; j < x2; j++)
+            { 
+                returnVal[i][j] = x[i][j] - y[i][j];
+            }
+        }
+
+        return returnVal;
+    },
+
+    /**
+     *
+     * @param x Double[]
+     * @param y Double[]
+     *
+     * @returns Double[]
+     */
+    subtract1dMinus1d: function(x, y)
+    {
+        var x1 = x.length;
+        var y1 = y.length;
+
+        if (x1 != y1)
+        {
+            return null;
+        }
+
+        var returnVal = new Array(x1); //Double[x1];
+        var i = 0;
+
+        //each row of the target matrix
+        for (i = 0; i < x1; i++)
+        {  
+            returnVal[i] = x[i] - y[i];
+        }
+
+        return returnVal;
     }
 }

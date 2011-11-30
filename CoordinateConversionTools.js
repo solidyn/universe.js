@@ -12,12 +12,13 @@ var CoordinateConversionTools = {
         //this is the time since January 1, 4713 BC (12:00)
         //unit of measure = days
         var JD = 0;                               //double
-        var year = currentEpoch.getFullYear();    //int
-        var month = currentEpoch.getUTCMonth();      //int
-        var day = currentEpoch.getUTCDate();         //int
-        var hour = currentEpoch.getUTCHours();       //int
-        var minute = currentEpoch.getUTCMinutes();   //int
-        var second = currentEpoch.getUTCSeconds();   //double
+        var year = currentEpoch.getYear() + 1900  //int
+        var month = currentEpoch.getMonth();      //int
+        var day = currentEpoch.getDate();         //int
+        var hour = currentEpoch.getHours();       //int
+        var minute = currentEpoch.getMinutes();   //int
+        var second = currentEpoch.getSeconds();   //double
+
         JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) +
             (275 * month / 9) + (day) + 1721013.5 +
             ((second / 60 + minute) / 60 + hour) / 24;
@@ -34,13 +35,15 @@ var CoordinateConversionTools = {
     convertTimeToGMST: function(currentEpoch)
     {
         var JD = this.convertCurrentEpochToJulianDate(currentEpoch); //double
-        var TUT = (JD-2451545.0)/36525.0;  //double - julian centuries since January 1, 2000 12h UT1
 
-        var GMST = 0; //double
-        GMST = 67310.54841 + (876600.0 * 3600 + 8640184.812866) * TUT +
-            0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;  //this is in seconds
+        //double - julian centuries since January 1, 2000 12h UT1
+        var TUT = (JD - 2451545.0) / 36525.0;
 
-        var multiples = Math.floor(GMST/86400.0); //double
+        //this is in seconds
+        var GMST = 67310.54841 + (876600.0 * 3600 + 8640184.812866) * TUT +
+            0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;  //double
+
+        var multiples = Math.floor(GMST / 86400.0); //double
 
         GMST = GMST - multiples * 86400.00;   //reduce it to be within the range of one day
         GMST = GMST / 240.0; //convert to degrees
@@ -105,10 +108,10 @@ var CoordinateConversionTools = {
         var rj = ecef.getY(); //double
         var rk = ecef.getZ(); //double
 
-        var ecc = Constants.getEccEarthSphere(); //double - eccentricity of the Earth's surface
-        var Re = Constants.getRadiusEarth();     //double - radius of the earth (mean) in kilometers
+        var ecc = Constants.eccEarthSphere; //double - eccentricity of the Earth's surface
+        var Re = Constants.radiusEarth;     //double - radius of the earth (mean) in kilometers
 
-        var rdelta = Math.sqrt(ri * ri + rj * rj);  //double
+        var rdelta = Math.sqrt((ri * ri) + (rj * rj));  //double
         var sinalpha = rj / rdelta;                 //double
         var cosalpha = ri / rdelta;                 //double
         var alpha = Math.atan(sinalpha / cosalpha); //double
@@ -129,7 +132,7 @@ var CoordinateConversionTools = {
         {
             latOld = lat;
             sinLat = Math.sin(latOld);
-            c = Re / Math.sqrt(1 - ecc * ecc * sinLat * sinLat);
+            c = Re / Math.sqrt(1 - (ecc * ecc * sinLat * sinLat));
             tanLat = (rk + c * ecc * ecc * sinLat) / rdelta;
             lat = Math.atan(tanLat);
             
@@ -346,19 +349,19 @@ var CoordinateConversionTools = {
      * @returns KeplerianCoordinates
      *
      */
-    convertECIToKeplerian: function( eci)
+    convertECIToKeplerian: function(eci)
     {
         //reference Vallado 120
         var kepler = new KeplerianCoordinates();
         var r = new Array(); //Double[3];
-        r[0] = eci.x;
-        r[1] = eci.y;
-        r[2] = eci.z;
+        r[0] = eci.getX();
+        r[1] = eci.getY();
+        r[2] = eci.getZ();
         
         var v = new Array(); //Double[3];
-        v[0] = eci.vx;
-        v[1] = eci.vy;
-        v[2] = eci.vz;
+        v[0] = eci.getVX();
+        v[1] = eci.getVY();
+        v[2] = eci.getVZ();
 
         var h = MathTools.cross(r, v); //Double[3]
         var hmag = MathTools.magnitude(h); //double
@@ -373,12 +376,8 @@ var CoordinateConversionTools = {
         var n = new Array(); //Double[3];
         n = MathTools.cross(khat, h);
         
-        
-
         var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
-        var coeff2 = MathTools.dotMultiply(r, v);                 //double
-        
-        
+        var coeff2 = MathTools.dotMultiply(r, v);            //double
        
         var e = new Array(); //Double[3];
 
@@ -386,12 +385,9 @@ var CoordinateConversionTools = {
         for (i = 0; i < 3; i++)
         {
             e[i] = (1 / Constants.muEarth) * (coeff1 * r[i] - coeff2 * v[i]);
-
         }
         
-        
-        
-        var emag = MathTools.magnitude(e);                            //double
+        var emag = MathTools.magnitude(e);                       //double
         var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
         
         var p = 0.0; //double
@@ -433,12 +429,12 @@ var CoordinateConversionTools = {
 
         if(isNaN(raan))
         {
-            raan=0.00001;
+            raan = 0.00001;
         }
 
         if(isNaN(arg))
         {
-            arg=0.00001;
+            arg = 0.00001;
         }
         
         kepler.setSemimajorAxis(a);
@@ -450,16 +446,47 @@ var CoordinateConversionTools = {
         kepler.setArgOfPerigee(arg);
         
         //figure out the mean anomaly
-        var sinNu=Math.sin(MathTools.toRadians(nu));
-        var cosNu=Math.cos(MathTools.toRadians(nu));
-        var sinEA=((sinNu*Math.sqrt(1-emag*emag))/(1+emag*cosNu));
-        var cosEA=((emag+cosNu)/(1+emag*cosNu));
-        var EA=Math.atan2(sinEA, cosEA);
-        var MA=EA-emag*sinEA;
-        MA=MathTools.toDegrees(MA);
+        var sinNu = Math.sin(MathTools.toRadians(nu));
+        var cosNu = Math.cos(MathTools.toRadians(nu));
+        var sinEA = ((sinNu * Math.sqrt(1 - emag * emag)) / (1 + emag * cosNu));
+        var cosEA = ((emag + cosNu) / (1 + emag * cosNu));
+        var EA = Math.atan2(sinEA, cosEA);
+        var MA = EA - emag * sinEA;
+        MA = MathTools.toDegrees(MA);
         kepler.setMeanAnomaly(MA);
 
         return kepler;
+    },
+
+    /**
+     *
+     * @param satellite SimulationObject
+     *
+     * @returns double[][]
+     */
+    buildRotationMatrixToConvertECItoRSW: function(satellite)
+    {
+        var satelliteKepler = satellite.getKepler(); //KeplerianCoords
+
+        var nu = satelliteKepler.getTrueAnomaly();  //double
+        var w = satelliteKepler.getArgOfPerigee();  //double
+        var inc = satelliteKepler.getInclination(); //double
+        var raan = satelliteKepler.getRaan();       //double
+
+        var netRotationMatrix = new Array(3);
+
+        var i = 0;
+        for(int i = 0; i < 3; i++) //create as Double[3][3];
+        {
+            netRotationMatrix[i] = new Array(3);
+        }
+
+        netRotationMatrix = MathTools.buildRotationMatrix3(raan);
+        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix1(inc), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(w), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(nu), netRotationMatrix);
+
+        return netRotationMatrix;
     },
 
     /**
@@ -476,10 +503,10 @@ var CoordinateConversionTools = {
         var satelliteKepler = satellite.getKepler(); //KeplerianCoordinates
         var satelliteECI = satellite.getEci();       //ECICoordinates
 
-        var nu = (satelliteKepler.getTrueAnomaly());  //double
-        var w = (satelliteKepler.getArgOfPerigee());  //double
-        var inc = (satelliteKepler.getInclination()); //double
-        var raan = (satelliteKepler.getRaan());       //double
+        var nu = satelliteKepler.getTrueAnomaly();  //double
+        var w = satelliteKepler.getArgOfPerigee();  //double
+        var inc = satelliteKepler.getInclination(); //double
+        var raan = satelliteKepler.getRaan();       //double
 
         var rijk = new Array(); //Double[3];
         rijk[0] = targetECI.getX() - satelliteECI.getX();
@@ -496,5 +523,76 @@ var CoordinateConversionTools = {
         rsw.setCrossTrack(rijk[2]);
 
         return rsw;
+    },
+
+    /**
+     *
+     * @param satellite SimulationObject
+     * @param rsw RSWcoordinates
+     *
+     * @returns ECIcoordinates
+     */
+    convertRSWToECI: function(satellite, rsw)
+    {
+        var eci = new ECIcoordinates();
+        var satelliteKepler = satellite.getKepler();
+
+        var nu = satelliteKepler.getTrueAnomaly();
+        var w = satelliteKepler.getArgOfPerigee();
+        var inc = satelliteKepler.getInclination();
+        var raan = satelliteKepler.getRaan();
+
+        var rswVec = new Array();        //Double[3];
+        rswVec[0] = rsw.getRadial();
+        rswVec[1] = rsw.getAlongTrack();
+        rswVec[2] = rsw.getCrossTrack();
+
+        var rijk = new Array();              //Double[3];
+        rijk = MathTools.rot3(-nu, rswVec);  //to PQW format
+        rijk = MathTools.rot3(-w, rijk);
+        rijk = MathTools.rot1(-inc, rijk);
+        rijk = MathTools.rot3(-raan, rijk);
+
+        eci.setX(rijk[0]);
+        eci.setY(rijk[1]);
+        eci.setZ(rijk[2]);
+
+        return eci;
+    },
+
+    /**
+     *
+     * @param currentEpoch Date
+     *
+     * @returns ECIcoordinates
+     */
+    getSunPositionECIAtCurrentTime: function(currentEpoch)
+    {
+        //ref Vallado 266
+        var JD = convertCurrentEpochToJulianDate(currentEpoch);
+
+        //julian centuries since January 1, 2000 12h UT1
+        var TUT = (JD - 2451545.0) / 36525.0;
+        var lambdaSun = 280.4606184 + 36000.77005361 * TUT;  //solar angle (deg)
+        var Msun = 357.5277233 + 35999.05034 * TUT;
+        var lambdaEcliptic = lambdaSun + 1.914666471 *
+            Math.sin(Math.toRadians(Msun)) + 0.019994643 *
+            Math.sin(2 * Math.toRadians(Msun));//ecliptic angle (deg)
+
+        //distance of the sun in AU
+        var rsun = 1.000140612 - 0.016708617 * Math.cos(Math.toRadians(Msun)) -
+            0.000139589 * Math.cos(2 * Math.toRadians(Msun));
+        var e = 23.439291 - 0.0130042 * TUT;  //ecliptic latitude on the earth
+
+        var AU = 149597870.0;  //one astronomical unit (km)
+        var sunPosition = new ECIcoordinates();
+
+        sunPosition.setX(rsun * Math.cos(Math.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setY(rsun * Math.cos(Math.toRadians(e)) *
+            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setZ(rsun * Math.sin(Math.toRadians(e)) *
+            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
+
+        return sunPosition;
     }
 };
