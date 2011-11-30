@@ -65,6 +65,10 @@ SSI.UniverseController = function(options) {
     this.removeAllGraphicsObjects = function () {
         graphicsObjects = new Array();
     }
+    
+    this.getGraphicsObjects = function() {
+        return graphicsObjects;
+    }
 };
 
 SSI.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {

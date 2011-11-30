@@ -279,6 +279,9 @@ SSI.Core3D = function(container) {
     }
 	
     this.getObjectPosition = function(id) {
+        if(drawnObjects[id] == undefined) {
+            return undefined;
+        }
         return drawnObjects[id].shape.position;
     }
 	
