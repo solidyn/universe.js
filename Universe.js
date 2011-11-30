@@ -51,6 +51,11 @@ SSI.Universe = function(options, container) {
                 color : 0x990000,
                 opacity : 1
             }));
+            
+    objectLibrary.setObject("default_ground_object_tracing_line_material", new THREE.LineBasicMaterial({
+                color : 0x000099,
+                opacity : 1
+            }));
 
     // fires a state changed event to the callback
     function fireStateChanged(state) {
@@ -392,7 +397,7 @@ SSI.Universe = function(options, container) {
         var objectGeometry, objectMaterial;
         
         
-        objectLibrary.getObjectById("default_orbit_line_material", function(retrieved_material) {
+        objectLibrary.getObjectById("default_ground_object_tracing_line_material", function(retrieved_material) {
             objectMaterial = retrieved_material;
 
             var line = undefined;
@@ -404,9 +409,7 @@ SSI.Universe = function(options, container) {
                     var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
                     
                     var closestGroundObject = findClosestGroundObject(objectLocation);
-                    
-                    
-                    
+                         
                     if(closestGroundObject != undefined) {
                         objectGeometry = new THREE.Geometry();
                         console.log("objectLocation: " + JSON.stringify(objectLocation));
