@@ -53,7 +53,7 @@ SSI.Universe = function(options, container) {
             }));
             
     objectLibrary.setObject("default_ground_object_tracing_line_material", new THREE.LineBasicMaterial({
-                color : 0x000099,
+                color : 0x009900,
                 opacity : 1
             }));
             
