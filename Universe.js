@@ -56,6 +56,9 @@ SSI.Universe = function(options, container) {
                 color : 0x000099,
                 opacity : 1
             }));
+            
+    // have to do this this way since the decision of whether to show or hide it has to be made at draw time
+    var enableControlLines = undefined;
 
     // fires a state changed event to the callback
     function fireStateChanged(state) {
@@ -287,6 +290,8 @@ SSI.Universe = function(options, container) {
                 universe.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
                 
                 universe.addClosestGroundObjectTracingLine(spaceObject);
+                // Have to do the below on draw for the control line since it creates a new line every draw
+                // universe.showControlLineForId(spaceObject.showControlLine, spaceObject.id);
             });
         });
     };
@@ -504,6 +509,15 @@ SSI.Universe = function(options, container) {
                     core.removeObject(this.id);
                     if(line != undefined) {
                         core.draw(this.id, line, false);
+                        
+                        //TODO: this is not perfect.  It does not allow the vehicle to override the global setting as the other settings do
+                        if(enableControlLines != undefined) {
+                            universe.showControlLineForId(enableControlLines, object.id);
+                        }
+                        else {
+                            universe.showControlLineForId(object.showControlLine, object.id);                            
+                        }
+
                     }
                 }
             });
@@ -590,6 +604,7 @@ SSI.Universe = function(options, container) {
     }
     
     this.showAllControlLines = function(isEnabled) {
+        enableControlLines = isEnabled;
         var graphicsObjects = controller.getGraphicsObjects();
 
         for(var i in graphicsObjects) {
@@ -666,7 +681,7 @@ SSI.Universe = function(options, container) {
     }
 
     this.setup = function() {
-        this.removeAll();
+        this.removeAllExceptEarthAndMoon();
         this.addSimStateObject();
     }
 
