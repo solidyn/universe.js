@@ -614,8 +614,23 @@ SSI.Universe = function(options, container) {
 
     // Removes all elements from the universe
     this.removeAll = function() {
-        core.removeAllObjects();
-        controller.removeAllGraphicsObjects();
+        this.removeAllExceptEarthAndMoon();
+        //controller.removeAllGraphicsObjects();
+    }
+    
+    this.removeAllExceptEarthAndMoon = function() {
+        var graphicsObjects = controller.getGraphicsObjects();
+        
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id != "earth" && graphicsObjects[i].id != "moon") {
+                core.removeObject(graphicsObjects[i].id);
+                controller.removeGraphicsObject(graphicsObjects[i].id);
+            }
+        }
+    }
+    
+    this.getGraphicsObjects = function() {
+        return controller.getGraphicsObjects();
     }
 
     this.updateObject = function(id, propertyName, propertyValue) {
