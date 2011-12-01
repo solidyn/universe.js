@@ -353,7 +353,18 @@ SSI.Universe = function(options, container) {
         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
         if(objectLocation != undefined) {
             // Create a SensorPattern
-            objectGeometry = new SensorPatternGeometry(3500);
+            var sensor_size = 1;
+            objectGeometry = new SensorPatternGeometry(sensor_size);
+
+            // TODO: this code is pretty bad;  the beam size will stay the same based on initial distance
+            // from the earth.  so it's really wrong
+            var initial_pos = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+            var base_length = initial_pos.length() - earthSphereRadius;
+            var cone_width_scale = 0.15;
+
+            //17431
+            
+            // if the vehicle starts too close to the earth, make it a nominal length instead (i.e. a Molniya orbit)
 
             objectLibrary.getObjectById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
@@ -375,12 +386,17 @@ SSI.Universe = function(options, container) {
                             // Move the tip of the sensor projection to the vehicle's location
                             sensorProjection.position.copy(vector);
 
-                           // the sensor projections are along the z axis and a length of 1, so scaling it
-                           // arbitarily along z will extend the length
-                           sensorProjection.scale.z = vector.length() - earthSphereRadius + 200;
+                            // the sensor projections are along the z axis and a length of 1, so scaling it
+                            // arbitarily along z will extend the length
+                            sensorProjection.scale.z = vector.length() - earthSphereRadius + 200;
+                            
+                            // sensor_size is the projection dimension at the earth's surface (or at least the end of the cone)
+                            // the projection length of the vector is 1
+                            //sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * (1 / base_length) ;
+                            sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * cone_width_scale ;
+                            //logger.debug("vec length:" + vector.length() +"    base_length:" + base_length + "   sensor scale: " + sensorProjection.scale.x);
 
                             var sensor_boresite = new THREE.Vector3(0,0,0);
-
                             sensorProjection.lookAt(sensor_boresite);
 
 
