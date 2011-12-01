@@ -32,7 +32,7 @@ SSI.Core3D = function(container) {
     var distance = 50000, distanceTarget = 50000;
     var PI_HALF = Math.PI / 2;
 
-    var maxZoom = 150000;
+    var maxZoom = 500000;
     var minZoom = 10000;
 
     var drawnObjects = new Array();
@@ -48,7 +48,7 @@ SSI.Core3D = function(container) {
         // Field of View (View Angle)
         // Ratio between width and height, has to match aspect of CanvasRenderer
         // Near, Far
-        camera = new THREE.PerspectiveCamera(30, w / h, 1, 315000);
+        camera = new THREE.PerspectiveCamera(30, w / h, 1, 1000000);
 
         camera.position.z = distance;
         vector = new THREE.Vector3();
