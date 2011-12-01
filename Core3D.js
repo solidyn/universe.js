@@ -249,18 +249,17 @@ SSI.Core3D = function(container) {
         }
     }
 	
-    this.showObject = function(id) {
+    this.showObject = function(id, isShown) {
         // if object exists in drawnObjects then add back to scene
         if (drawnObjects[id] != undefined) {
-            logger.debug("adding shape back to scene for id " + id);
-            scene.add(drawnObjects[id].shape);
-        }
-    }
-	
-    this.hideObject = function(id) {
-        if (drawnObjects[id] != undefined) {
-            logger.debug("removing object from scene with id: " + id);
-            scene.remove(drawnObjects[id].shape);
+            if(isShown) {
+                logger.debug("adding shape back to scene for id " + id);
+                scene.add(drawnObjects[id].shape);
+            }
+            else {
+                logger.debug("removing object from scene with id: " + id);
+                scene.remove(drawnObjects[id].shape);
+            }
         }
     }
     

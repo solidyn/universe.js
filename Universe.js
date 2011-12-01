@@ -481,7 +481,7 @@ SSI.Universe = function(options, container) {
 
             var line = undefined;
             controller.addGraphicsObject({
-                id : object.id + "_connection",
+                id : object.id + "_controlLine",
                 objectName : object.objectName,
                 update : function(elapsedTime) {
                     
@@ -538,41 +538,69 @@ SSI.Universe = function(options, container) {
         
         return closestObject;
     }
+    
+    this.showAllOrbitLines = function(isEnabled) {
+        var graphicsObjects = controller.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf("_propogation") != -1){
+                core.showObject(graphicsObjects[i].id, isEnabled);
+            }
+        }
+    }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
         logger.debug("in show orbit lines " + isEnabled);
-        if (!isEnabled) {
-            core.hideObject(id + "_propogation");
-        } else {
-            core.showObject(id + "_propogation");
-        }
+        core.showObject(id + "_propogation", isEnabled);
     }
 
     this.showModelForId = function(isEnabled, id) {
         logger.debug("show/hiding vehicle model " + isEnabled);
-        if (!isEnabled) {
-            core.hideObject(id);
-        } else {
-            core.showObject(id);
+        core.showObject(id, isEnabled);
+    }
+    
+    this.showAllGroundTracks = function(isEnabled) {
+        var graphicsObjects = controller.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf("_groundPoint") != -1){
+                core.showObject(graphicsObjects[i].id, isEnabled);
+            }
         }
     }
 
     this.showGroundTrackForId = function(isEnabled, id) {
         logger.debug("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
-        if (!isEnabled) {
-            core.hideObject(id + "_groundPoint");
-        } else {
-            core.showObject(id + "_groundPoint");
+        core.showObject(id + "_groundPoint", isEnabled);
+    }
+    
+    this.showAllSensorProjections = function(isEnabled) {
+        var graphicsObjects = controller.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf("_sensorProjection") != -1){
+                core.showObject(graphicsObjects[i].id, isEnabled);
+            }
         }
     }
 
     this.showSensorProjectionForId = function(isEnabled, id) {
         //console.log("show/hiding sensorProjection");
-        if (!isEnabled) {
-            core.hideObject(id + "_sensorProjection");
-        } else {
-            core.showObject(id + "_sensorProjection");
+        core.showObject(id + "_sensorProjection", isEnabled);
+    }
+    
+    this.showAllControlLines = function(isEnabled) {
+        var graphicsObjects = controller.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf("_controlLine") != -1){
+                core.showObject(graphicsObjects[i].id, isEnabled);
+            }
         }
+    }
+    
+    this.showControlLineForId = function(isEnabled, id) {
+        core.showObject(id + "_controlLine", isEnabled);
     }
 
     this.removeObject = function(id) {
