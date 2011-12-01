@@ -351,17 +351,25 @@ var CoordinateConversionTools = {
      */
     convertECIToKeplerian: function(eci)
     {
-        //reference Vallado 120
         var kepler = new KeplerianCoordinates();
+
+        /*
+        if ( eci == null || typeof eci.getX === 'undefined') {
+            console.log("convertECIToKeplerian received bogus eci object" + eci);
+            return null;
+        }
+        */
+        //reference Vallado 120
+
         var r = new Array(); //Double[3];
-        r[0] = eci.getX();
-        r[1] = eci.getY();
-        r[2] = eci.getZ();
+        r[0] = eci.x;
+        r[1] = eci.y;
+        r[2] = eci.z;
         
         var v = new Array(); //Double[3];
-        v[0] = eci.getVX();
-        v[1] = eci.getVY();
-        v[2] = eci.getVZ();
+        v[0] = eci.vx;
+        v[1] = eci.vy;
+        v[2] = eci.vz;
 
         var h = MathTools.cross(r, v); //Double[3]
         var hmag = MathTools.magnitude(h); //double
