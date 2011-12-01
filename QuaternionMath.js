@@ -25,7 +25,7 @@ var QuaternionMath = {
             var y1 = q1.getY(); //double
             var z1 = q1.getZ(); //double
             var w2 = q2.getW(); //double
-            v x2 = q2.getX(); //double
+            var x2 = q2.getX(); //double
             var y2 = q2.getY(); //double
             var z2 = q2.getZ(); //double
 

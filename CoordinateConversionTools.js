@@ -476,7 +476,7 @@ var CoordinateConversionTools = {
         var netRotationMatrix = new Array(3);
 
         var i = 0;
-        for(int i = 0; i < 3; i++) //create as Double[3][3];
+        for(var i = 0; i < 3; i++) //create as Double[3][3];
         {
             netRotationMatrix[i] = new Array(3);
         }

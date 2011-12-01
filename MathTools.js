@@ -290,7 +290,7 @@ var MathTools = {
 
         for (i = 0; i < N; i++)
         {
-            for (int j = 0; j < N; j++)
+            for (j = 0; j < N; j++)
             {
                 if (i != j)
                 {
@@ -324,9 +324,9 @@ var MathTools = {
            result[i] = new Array(N);
         }
 
-        for (int i = 0; i < N; i++)
+        for (i = 0; i < N; i++)
         {
-            for (int j = 0; j < N; j++)
+            for (j = 0; j < N; j++)
             {
                 x[i][j] = 0.0;
             }
@@ -354,9 +354,9 @@ var MathTools = {
            result[i] = new Array(N);
         }
 
-        for (int i = 0; i < M; i++)
+        for (i = 0; i < M; i++)
         {
-            for (int j = 0; j < N; j++)
+            for ( j = 0; j < N; j++)
             {
                 x[i][j] = 0.0;
             }
