@@ -210,7 +210,7 @@
         {
             return eci;
         }
-        else if(kep.getEccentricity() <= 0.05) {
+        else if(kep.getEccentricity() <= 0.1) {
             //console.log('keping it up');
             var MA = kep.getMeanAnomaly()+kep.getMeanMotion()*elapsedTime; //update the mean anomaly (deg)
             var w = MathTools.toRadians(kep.getArgOfPerigee());
