@@ -27,6 +27,8 @@ SSI.Universe = function(options, container) {
 
     var earthCenterPoint = new THREE.Vector3(0,0,0);
 
+    // OBJECT LIBRARY DEFAULTS
+    
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
     objectLibrary.setObject("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
@@ -60,6 +62,10 @@ SSI.Universe = function(options, container) {
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableControlLines = undefined;
 
+
+
+    // PRIVATE METHODS
+    
     // fires a state changed event to the callback
     function fireStateChanged(state) {
         if(stateChangedCallback != null) {
@@ -67,7 +73,7 @@ SSI.Universe = function(options, container) {
         }
     }
 
-    this.addSimStateObject = function() {
+    function addSimStateObject() {
         controller.addGraphicsObject({
             id : "simState",
             objectName : "simState",
@@ -80,7 +86,7 @@ SSI.Universe = function(options, container) {
     }
 
 
-    this.updateState = function() {
+    function updateState() {
         //create our state object and notify our listener
         var universe = this;
         var state = {};
@@ -90,9 +96,12 @@ SSI.Universe = function(options, container) {
 
         // call update() again in a certain number of milliseconds
         updateStateTimeout = setTimeout(function() {
-            universe.updateState();
+            updateState();
         }, timeBetweenStateUpdatesMs);
     }
+    
+    // PROTECTED METHODS (API METHODS)
+    
     // play the universe
     this.play = function(options) {
         currentUniverseTime = new Date(options.startTime);
@@ -101,7 +110,7 @@ SSI.Universe = function(options, container) {
         logger.debug("Universe.play() called with time [" + currentUniverseTime + "], speed: [" + playbackSpeed + "]");
 
         // update state our first time
-        this.updateState();
+        updateState();
 
         controller.play();
     };
@@ -229,7 +238,7 @@ SSI.Universe = function(options, container) {
             }
         });
     }
-    // adds a model to the universe with an ID and url to retrieve
+    // adds a geometry to the universe with an ID and url to retrieve
     // the model's geometry
     this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
         logger.debug("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "]");
@@ -410,6 +419,7 @@ SSI.Universe = function(options, container) {
         });
     }
 
+    // TODO: This doesn't really belong in the universe.  In order to be part of Universe it needs to be much more generic
     // TODO: This really needs to be refactored into the Sensor code, but that seems kind
     // of disfunctional right now....so I've got this instead
     this.addSensorProjection = function(object) {
@@ -477,6 +487,7 @@ SSI.Universe = function(options, container) {
         }
     }
     
+    // TODO: Doesn't belong in Universe or needs to be far more generic.
     this.addClosestGroundObjectTracingLine = function(object) {
         var objectGeometry, objectMaterial;
         
@@ -588,6 +599,7 @@ SSI.Universe = function(options, container) {
         core.showObject(id + "_groundPoint", isEnabled);
     }
     
+    // TODO: if sensor projections aren't part of universe, this shouldn't be either
     this.showAllSensorProjections = function(isEnabled) {
         var graphicsObjects = controller.getGraphicsObjects();
 
@@ -603,6 +615,7 @@ SSI.Universe = function(options, container) {
         core.showObject(id + "_sensorProjection", isEnabled);
     }
     
+    // TODO: move out of universe with control line code
     this.showAllControlLines = function(isEnabled) {
         enableControlLines = isEnabled;
         var graphicsObjects = controller.getGraphicsObjects();
@@ -640,7 +653,8 @@ SSI.Universe = function(options, container) {
             logger.debug(id + " not added to the core")
         }
     }
-
+    
+    // TODO: Consider whether this should be exposed via the API
     // Compare these two websites for details on why we have to do this:
     // http://celestrak.com/columns/v02n01/
     // http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
@@ -655,6 +669,7 @@ SSI.Universe = function(options, container) {
         };
     }
 
+    // TODO: This really should remove all and the user should call the method they really want
     // Removes all elements from the universe
     this.removeAll = function() {
         this.removeAllExceptEarthAndMoon();
@@ -677,12 +692,13 @@ SSI.Universe = function(options, container) {
     }
 
     this.updateObject = function(id, propertyName, propertyValue) {
-
+        // TODO: Implement or delete
     }
 
+    // TODO: This should be generic and not specific to the earth setup.  Should add a specific method for setupEarthAndMoon
     this.setup = function() {
         this.removeAllExceptEarthAndMoon();
-        this.addSimStateObject();
+        addSimStateObject();
     }
 
     this.setup();
