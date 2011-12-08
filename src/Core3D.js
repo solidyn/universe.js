@@ -58,7 +58,7 @@ SSI.Core3D = function(container) {
         scene = new THREE.Scene();
 
         addEventListeners();
-
+		
         animate();
     }
 
