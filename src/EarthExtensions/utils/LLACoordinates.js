@@ -1,3 +1,4 @@
+
 function LLACoordinates(lat, lon, alt) {
 
     // define variables as <var name>: <value>

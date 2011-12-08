@@ -1,3 +1,4 @@
+
 function Quaternion() {
 
     this.w = xVal ? xVal : 0.0,

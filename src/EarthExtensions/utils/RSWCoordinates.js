@@ -1,3 +1,4 @@
+
 function RSWCoordinates() {
  
     // define variables as <var name>: <value>
