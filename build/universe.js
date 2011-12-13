@@ -641,7 +641,7 @@ SSI.EarthExtensions = function(universe) {
             universe.getObjectFromLibraryById("default_material", function(retrieved_material) {
                 material = retrieved_material;
 
-                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( 0, Math.PI, 0 ) ));
+                //objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( 0, 0, 0 ) ));
                 var objectModel = new THREE.Mesh(objectGeometry, material);
 
                 universe.addObject({
@@ -908,12 +908,15 @@ SSI.EarthExtensions = function(universe) {
     }
     
     function findClosestGroundObject(location) {
-        var location_vector = new THREE.Vector3(location.x, location.y, location.z);
+		if(location != undefined) {
+			var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
-        // move the vector to the surface of the earth
-        location_vector.multiplyScalar(earthSphereRadius / location_vector.length())
-        
-        return findClosestObject(location_vector);
+	        // move the vector to the surface of the earth
+	        location_vector.multiplyScalar(earthSphereRadius / location_vector.length())
+
+	        return findClosestObject(location_vector);
+		}
+        return undefined;
     }
     
     function findClosestObject(location_vector) {
