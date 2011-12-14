@@ -489,7 +489,7 @@ SSI.EarthExtensions = function(universe) {
 	// have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableControlLines = undefined;
 
-    universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(300, 20, 10));
+    universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(150, 20, 10));
     universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0x00CC00}));
 
     universe.setObjectInLibrary("default_ground_track_material", new THREE.MeshBasicMaterial({
@@ -908,6 +908,8 @@ SSI.EarthExtensions = function(universe) {
     }
     
     function findClosestGroundObject(location) {
+		// TODO: this undefined check may be covering up a bug where not everything gets removed in the 
+		// removeAllExceptEarthAndMoon method
 		if(location != undefined) {
 			var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
