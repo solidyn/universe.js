@@ -10,11 +10,8 @@ SSI.ObjectLibrary = function() {
     // url -> url used to retrieve the json of the model
     // material -> material to apply to the model's geometry
     this.addGeometryObjectFromUrl = function(id, url, callback) {
-        logger.debug("Adding mesh object to library; id: [" + id + "] url: [" + 
-            url + "]");
         // if we have already loaded an onject with this id, return
         if (objects[id] != undefined) {
-            logger.debug("Object with id [" + id + "] already exists so not adding");
             callback();
             return;
         }
@@ -44,7 +41,6 @@ SSI.ObjectLibrary = function() {
 
     // gets an object from the library based on the given id
     this.getObjectById = function(id, callback) {
-        logger.debug("Retrieving object with id [" + id + "] from library");
         //console.log("number of elements: " + numberOfElements);
         var object = objects[id];
         var objectLib = this;

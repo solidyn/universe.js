@@ -224,7 +224,6 @@ SSI.Core3D = function(container) {
     }
 
     function resize() {
-        logger.debug('resize');
         w = container.offsetWidth || window.innerWidth;
         h = container.offsetHeight || window.innerHeight;
         camera.aspect = w / h;
@@ -241,7 +240,6 @@ SSI.Core3D = function(container) {
     // Priviledged Methods
     this.draw = function(id, shape, scale) {
         if(drawnObjects[id] == undefined) {
-            logger.debug(" adding and drawing: " + id);
             scene.add(shape);
             drawnObjects[id] = {
                 shape : shape,
@@ -254,11 +252,9 @@ SSI.Core3D = function(container) {
         // if object exists in drawnObjects then add back to scene
         if (drawnObjects[id] != undefined) {
             if(isShown) {
-                logger.debug("adding shape back to scene for id " + id);
                 scene.add(drawnObjects[id].shape);
             }
             else {
-                logger.debug("removing object from scene with id: " + id);
                 scene.remove(drawnObjects[id].shape);
             }
         }
@@ -289,7 +285,6 @@ SSI.Core3D = function(container) {
         // This method converts a position into the rotation coordinate system used to move the camera
         // The target.x parameter is the rotation angle from the positive Z axis
         // target.y is the rotation angle away from the z-x plane
-        logger.debug("Moving camera to: " + JSON.stringify(position_vector));
 	    
         // sets the distance from the center of the scene the camera will end up
         distanceTarget = position_vector.length();
@@ -327,7 +322,6 @@ SSI.Core3D = function(container) {
         target.y = isNaN(y) ? 0 : y;
         target.x = isNaN(x) ? 0 : x;
 	    
-        logger.debug("target: " + JSON.stringify(target));
     }
 	
     init();

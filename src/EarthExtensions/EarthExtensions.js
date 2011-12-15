@@ -89,7 +89,7 @@ SSI.EarthExtensions = function(universe) {
     this.addMoon = function(moonOptions) {
         var moonSphereSegments = 40, moonSphereRings = 30;
         var moonSphereRadius = 1737.1;
-        var initialStateVector = {x: -360680.9359251, y: -42332.8629642, z: -30945.6526294, x_dot: 0.1634206, y_dot: -1.0634127, z_dot:  0.0412856, epoch: moonOptions.epoch};
+        var initialStateVector = {x: -360680.9359251, y: -42332.8629642, z: -30945.6526294, x_dot: 0.1634206, y_dot: -1.0634127, z_dot:  0.0412856, epoch: new Date(universe.getCurrentUniverseTime())};
 
         // Create the sphere
         var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
@@ -367,7 +367,6 @@ SSI.EarthExtensions = function(universe) {
                             // the projection length of the vector is 1
                             //sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * (1 / base_length) ;
                             sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * cone_width_scale ;
-                            //logger.debug("vec length:" + vector.length() +"    base_length:" + base_length + "   sensor scale: " + sensorProjection.scale.x);
 
                             var sensor_boresite = new THREE.Vector3(0,0,0);
                             sensorProjection.lookAt(sensor_boresite);
@@ -475,12 +474,10 @@ SSI.EarthExtensions = function(universe) {
     }
 
     this.showOrbitLineForObject = function(isEnabled, id) {
-        logger.debug("in show orbit lines " + isEnabled);
         universe.showObject(id + "_propogation", isEnabled);
     }
 
     this.showModelForId = function(isEnabled, id) {
-        logger.debug("show/hiding vehicle model " + isEnabled);
         universe.showObject(id, isEnabled);
     }
     
@@ -495,7 +492,6 @@ SSI.EarthExtensions = function(universe) {
     }
 
     this.showGroundTrackForId = function(isEnabled, id) {
-        logger.debug("show/hiding groundTrack, isEnabled: " + isEnabled + " id: " + id);
         universe.showObject(id + "_groundPoint", isEnabled);
     }
     

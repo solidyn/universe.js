@@ -2,7 +2,7 @@
 var SSI = SSI || {};
 
 SSI.Universe = function(options, container) {
-    var controller = new SSI.UniverseController({});
+    var controller = new SSI.UniverseController(options);
     var core = new SSI.Core3D(container);
     var objectLibrary = new SSI.ObjectLibrary();
 
@@ -43,7 +43,9 @@ SSI.Universe = function(options, container) {
             id : "simState",
             objectName : "simState",
             update : function(elapsedTime) {
-                currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
+				if(elapsedTime != null) {
+					currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
+				}
             },
             draw : function() {
             }
@@ -69,10 +71,14 @@ SSI.Universe = function(options, container) {
     
     // play the universe
     this.play = function(options) {
-        currentUniverseTime = new Date(options.startTime);
-        playbackSpeed = options.playbackSpeed;
+		if(options.startTime != undefined) {
+			currentUniverseTime = new Date(options.startTime);
+		}
+		if(options.playbackSpeed != undefined) {
+			playbackSpeed = options.playbackSpeed;
+		}
+        
         stateChangedCallback = options.stateChangedCallback;
-        logger.debug("Universe.play() called with time [" + currentUniverseTime + "], speed: [" + playbackSpeed + "]");
 
         // update state our first time
         updateState();
@@ -101,7 +107,6 @@ SSI.Universe = function(options, container) {
     // adds a geometry to the universe with an ID and url to retrieve
     // the model's geometry
     this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
-        logger.debug("Adding mesh model to universe; id: [" + modelId + "] url: [" + modelUrl + "]");
         if (modelId != undefined){
             objectLibrary.addGeometryObjectFromUrl(modelId, modelUrl, callback);
         } else {
@@ -157,7 +162,7 @@ SSI.Universe = function(options, container) {
             core.moveCameraTo(vector);
         }
         else {
-            logger.debug(id + " not added to the core")
+			// Object is not added to the core so not doing anything
         }
     }
 
