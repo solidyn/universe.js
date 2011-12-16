@@ -1,0 +1,305 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>     @namespace Solidyn Solutions Inc. Namespace.
+<span class='line'>  3</span> */</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">SSI</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">SSI</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  5</span> 
+<span class='line'>  6</span> </span><span class="COMM">/** 
+<span class='line'>  7</span> 	A simple Universe for drawing 3D modeling and simulation using WebGL
+<span class='line'>  8</span> 	@constructor
+<span class='line'>  9</span> 	@param {Object} options - currentUniverseTime, refreshRate
+<span class='line'> 10</span> 	@param {DOMElement} container - the container where the Universe will be drawn
+<span class='line'> 11</span>  */</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="NAME">SSI.Universe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">container</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">controller</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">SSI.UniverseController</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">core</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">SSI.Core3D</span><span class="PUNC">(</span><span class="NAME">container</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">objectLibrary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">SSI.ObjectLibrary</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> 
+<span class='line'> 17</span> </span><span class="WHIT">    </span><span class="COMM">// options</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">currentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.currentUniverseTime</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">playbackSpeed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> 
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 23</span> 		function to call when we have a new state object
+<span class='line'> 24</span> 		@private
+<span class='line'> 25</span> 	*/</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">stateChangedCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> 
+<span class='line'> 29</span> </span><span class="WHIT">    </span><span class="COMM">// milliseconds between updating our state object that we broadcast</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">    </span><span class="COMM">// to any listeners</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">timeBetweenStateUpdatesMs</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1000</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> 
+<span class='line'> 33</span> </span><span class="WHIT">    </span><span class="COMM">// timeout for updating state</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">updateStateTimeout</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 35</span> 
+<span class='line'> 36</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">universe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 37</span> 
+<span class='line'> 38</span> </span><span class="WHIT">    </span><span class="COMM">// OBJECT LIBRARY DEFAULTS</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">    
+<span class='line'> 40</span>     </span><span class="NAME">objectLibrary.setObject</span><span class="PUNC">(</span><span class="STRN">"default_geometry"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">THREE.Geometry</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="NAME">objectLibrary.setObject</span><span class="PUNC">(</span><span class="STRN">"default_material"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">THREE.MeshFaceMaterial</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 42</span> 
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="COMM">// PRIVATE METHODS</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">    
+<span class='line'> 45</span>     </span><span class="COMM">/**
+<span class='line'> 46</span> 		fires a state changed event to the callback
+<span class='line'> 47</span> 		@private
+<span class='line'> 48</span> 	*/</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">fireStateChanged</span><span class="PUNC">(</span><span class="NAME">state</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">stateChangedCallback</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">            </span><span class="NAME">stateChangedCallback</span><span class="PUNC">(</span><span class="NAME">state</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 54</span> 
+<span class='line'> 55</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 56</span> 		adds an object that updates the currentUniverseTime using the playback speed
+<span class='line'> 57</span> 		@private
+<span class='line'> 58</span> 	*/</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addSimStateObject</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">        </span><span class="NAME">controller.addGraphicsObject</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">            </span><span class="NAME">id</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"simState"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">            </span><span class="NAME">objectName</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"simState"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">            </span><span class="NAME">update</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">elapsedTime</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">elapsedTime</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">					</span><span class="NAME">currentUniverseTime.setTime</span><span class="PUNC">(</span><span class="NAME">currentUniverseTime.getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">playbackSpeed</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">elapsedTime</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">            </span><span class="NAME">draw</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 72</span> 
+<span class='line'> 73</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'> 74</span> 		gets called at our state update interfal and fires the state change callback
+<span class='line'> 75</span> 		@private
+<span class='line'> 76</span> 	*/</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">updateState</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">        </span><span class="COMM">//create our state object and notify our listener</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">universe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">state</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">        </span><span class="NAME">state.currentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="NAME">currentUniverseTime</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> 
+<span class='line'> 83</span> </span><span class="WHIT">        </span><span class="NAME">fireStateChanged</span><span class="PUNC">(</span><span class="NAME">state</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 84</span> 
+<span class='line'> 85</span> </span><span class="WHIT">        </span><span class="COMM">// call update() again in a certain number of milliseconds</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">        </span><span class="NAME">updateStateTimeout</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">setTimeout</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">            </span><span class="NAME">updateState</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">timeBetweenStateUpdatesMs</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">    
+<span class='line'> 91</span>     </span><span class="COMM">// PROTECTED METHODS (API METHODS)</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">    
+<span class='line'> 93</span> 	</span><span class="COMM">/**
+<span class='line'> 94</span> 		Start playback for the universe
+<span class='line'> 95</span> 		@public
+<span class='line'> 96</span> 	    @param {string} options - playbackSpeed, startTime, stateChangedCallback
+<span class='line'> 97</span> 	 */</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">    </span><span class="NAME">this.play</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">options</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">options.startTime</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">			</span><span class="NAME">currentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="NAME">options.startTime</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">options.playbackSpeed</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">			</span><span class="NAME">playbackSpeed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.playbackSpeed</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">        
+<span class='line'>106</span> 		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">options</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">			</span><span class="NAME">stateChangedCallback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">options.stateChangedCallback</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">        
+<span class='line'>110</span>         </span><span class="COMM">// update state our first time</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">        </span><span class="NAME">updateState</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> 
+<span class='line'>113</span> </span><span class="WHIT">        </span><span class="NAME">controller.play</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> 
+<span class='line'>116</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>117</span> 		Pause playback for the universe
+<span class='line'>118</span> 		@public
+<span class='line'>119</span> 	*/</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">    </span><span class="NAME">this.pause</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">        </span><span class="NAME">clearTimeout</span><span class="PUNC">(</span><span class="NAME">updateStateTimeout</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">        </span><span class="NAME">controller.pause</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> 
+<span class='line'>125</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>126</span> 		Set the playback speed for the Universe
+<span class='line'>127</span> 		@public
+<span class='line'>128</span> 	    @param {Double} speed
+<span class='line'>129</span> 	 */</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="NAME">this.setPlaybackSpeed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">speed</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">        </span><span class="NAME">playbackSpeed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">speed</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>133</span> 
+<span class='line'>134</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>135</span> 		Set the current time of the Universe
+<span class='line'>136</span> 		@public
+<span class='line'>137</span> 	    @param {Date} newUniverseTime
+<span class='line'>138</span> 	 */</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">    </span><span class="NAME">this.setCurrentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">newUniverseTime</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">        </span><span class="NAME">currentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="NAME">newUniverseTime</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">        </span><span class="NAME">controller.updateOnce</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>143</span> 
+<span class='line'>144</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>145</span> 		Get the current time of the Universe
+<span class='line'>146</span> 		@public
+<span class='line'>147</span> 	*/</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">    </span><span class="NAME">this.getCurrentUniverseTime</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">currentUniverseTime</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>151</span> 
+<span class='line'>152</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>153</span>     	Add a geometry to the universe with an ID and url to retrieve the model's geometry
+<span class='line'>154</span> 		@public
+<span class='line'>155</span> 		@param {string} modelId
+<span class='line'>156</span> 		@param {string} modelUrl - URL for the THREE.js format geometry model
+<span class='line'>157</span> 		@param {function} callback - callback function that gets called when the geometry is done loading
+<span class='line'>158</span> 	*/</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">    </span><span class="NAME">this.addJsonGeometryModel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">modelId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">modelUrl</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">modelId</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">            </span><span class="NAME">objectLibrary.addGeometryObjectFromUrl</span><span class="PUNC">(</span><span class="NAME">modelId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">modelUrl</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">            </span><span class="NAME">callback</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> 
+<span class='line'>167</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>168</span>     	Add an object to the universe
+<span class='line'>169</span> 		@public
+<span class='line'>170</span> 		@param {Object} object 
+<span class='line'>171</span> 			- id: identifier for the object to be referenced later
+<span class='line'>172</span> 			- objectName: a name for the object if different than id
+<span class='line'>173</span> 			- update: a function(elapsedTime) that gets called each time the Universe time changes
+<span class='line'>174</span> 			- draw: a function that should call Universe.draw with the object's model
+<span class='line'>175</span> 	*/</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">	</span><span class="NAME">this.addObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">object</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">		</span><span class="NAME">controller.addGraphicsObject</span><span class="PUNC">(</span><span class="NAME">object</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">	
+<span class='line'>180</span> 	</span><span class="COMM">/**
+<span class='line'>181</span>     	Draws an object in the Universe
+<span class='line'>182</span> 		@public
+<span class='line'>183</span> 		@param {string} id - identifier for the object
+<span class='line'>184</span> 		@param {THREE.Mesh} mesh - THREE.js mesh for the object
+<span class='line'>185</span> 		@param {boolean} isScale - specifies whether the object should be scaled to always be the same as the camera moves
+<span class='line'>186</span> 	*/</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">	</span><span class="NAME">this.draw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mesh</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isScale</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">		</span><span class="NAME">core.draw</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">mesh</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isScale</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">	
+<span class='line'>191</span> 	</span><span class="COMM">/**
+<span class='line'>192</span>     	Removes an object from the Universe
+<span class='line'>193</span> 		@public
+<span class='line'>194</span> 		@param {string} id - identifier for the object
+<span class='line'>195</span> 	*/</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">	</span><span class="NAME">this.unDraw</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="WHIT">		</span><span class="NAME">core.removeObject</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">	
+<span class='line'>200</span> 	</span><span class="COMM">/**
+<span class='line'>201</span>     	Add an object to the Universe.js object pipeline.  
+<span class='line'>202</span> 		This is useful for storing things that take up GPU memory like geometries so you can reuse them.
+<span class='line'>203</span> 		@public
+<span class='line'>204</span> 		@param {string} id - identifier for the object
+<span class='line'>205</span> 		@param {Object} object - any object you want to store for later retrieval
+<span class='line'>206</span> 	*/</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">	</span><span class="NAME">this.setObjectInLibrary</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">object</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">		</span><span class="NAME">objectLibrary.setObject</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">object</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">	
+<span class='line'>211</span> 	</span><span class="COMM">/**
+<span class='line'>212</span>     	Retrieves an object from the Universe.js object pipeline
+<span class='line'>213</span> 		@public
+<span class='line'>214</span> 		@param {string} id - identifier for the object
+<span class='line'>215</span> 		@param {function} callback - method to be called with the retrieved object
+<span class='line'>216</span> 	*/</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">	</span><span class="NAME">this.getObjectFromLibraryById</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">		</span><span class="NAME">objectLibrary.getObjectById</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">	
+<span class='line'>221</span> 	</span><span class="COMM">/**
+<span class='line'>222</span> 		Remove an object completely from the Universe
+<span class='line'>223</span> 		@public
+<span class='line'>224</span> 		@param {string} id - identifier for the object
+<span class='line'>225</span> 	*/</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">    </span><span class="NAME">this.removeObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">        </span><span class="NAME">controller.removeGraphicsObject</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">        </span><span class="NAME">core.removeObject</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>230</span> 
+<span class='line'>231</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>232</span> 		Snap the Universe's camera to be directly behind an object
+<span class='line'>233</span> 		@public
+<span class='line'>234</span> 		@param {string} id - identifier for the object
+<span class='line'>235</span> 	*/</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">    </span><span class="NAME">this.snapToObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">        </span><span class="COMM">// get the object's position and copy it into a vector</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">core.getObjectPosition</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">position</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">undefined</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vector</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">THREE.Vector3</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">            </span><span class="NAME">vector.copy</span><span class="PUNC">(</span><span class="NAME">position</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">    
+<span class='line'>243</span>             </span><span class="COMM">// move the point the camera will be at out a bit so we are behind the object</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">            </span><span class="NAME">vector.multiplyScalar</span><span class="PUNC">(</span><span class="NUMB">1.4</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">    
+<span class='line'>246</span>             </span><span class="COMM">// tell the core to move to the vector</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">            </span><span class="NAME">core.moveCameraTo</span><span class="PUNC">(</span><span class="NAME">vector</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">        </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">			</span><span class="COMM">// Object is not added to the core so not doing anything</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>253</span> 
+<span class='line'>254</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>255</span> 		Remove all objects from the Universe
+<span class='line'>256</span> 		@public
+<span class='line'>257</span> 	*/</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">    </span><span class="NAME">this.removeAll</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">        </span><span class="NAME">core.removeAllObjects</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">        </span><span class="NAME">controller.removeAllGraphicsObjects</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">    
+<span class='line'>263</span> 	</span><span class="COMM">/**
+<span class='line'>264</span> 		Get all of the objects currently in the Universe
+<span class='line'>265</span> 		@public
+<span class='line'>266</span> 	*/</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">    </span><span class="NAME">this.getGraphicsObjects</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">controller.getGraphicsObjects</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">	
+<span class='line'>271</span> 	</span><span class="COMM">/**
+<span class='line'>272</span> 		@ignore
+<span class='line'>273</span> 	*/</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">    </span><span class="NAME">this.updateObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">propertyName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">propertyValue</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">        </span><span class="COMM">// TODO: Implement or delete</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>277</span> 
+<span class='line'>278</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>279</span> 		Toggle whether an object is visible in the Universe
+<span class='line'>280</span> 		@public
+<span class='line'>281</span> 		@param {string} id - identifier for the object
+<span class='line'>282</span> 		@param {boolean} isEnabled - whether the object is visible or not
+<span class='line'>283</span> 	*/</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">	</span><span class="NAME">this.showObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isEnabled</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">		</span><span class="NAME">core.showObject</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">isEnabled</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>287</span> 
+<span class='line'>288</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>289</span> 		Basic setup method, needs to be called after all objects are removed from the Universe
+<span class='line'>290</span> 		@public
+<span class='line'>291</span> 	*/</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">    </span><span class="NAME">this.setup</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="WHIT">        </span><span class="NAME">addSimStateObject</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>295</span> 
+<span class='line'>296</span> </span><span class="WHIT">    </span><span class="NAME">this.setup</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>298</span> </span></pre></body></html>
