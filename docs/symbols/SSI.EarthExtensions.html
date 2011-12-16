@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - SSI.Universe</title>
+		<title>JsDoc Reference - SSI.EarthExtensions</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -206,7 +206,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class SSI.Universe
+				Class SSI.EarthExtensions
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -217,13 +217,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/src_Universe.js.html">Universe.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/src_EarthExtensions_EarthExtensions.js.html">EarthExtensions.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class SSI.Universe.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class SSI.EarthExtensions.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -236,9 +236,9 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/SSI.Universe.html#constructor">SSI.Universe</a></b>(options, container)
+								<b><a href="../symbols/SSI.EarthExtensions.html#constructor">SSI.EarthExtensions</a></b>(universe)
 							</div>
-							<div class="description">A simple Universe for drawing 3D modeling and simulation using WebGL</div>
+							<div class="description">Extensions for doing Earth-based 3D modeling with Universe.js</div>
 						</td>
 					</tr>
 				</tbody>
@@ -252,7 +252,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class SSI.Universe.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class SSI.EarthExtensions.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -265,153 +265,189 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#addJsonGeometryModel">addJsonGeometryModel</a></b>(modelId, modelUrl, callback)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addClosestGroundObjectTracingLine">addClosestGroundObjectTracingLine</a></b>(object)
 								</div>
-								<div class="description">Add a geometry to the universe with an ID and url to retrieve the model's geometry</div>
+								<div class="description">Add a Tracing Line to the closest ground object for an Object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#addObject">addObject</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addEarth">addEarth</a></b>(earthOptions)
 								</div>
-								<div class="description">Add an object to the universe</div>
+								<div class="description">Add the Earth at the center of the Universe</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#draw">draw</a></b>(id, mesh, isScale)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addGroundObject">addGroundObject</a></b>(groundObject)
 								</div>
-								<div class="description">Draws an object in the Universe</div>
+								<div class="description">Add a Ground Object to the Earth</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#getCurrentUniverseTime">getCurrentUniverseTime</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addGroundTrackPointForObject">addGroundTrackPointForObject</a></b>(object)
 								</div>
-								<div class="description">Get the current time of the Universe</div>
+								<div class="description">Add a Ground Track Point for an Object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#getGraphicsObjects">getGraphicsObjects</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addMoon">addMoon</a></b>(moonOptions)
 								</div>
-								<div class="description">Get all of the objects currently in the Universe</div>
+								<div class="description">Add the Moon to the Universe</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#getObjectFromLibraryById">getObjectFromLibraryById</a></b>(id, callback)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addPropogationLineForObject">addPropogationLineForObject</a></b>(object)
 								</div>
-								<div class="description">Retrieves an object from the Universe.js object pipeline</div>
+								<div class="description">Add a Propagation Line for an Object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#pause">pause</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addSensorProjection">addSensorProjection</a></b>(object)
 								</div>
-								<div class="description">Pause playback for the universe</div>
+								<div class="description">Add a Sensor Projection for an Object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#play">play</a></b>(options)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#addSpaceObject">addSpaceObject</a></b>(spaceObject)
 								</div>
-								<div class="description">Start playback for the universe</div>
+								<div class="description">Add a Space Object to the Universe</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#removeAll">removeAll</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#findClosestGroundObject">findClosestGroundObject</a></b>(location)
 								</div>
-								<div class="description">Remove all objects from the Universe</div>
+								<div class="description">Return the closest Ground Object to a location</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#removeObject">removeObject</a></b>(id)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#findClosestObject">findClosestObject</a></b>(location)
 								</div>
-								<div class="description">Remove an object completely from the Universe</div>
+								<div class="description">Return the closest Object to a location</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#setCurrentUniverseTime">setCurrentUniverseTime</a></b>(newUniverseTime)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#removeAllExceptEarthAndMoon">removeAllExceptEarthAndMoon</a></b>()
 								</div>
-								<div class="description">Set the current time of the Universe</div>
+								<div class="description">Remove all objects from the Universe except the Earth and Moon</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#setObjectInLibrary">setObjectInLibrary</a></b>(id, object)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#setup">setup</a></b>()
 								</div>
-								<div class="description">Add an object to the Universe.js object pipeline.</div>
+								<div class="description">Set up the Universe with the Earth Extensions</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#setPlaybackSpeed">setPlaybackSpeed</a></b>(speed)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showAllControlLines">showAllControlLines</a></b>(isEnabled)
 								</div>
-								<div class="description">Set the playback speed for the Universe</div>
+								<div class="description">Enable or disable display of all control lines</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#setup">setup</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showAllGroundTracks">showAllGroundTracks</a></b>(isEnabled)
 								</div>
-								<div class="description">Basic setup method, needs to be called after all objects are removed from the Universe</div>
+								<div class="description">Enable or disable display of all ground tracks</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#showObject">showObject</a></b>(id, isEnabled)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showAllOrbitLines">showAllOrbitLines</a></b>(isEnabled)
 								</div>
-								<div class="description">Toggle whether an object is visible in the Universe</div>
+								<div class="description">Enable or disable all orbit lines</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#snapToObject">snapToObject</a></b>(id)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showAllSensorProjections">showAllSensorProjections</a></b>(isEnabled)
 								</div>
-								<div class="description">Snap the Universe's camera to be directly behind an object</div>
+								<div class="description">Enable or disable display of all sensor projections</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/SSI.Universe.html#unDraw">unDraw</a></b>(id)
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showControlLineForId">showControlLineForId</a></b>(id, isEnabled)
 								</div>
-								<div class="description">Removes an object from the Universe</div>
+								<div class="description">Enable or disable display of control lines for an object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showGroundTrackForId">showGroundTrackForId</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable display of a ground track for an object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showModelForId">showModelForId</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable display of an object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showOrbitLineForObject">showOrbitLineForObject</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable orbit lines for a specific object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/SSI.EarthExtensions.html#showSensorProjectionForId">showSensorProjectionForId</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable display of sensor projections for an object</div>
 							</td>
 						</tr>
 					
@@ -432,11 +468,11 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>SSI.Universe</b>(options, container)
+						<b>SSI.EarthExtensions</b>(universe)
 				</div>
 				
 				<div class="description">
-					A simple Universe for drawing 3D modeling and simulation using WebGL
+					Extensions for doing Earth-based 3D modeling with Universe.js
 					
 				</div>
 				
@@ -448,16 +484,10 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>options</b>
+								<span class="light fixedFont">{<a href="../symbols/SSI.Universe.html">SSI.Universe</a>}</span>  <b>universe</b>
 								
 							</dt>
-								<dd>- currentUniverseTime, refreshRate</dd>
-						
-							<dt>
-								<span class="light fixedFont">{DOMElement}</span>  <b>container</b>
-								
-							</dt>
-								<dd>- the container where the Universe will be drawn</dd>
+								<dd>- The Universe to draw in</dd>
 						
 						</dl>
 					
@@ -480,63 +510,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="addJsonGeometryModel"> </a>
+					<a name="addClosestGroundObjectTracingLine"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>addJsonGeometryModel</b>(modelId, modelUrl, callback)
+					<b>addClosestGroundObjectTracingLine</b>(object)
 					
 					</div>
 					<div class="description">
-						Add a geometry to the universe with an ID and url to retrieve the model's geometry
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>modelId</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>modelUrl</b>
-									
-								</dt>
-								<dd>- URL for the THREE.js format geometry model</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>- callback function that gets called when the geometry is done loading</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="addObject"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addObject</b>(object)
-					
-					</div>
-					<div class="description">
-						Add an object to the universe
+						Add a Tracing Line to the closest ground object for an Object
 						
 						
 					</div>
@@ -551,10 +533,10 @@ ul.inheritsList
 									<span class="light fixedFont">{Object}</span> <b>object</b>
 									
 								</dt>
-								<dd>- id: identifier for the object to be referenced later
-			- objectName: a name for the object if different than id
-			- update: a function(elapsedTime) that gets called each time the Universe time changes
-			- draw: a function that should call Universe.draw with the object's model</dd>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator</dd>
 							
 							</dl>
 						
@@ -567,15 +549,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="draw"> </a>
+					<a name="addEarth"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>draw</b>(id, mesh, isScale)
+					<b>addEarth</b>(earthOptions)
 					
 					</div>
 					<div class="description">
-						Draws an object in the Universe
+						Add the Earth at the center of the Universe
 						
 						
 					</div>
@@ -587,22 +569,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>id</b>
+									<span class="light fixedFont">{Object}</span> <b>earthOptions</b>
 									
 								</dt>
-								<dd>- identifier for the object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{THREE.Mesh}</span> <b>mesh</b>
-									
-								</dt>
-								<dd>- THREE.js mesh for the object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>isScale</b>
-									
-								</dt>
-								<dd>- specifies whether the object should be scaled to always be the same as the camera moves</dd>
+								<dd>- .image=the URL of the Earth image to use</dd>
 							
 							</dl>
 						
@@ -615,65 +585,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="getCurrentUniverseTime"> </a>
+					<a name="addGroundObject"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>getCurrentUniverseTime</b>()
+					<b>addGroundObject</b>(groundObject)
 					
 					</div>
 					<div class="description">
-						Get the current time of the Universe
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getGraphicsObjects"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getGraphicsObjects</b>()
-					
-					</div>
-					<div class="description">
-						Get all of the objects currently in the Universe
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getObjectFromLibraryById"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getObjectFromLibraryById</b>(id, callback)
-					
-					</div>
-					<div class="description">
-						Retrieves an object from the Universe.js object pipeline
+						Add a Ground Object to the Earth
 						
 						
 					</div>
@@ -685,16 +605,14 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>id</b>
+									<span class="light fixedFont">{Object}</span> <b>groundObject</b>
 									
 								</dt>
-								<dd>- identifier for the object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function}</span> <b>callback</b>
-									
-								</dt>
-								<dd>- method to be called with the retrieved object</dd>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator,
+	    modelId</dd>
 							
 							</dl>
 						
@@ -707,40 +625,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="pause"> </a>
+					<a name="addGroundTrackPointForObject"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>pause</b>()
+					<b>addGroundTrackPointForObject</b>(object)
 					
 					</div>
 					<div class="description">
-						Pause playback for the universe
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="play"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>play</b>(options)
-					
-					</div>
-					<div class="description">
-						Start playback for the universe
+						Add a Ground Track Point for an Object
 						
 						
 					</div>
@@ -750,152 +643,15 @@ ul.inheritsList
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>options</b>
-									
-								</dt>
-								<dd>- playbackSpeed, startTime, stateChangedCallback</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="removeAll"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>removeAll</b>()
-					
-					</div>
-					<div class="description">
-						Remove all objects from the Universe
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="removeObject"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>removeObject</b>(id)
-					
-					</div>
-					<div class="description">
-						Remove an object completely from the Universe
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>id</b>
-									
-								</dt>
-								<dd>- identifier for the object</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setCurrentUniverseTime"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setCurrentUniverseTime</b>(newUniverseTime)
-					
-					</div>
-					<div class="description">
-						Set the current time of the Universe
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Date}</span> <b>newUniverseTime</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setObjectInLibrary"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>setObjectInLibrary</b>(id, object)
-					
-					</div>
-					<div class="description">
-						Add an object to the Universe.js object pipeline.  
-		This is useful for storing things that take up GPU memory like geometries so you can reuse them.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>id</b>
-									
-								</dt>
-								<dd>- identifier for the object</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>object</b>
 									
 								</dt>
-								<dd>- any object you want to store for later retrieval</dd>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator</dd>
 							
 							</dl>
 						
@@ -908,15 +664,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="setPlaybackSpeed"> </a>
+					<a name="addMoon"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>setPlaybackSpeed</b>(speed)
+					<b>addMoon</b>(moonOptions)
 					
 					</div>
 					<div class="description">
-						Set the playback speed for the Universe
+						Add the Moon to the Universe
 						
 						
 					</div>
@@ -928,12 +684,229 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Double}</span> <b>speed</b>
+									<span class="light fixedFont">{Object}</span> <b>moonOptions</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>- .image=the URL of the Moon image to use</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addPropogationLineForObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addPropogationLineForObject</b>(object)
+					
+					</div>
+					<div class="description">
+						Add a Propagation Line for an Object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorProjection"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorProjection</b>(object)
+					
+					</div>
+					<div class="description">
+						Add a Sensor Projection for an Object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSpaceObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSpaceObject</b>(spaceObject)
+					
+					</div>
+					<div class="description">
+						Add a Space Object to the Universe
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>spaceObject</b>
+									
+								</dt>
+								<dd>- 
+		id, 
+	    objectName,
+	    propagator,
+	    modelId,
+	    showPropogationLine,
+	    showGroundTrackPoint</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="findClosestGroundObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>findClosestGroundObject</b>(location)
+					
+					</div>
+					<div class="description">
+						Return the closest Ground Object to a location
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>location</b>
+									
+								</dt>
+								<dd>- x, y, z</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="findClosestObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>findClosestObject</b>(location)
+					
+					</div>
+					<div class="description">
+						Return the closest Object to a location
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>location</b>
+									
+								</dt>
+								<dd>- x, y, z</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeAllExceptEarthAndMoon"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeAllExceptEarthAndMoon</b>()
+					
+					</div>
+					<div class="description">
+						Remove all objects from the Universe except the Earth and Moon
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -952,7 +925,7 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Basic setup method, needs to be called after all objects are removed from the Universe
+						Set up the Universe with the Earth Extensions
 						
 						
 					</div>
@@ -969,15 +942,159 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="showObject"> </a>
+					<a name="showAllControlLines"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>showObject</b>(id, isEnabled)
+					<b>showAllControlLines</b>(isEnabled)
 					
 					</div>
 					<div class="description">
-						Toggle whether an object is visible in the Universe
+						Enable or disable display of all control lines
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showAllGroundTracks"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllGroundTracks</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of all ground tracks
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showAllOrbitLines"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllOrbitLines</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable all orbit lines
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showAllSensorProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllSensorProjections</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of all sensor projections
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showControlLineForId"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showControlLineForId</b>(id, isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of control lines for an object
 						
 						
 					</div>
@@ -998,7 +1115,7 @@ ul.inheritsList
 									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
 									
 								</dt>
-								<dd>- whether the object is visible or not</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -1011,15 +1128,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="snapToObject"> </a>
+					<a name="showGroundTrackForId"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>snapToObject</b>(id)
+					<b>showGroundTrackForId</b>(id, isEnabled)
 					
 					</div>
 					<div class="description">
-						Snap the Universe's camera to be directly behind an object
+						Enable or disable display of a ground track for an object
 						
 						
 					</div>
@@ -1036,6 +1153,12 @@ ul.inheritsList
 								</dt>
 								<dd>- identifier for the object</dd>
 							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
 							</dl>
 						
 						
@@ -1047,15 +1170,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name="unDraw"> </a>
+					<a name="showModelForId"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>unDraw</b>(id)
+					<b>showModelForId</b>(id, isEnabled)
 					
 					</div>
 					<div class="description">
-						Removes an object from the Universe
+						Enable or disable display of an object
 						
 						
 					</div>
@@ -1071,6 +1194,96 @@ ul.inheritsList
 									
 								</dt>
 								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showOrbitLineForObject"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showOrbitLineForObject</b>(id, isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable orbit lines for a specific object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showSensorProjectionForId"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showSensorProjectionForId</b>(id, isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of sensor projections for an object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
