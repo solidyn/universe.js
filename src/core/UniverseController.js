@@ -1,14 +1,13 @@
+var UNIVERSE = UNIVERSE || {};
 
-var SSI = SSI || {};
-
-SSI.UniverseController = function(options) {
+UNIVERSE.UniverseController = function(theRefreshRate) {
     var graphicsObjects = new Array();
 
     // Timeout that runs the animation, will be cleared when paused
     var refreshTimeout;
 
     // number of milliseconds between calls to update() (frame rate / refresh rate)
-    var refreshRate = options.refreshRate || 30;
+    var refreshRate = theRefreshRate || 30;
 
     // the last time we called update() in ms since jsDate epoch
     var lastUpdateMs = 0;
@@ -72,6 +71,6 @@ SSI.UniverseController = function(options) {
     }
 };
 
-SSI.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
+UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
     this.refreshRate = rateInMilliseconds;
 }

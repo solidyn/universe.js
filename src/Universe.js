@@ -1,22 +1,23 @@
 /**
-    @namespace Solidyn Solutions Inc. Namespace.
+	Universe.js Classes
 */
-var SSI = SSI || {};
+var UNIVERSE = UNIVERSE || {};
 
 /** 
 	A simple Universe for drawing 3D modeling and simulation using WebGL
 	@constructor
-	@param {Object} options - currentUniverseTime, refreshRate
+	@param {Date} time - The current universe time
+	@param {double} refreshRate - The refresh rate for the universe in milliseconds
 	@param {DOMElement} container - the container where the Universe will be drawn
  */
-SSI.Universe = function(options, container) {
-    var controller = new SSI.UniverseController(options);
-    var core = new SSI.Core3D(container);
-    var objectLibrary = new SSI.ObjectLibrary();
+UNIVERSE.Universe = function(time, refreshRate, container) {
+    var controller = new UNIVERSE.UniverseController(refreshRate);
+    var core = new UNIVERSE.Core3D(container);
+    var objectLibrary = new UNIVERSE.ObjectLibrary();
 
     // options
 
-    var currentUniverseTime = options.currentUniverseTime;
+    var currentUniverseTime = time;
     var playbackSpeed = 1;
 
     /**
@@ -93,18 +94,20 @@ SSI.Universe = function(options, container) {
 	/**
 		Start playback for the universe
 		@public
-	    @param {string} options - playbackSpeed, startTime, stateChangedCallback
+		@param {date} startTime
+		@param {double} newPlaybackSpeed
+		@param {function} newStateChangedCallback
 	 */
-    this.play = function(options) {
-		if(options.startTime != undefined) {
-			currentUniverseTime = new Date(options.startTime);
+    this.play = function(startTime, newPlaybackSpeed, newStateChangedCallback) {
+		if(startTime != undefined) {
+			currentUniverseTime = new Date(startTime);
 		}
-		if(options.playbackSpeed != undefined) {
-			playbackSpeed = options.playbackSpeed;
-		}
+ 		if(newPlaybackSpeed != undefined) {
+			playbackSpeed = newPlaybackSpeed;
+	 	}
         
-		if(options != undefined) {
-			stateChangedCallback = options.stateChangedCallback;
+		if(newStateChangedCallback != undefined) {
+			stateChangedCallback = newStateChangedCallback;
 		}
         
         // update state our first time
@@ -167,11 +170,7 @@ SSI.Universe = function(options, container) {
 	/**
     	Add an object to the universe
 		@public
-		@param {Object} object 
-			- id: identifier for the object to be referenced later
-			- objectName: a name for the object if different than id
-			- update: a function(elapsedTime) that gets called each time the Universe time changes
-			- draw: a function that should call Universe.draw with the object's model
+		@param {UNIVERSE.GraphicsObject} object
 	*/
 	this.addObject = function(object) {
 		controller.addGraphicsObject(object);

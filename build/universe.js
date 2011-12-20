@@ -739,10 +739,9 @@ if ( !window.requestAnimationFrame ) {
   } )();
 
 }
+var UNIVERSE = UNIVERSE || {};
 
-var SSI = SSI || {};
-
-SSI.Core3D = function(container) {
+UNIVERSE.Core3D = function(container) {
     // Variables used to draw the 3D elements
     var camera, scene, projector, renderer, w, h;
     var vector, animate;
@@ -1070,10 +1069,44 @@ SSI.Core3D = function(container) {
     return this;
 
 };
+var UNIVERSE = UNIVERSE || {};
 
-var SSI = SSI || {};
+/** 
+	A graphics object to be drawn in the Universe
+	@constructor
+	@param {string} id - Identifier for the object to be referenced later
+	@param {string} objectName - A name for the object if different than id.  Set to the id if not defined
+	@param {function} updateFunction - A function(elapsedTime) that gets called each time the Universe time changes
+	@param {function} drawFunction - A function that should call Universe.draw with the object's model
+ */
 
-SSI.ObjectLibrary = function() {
+UNIVERSE.GraphicsObject = function(id, modelName, updateFunction, drawFunction) {
+	if(id == undefined)
+	{ 
+		return undefined;
+	}
+	this.id = id;
+	this.modelName = modelName || id;
+	this.update = updateFunction;
+	this.draw = drawFunction;
+}
+
+UNIVERSE.GraphicsObject.prototype = {
+	constructor: UNIVERSE.GraphicsObject,
+	
+	set: function ( id, modelName, updateFunction, drawFunction ) {
+
+		this.id = id;
+		this.modelName = modelName;
+		this.update = updateFunction;
+		this.draw = drawFunction;
+
+		return this;
+	},
+}
+var UNIVERSE = UNIVERSE || {};
+
+UNIVERSE.ObjectLibrary = function() {
     var objects = new Array();
     var numberOfElements = 0;
 
@@ -1129,17 +1162,16 @@ SSI.ObjectLibrary = function() {
         objects[id] = object;
     }
 }
+var UNIVERSE = UNIVERSE || {};
 
-var SSI = SSI || {};
-
-SSI.UniverseController = function(options) {
+UNIVERSE.UniverseController = function(theRefreshRate) {
     var graphicsObjects = new Array();
 
     // Timeout that runs the animation, will be cleared when paused
     var refreshTimeout;
 
     // number of milliseconds between calls to update() (frame rate / refresh rate)
-    var refreshRate = options.refreshRate || 30;
+    var refreshRate = theRefreshRate || 30;
 
     // the last time we called update() in ms since jsDate epoch
     var lastUpdateMs = 0;
@@ -1203,28 +1235,29 @@ SSI.UniverseController = function(options) {
     }
 };
 
-SSI.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
+UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
     this.refreshRate = rateInMilliseconds;
 }
 /**
-    @namespace Solidyn Solutions Inc. Namespace.
+	Universe.js Classes
 */
-var SSI = SSI || {};
+var UNIVERSE = UNIVERSE || {};
 
 /** 
 	A simple Universe for drawing 3D modeling and simulation using WebGL
 	@constructor
-	@param {Object} options - currentUniverseTime, refreshRate
+	@param {Date} time - The current universe time
+	@param {double} refreshRate - The refresh rate for the universe in milliseconds
 	@param {DOMElement} container - the container where the Universe will be drawn
  */
-SSI.Universe = function(options, container) {
-    var controller = new SSI.UniverseController(options);
-    var core = new SSI.Core3D(container);
-    var objectLibrary = new SSI.ObjectLibrary();
+UNIVERSE.Universe = function(time, refreshRate, container) {
+    var controller = new UNIVERSE.UniverseController(refreshRate);
+    var core = new UNIVERSE.Core3D(container);
+    var objectLibrary = new UNIVERSE.ObjectLibrary();
 
     // options
 
-    var currentUniverseTime = options.currentUniverseTime;
+    var currentUniverseTime = time;
     var playbackSpeed = 1;
 
     /**
@@ -1301,18 +1334,20 @@ SSI.Universe = function(options, container) {
 	/**
 		Start playback for the universe
 		@public
-	    @param {string} options - playbackSpeed, startTime, stateChangedCallback
+		@param {date} startTime
+		@param {double} newPlaybackSpeed
+		@param {function} newStateChangedCallback
 	 */
-    this.play = function(options) {
-		if(options.startTime != undefined) {
-			currentUniverseTime = new Date(options.startTime);
+    this.play = function(startTime, newPlaybackSpeed, newStateChangedCallback) {
+		if(startTime != undefined) {
+			currentUniverseTime = new Date(startTime);
 		}
-		if(options.playbackSpeed != undefined) {
-			playbackSpeed = options.playbackSpeed;
-		}
+ 		if(newPlaybackSpeed != undefined) {
+			playbackSpeed = newPlaybackSpeed;
+	 	}
         
-		if(options != undefined) {
-			stateChangedCallback = options.stateChangedCallback;
+		if(newStateChangedCallback != undefined) {
+			stateChangedCallback = newStateChangedCallback;
 		}
         
         // update state our first time
@@ -1375,11 +1410,7 @@ SSI.Universe = function(options, container) {
 	/**
     	Add an object to the universe
 		@public
-		@param {Object} object 
-			- id: identifier for the object to be referenced later
-			- objectName: a name for the object if different than id
-			- update: a function(elapsedTime) that gets called each time the Universe time changes
-			- draw: a function that should call Universe.draw with the object's model
+		@param {UNIVERSE.GraphicsObject} object
 	*/
 	this.addObject = function(object) {
 		controller.addGraphicsObject(object);

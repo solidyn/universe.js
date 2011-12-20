@@ -1,14 +1,11 @@
-/**
-    @namespace Solidyn Solutions Inc. Namespace.
-*/
-var SSI = SSI || {};
+var UNIVERSE = UNIVERSE || {};
 
 /** 
 	Extensions for doing Earth-based 3D modeling with Universe.js
 	@constructor
-	@param {SSI.Universe} universe - The Universe to draw in
+	@param {UNIVERSE.Universe} universe - The Universe to draw in
  */
-SSI.EarthExtensions = function(universe) {
+UNIVERSE.EarthExtensions = function(universe) {
 	var earthExtensions = this;
 	
 	// constants
@@ -82,17 +79,17 @@ SSI.EarthExtensions = function(universe) {
 
         var earthMesh = new THREE.Mesh(geometry, material);
 
-        universe.addObject({
-            id : "earth",
-            objectName : "earth",
-            update : function(elapsedTime) {
-                var rotationAngle = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
-                earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
-            },
-            draw : function() {
+		var earthObject = new UNIVERSE.GraphicsObject(
+			"earth", 
+			"earth", 
+			function(elapsedTime) {
+            	var rotationAngle = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
+            	earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
+        	},
+ 			function() {
                 universe.draw(this.id, earthMesh, false);
-            }
-        });
+            });
+		universe.addObject(earthObject);
     };
     
 	/**
@@ -132,11 +129,10 @@ SSI.EarthExtensions = function(universe) {
 
         var moonMesh = new THREE.Mesh(geometry, material);
 
-        universe.addObject({
-            id : "moon",
-            objectName : "moon",
-            stateVector: initialStateVector,
-            update : function(elapsedTime) {
+		var moonObject = new UNIVERSE.GraphicsObject(
+			"moon", 
+			"moon", 
+			function(elapsedTime) {
                 var eci = new ECICoordinates(
                         this.stateVector.x,
                         this.stateVector.y,
@@ -155,10 +151,12 @@ SSI.EarthExtensions = function(universe) {
                     moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
                     
             },
-            draw : function() {
+			function() {
                 universe.draw(this.id, moonMesh, false);
             }
-        });
+		)
+		moonObject.stateVector = initialStateVector;
+		universe.addObject(moonObject);
     }
 
 	/**
@@ -182,25 +180,25 @@ SSI.EarthExtensions = function(universe) {
                 //objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( 0, 0, 0 ) ));
                 var objectModel = new THREE.Mesh(objectGeometry, material);
 
-                universe.addObject({
-                    id : spaceObject.id,
-                    objectName : spaceObject.objectName,
-                    update : function(elapsedTime) {
-                        // need to pass a time to the propagator
-                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
-                        if(convertedLocation != undefined) {
-                            objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
+				var spaceGraphicsObject = new UNIVERSE.GraphicsObject(
+						spaceObject.id,
+						spaceObject.objectName,
+						function(elapsedTime) {
+	                        // need to pass a time to the propagator
+	                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
+	                        if(convertedLocation != undefined) {
+	                            objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 
-                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                            objectModel.lookAt(centerPoint);
-                        }
-
-                    },
-                    draw : function() {
-                        universe.draw(this.id, objectModel, false);
-                        earthExtensions.showModelForId(spaceObject.showVehicle, this.id);
-                    }
-                });
+	                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+	                            objectModel.lookAt(centerPoint);
+	                        }
+						},
+						function() {
+	                        universe.draw(this.id, objectModel, false);
+	                        earthExtensions.showModelForId(spaceObject.showVehicle, this.id);
+	                    }
+					)
+				universe.addObject(spaceGraphicsObject);
 
                 earthExtensions.addPropogationLineForObject(spaceObject);
                 earthExtensions.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
@@ -243,28 +241,29 @@ SSI.EarthExtensions = function(universe) {
                 objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
                 var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
 
-                universe.addObject({
-                    id : groundObject.id,
-                    objectName : groundObject.objectName,
-                    currentLocation: undefined,
-                    update : function(elapsedTime) {
-                        // check earth rotation and update location
-                        var position = eciTo3DCoordinates(groundObject.propagator());
-                        groundObjectMesh.position.set(position.x, position.y, position.z);
-                        this.currentLocation = {x: position.x, y: position.y, z: position.z};
+				var groundGraphicsObject = new UNIVERSE.GraphicsObject(
+						groundObject.id,
+						groundObject.objectName,
+						function(elapsedTime) {
+	                        // check earth rotation and update location
+	                        var position = eciTo3DCoordinates(groundObject.propagator());
+	                        groundObjectMesh.position.set(position.x, position.y, position.z);
+	                        this.currentLocation = {x: position.x, y: position.y, z: position.z};
 
-                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                        var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
+	                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+	                        var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
 
-                        // arbitrary size, just a point along the position vector further out for the object to lookAt
-                        scaled_position_vector.multiplyScalar(1.4);
+	                        // arbitrary size, just a point along the position vector further out for the object to lookAt
+	                        scaled_position_vector.multiplyScalar(1.4);
 
-                        groundObjectMesh.lookAt(scaled_position_vector);
-                    },
-                    draw : function() {
-                        universe.draw(this.id, groundObjectMesh, true);
-                    }
-                });
+	                        groundObjectMesh.lookAt(scaled_position_vector);
+	                    },
+	                    function() {
+	                        universe.draw(this.id, groundObjectMesh, true);
+	                    }
+					);
+				groundGraphicsObject.currentLocation = undefined;
+				universe.addObject(groundGraphicsObject);
             });
         });
     };
@@ -287,10 +286,10 @@ SSI.EarthExtensions = function(universe) {
 
                 var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
 
-                universe.addObject({
-                    id : object.id + "_groundPoint",
-                    objectName : object.objectName,
-                    update : function(elapsedTime) {
+				var groundGraphicsObject = new UNIVERSE.GraphicsObject(
+					object.id + "_groundPoint",
+                    object.objectName,
+                    function(elapsedTime) {
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
                         if(objectLocation != undefined) {
                             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
@@ -301,10 +300,11 @@ SSI.EarthExtensions = function(universe) {
                             groundObjectMesh.position.copy(vector);
                         }
                     },
-                    draw : function() {
+                    function() {
                         universe.draw(this.id, groundObjectMesh, true);
                     }
-                });
+				);
+				universe.addObject(groundGraphicsObject);
             });
         });
     }
@@ -341,16 +341,17 @@ SSI.EarthExtensions = function(universe) {
 
             var lineS = new THREE.Line(objectGeometry, objectMaterial);
 
-            universe.addObject({
-                id : object.id + "_propogation",
-                objectName : object.objectName,
-                update : function(elapsedTime) {
+			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
+				object.id + "_propogation",
+				object.objectName,
+				function(elapsedTime) {
                 // add points onto the end of the track?
                 },
-                draw : function() {
+				function() {
                     universe.draw(this.id, lineS, false);
                 }
-            });
+			);
+			universe.addObject(lineGraphicsObject);
         });
     }
 
@@ -390,10 +391,10 @@ SSI.EarthExtensions = function(universe) {
 
                 sensorProjection.doubleSided=true;
 
-                universe.addObject({
-                    id : object.id + "_sensorProjection",
-                    objectName : object.objectName,
-                    update : function(elapsedTime) {
+				var sensorProjectionGraphicsObject = new UNIVERSE.GraphicsObject(
+					object.id + "_sensorProjection",
+                    object.objectName,
+                    function(elapsedTime) {
 
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
 
@@ -418,10 +419,11 @@ SSI.EarthExtensions = function(universe) {
 
                         }
                     },
-                    draw : function() {
+					function() {
                         universe.draw(this.id, sensorProjection, false);
                     }
-                });
+				);
+				universe.addObject(sensorProjectionGraphicsObject);
             });
         }
     }
@@ -442,11 +444,11 @@ SSI.EarthExtensions = function(universe) {
             objectMaterial = retrieved_material;
 
             var line = undefined;
-            universe.addObject({
-                id : object.id + "_controlLine",
-                objectName : object.objectName,
-                update : function(elapsedTime) {
-                    
+
+			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
+				object.id + "_controlLine",
+				object.objectName,
+				function(elapsedTime) {    
                     var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
                     
                     var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
@@ -462,7 +464,7 @@ SSI.EarthExtensions = function(universe) {
                         line = new THREE.Line(objectGeometry, objectMaterial);
                     }
                 },
-                draw : function() {
+				function() {
                     universe.unDraw(this.id);
                     if(line != undefined) {
                         universe.draw(this.id, line, false);
@@ -477,7 +479,8 @@ SSI.EarthExtensions = function(universe) {
 
                     }
                 }
-            });
+			);
+			universe.addObject(lineGraphicsObject);
         });
     }
     

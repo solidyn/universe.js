@@ -1,7 +1,7 @@
 
-var SSI = SSI || {};
+var UNIVERSE = UNIVERSE || {};
 
-SSI.ObjectLibrary = function() {
+UNIVERSE.ObjectLibrary = function() {
     var objects = new Array();
     var numberOfElements = 0;
 

@@ -1,7 +1,6 @@
+var UNIVERSE = UNIVERSE || {};
 
-var SSI = SSI || {};
-
-SSI.Core3D = function(container) {
+UNIVERSE.Core3D = function(container) {
     // Variables used to draw the 3D elements
     var camera, scene, projector, renderer, w, h;
     var vector, animate;
