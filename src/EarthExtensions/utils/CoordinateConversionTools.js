@@ -223,7 +223,7 @@ var CoordinateConversionTools = {
     convertECEFtoECI: function(ecef,  GST)
     {
         //GST is in degrees
-        var eci = new ECICoordinates();
+        var eci = new UNIVERSE.ECICoordinates();
 
         //convert the position
         var eciPos = new Array(); //Double[3];
@@ -297,7 +297,7 @@ var CoordinateConversionTools = {
      */
     convertKeplerianToECI: function(kepler)
     {
-        var eci = new ECIcoordinates();
+        var eci = new UNIVERSE.ECICoordinates();
         var a = kepler.getSemimajorAxis(); //double
         var e = kepler.getEccentricity();  //double
         var p = a * (1 - e * e);           //double
@@ -552,7 +552,7 @@ var CoordinateConversionTools = {
      */
     convertRSWToECI: function(satellite, rsw)
     {
-        var eci = new ECIcoordinates();
+        var eci = new UNIVERSE.ECICoordinates();
         var satelliteKepler = satellite.getKepler();
 
         var nu = satelliteKepler.getTrueAnomaly();
@@ -603,7 +603,7 @@ var CoordinateConversionTools = {
         var e = 23.439291 - 0.0130042 * TUT;  //ecliptic latitude on the earth
 
         var AU = 149597870.0;  //one astronomical unit (km)
-        var sunPosition = new ECIcoordinates();
+        var sunPosition = new UNIVERSE.ECICoordinates();
 
         sunPosition.setX(rsun * Math.cos(Math.toRadians(lambdaEcliptic)) * AU);
         sunPosition.setY(rsun * Math.cos(Math.toRadians(e)) *

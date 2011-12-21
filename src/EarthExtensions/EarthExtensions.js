@@ -133,7 +133,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 			"moon", 
 			"moon", 
 			function(elapsedTime) {
-                var eci = new ECICoordinates(
+                var eci = new UNIVERSE.ECICoordinates(
                         this.stateVector.x,
                         this.stateVector.y,
                         this.stateVector.z,
@@ -162,13 +162,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add a Space Object to the Universe
 		@public
-		@param {Object} spaceObject - 
-		id, 
-	    objectName,
-	    propagator,
-	    modelId,
-	    showPropogationLine,
-	    showGroundTrackPoint
+		@param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
 	*/
     this.addSpaceObject = function(spaceObject) {
         var objectGeometry, material;
@@ -219,11 +213,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add a Ground Object to the Earth
 		@public
-		@param {Object} groundObject - 
-		id, 
-	    objectName,
-	    propagator,
-	    modelId
+		@param {UNIVERSE.GroundObject} groundObject - an object to display on the Earth
 	*/
     this.addGroundObject = function(groundObject) {
         var objectGeometry, objectMaterial, material;
@@ -271,10 +261,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add a Ground Track Point for an Object
 		@public
-		@param {Object} object - 
-		id, 
-	    objectName,
-	    propagator
+		@param {UNIVERSE.SpaceObject} object - The Space Object to add a ground track point for
 	*/
 	this.addGroundTrackPointForObject = function(object) {
         var objectGeometry, objectMaterial;
@@ -312,10 +299,7 @@ UNIVERSE.EarthExtensions = function(universe) {
     /**
 		Add a Propagation Line for an Object
 		@public
-		@param {Object} object - 
-		id, 
-	    objectName,
-	    propagator
+		@param {UNIVERSE.SpaceObject} object - A Space Object to add a propagation line for
 	*/
     this.addPropogationLineForObject = function(object) {
         var objectGeometry, objectMaterial;
@@ -358,10 +342,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add a Sensor Projection for an Object
 		@public
-		@param {Object} object - 
-		id, 
-	    objectName,
-	    propagator
+		@param {UNIVERSE.SpaceObject} object - A Space Object to add a Sensor Projection for
 	*/
     this.addSensorProjection = function(object) {
 
@@ -431,14 +412,10 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add a Tracing Line to the closest ground object for an Object
 		@public
-		@param {Object} object - 
-		id, 
-	    objectName,
-	    propagator
+		@param {UNIVERSE.SpaceObject} object - A Space Object to add a tracing line to the closest ground object for
 	*/
     this.addClosestGroundObjectTracingLine = function(object) {
         var objectGeometry, objectMaterial;
-        
         
         universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
             objectMaterial = retrieved_material;
@@ -487,7 +464,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Return the closest Ground Object to a location
 		@public
-		@param {Object} location - x, y, z
+		@param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
 	*/
     this.findClosestGroundObject = function(location) {
 		// TODO: this undefined check may be covering up a bug where not everything gets removed in the 
@@ -506,7 +483,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Return the closest Object to a location
 		@public
-		@param {Object} location - x, y, z
+		@param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
 	*/
     this.findClosestObject = function(location) {
         var graphicsObjects = universe.getGraphicsObjects();

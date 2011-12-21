@@ -1,3 +1,4 @@
+
 var Constants = {
 
     // define variables as <var name>: <value>

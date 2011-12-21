@@ -1,4 +1,5 @@
- var OrbitPropagator = {
+ 
+var OrbitPropagator = {
 
     /**
      *
@@ -198,7 +199,7 @@
      * @param dt                       double, time-step
      * @param timeAtStartOfPropagation Date
      *
-     * @returns ECICoordinates
+     * @returns {UNIVERSE.ECICoordinates} 
      */
     propagateOrbit: function(eci, elapsedTime, dt, timeAtStartOfPropagation)
     {
@@ -260,7 +261,7 @@
             var zdot = ((z * h * ecc) / (r * p)) * Math.sin(f) + (h / r) * (Math.sin(inc) * Math.cos(w + f));
 
             //System.out.println(vehicleName+","+x+","+y+","+z+","+xdot+","+ydot+","+zdot);
-            var eciState = new ECICoordinates();
+            var eciState = new UNIVERSE.ECICoordinates();
             
             eciState.setX(x);
             eciState.setY(y);
@@ -295,7 +296,7 @@
 
             //console.log("updatedState: " + JSON.stringify(updatedState));
             //translate the integrated values into the correct class structure
-            var newEci = new ECICoordinates(
+            var newEci = new UNIVERSE.ECICoordinates(
                 updatedState[0], 
                 updatedState[1], 
                 updatedState[2], 

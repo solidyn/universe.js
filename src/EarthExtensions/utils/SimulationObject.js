@@ -3,7 +3,7 @@ var SimulationObject = {
     // define variables as <var name>: value
 
     name:         "",
-    eciCoords:    ECICoordinates,
+    eciCoords:    UNIVERSE.ECICoordinates,
     ecefCoords:   ECEFCoordinates,
     keplerCoords: KeplerianCoordinates,
     llaCoords:    LLACoordinates,
@@ -127,4 +127,4 @@ var SimulationObject = {
         ecefCoords = CoordinateConversionTools.convertECItoECEF(eci, GST);
         llaCoords = CoordinateConversionTools.convertECItoLLA(eci, GST);
     }
-}
+};

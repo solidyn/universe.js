@@ -1,4 +1,6 @@
-function ECICoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal) {
+var UNIVERSE = UNIVERSE || {};
+
+UNIVERSE.ECICoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal) {
     
     // define variables as <var name>: <value>
 
@@ -155,4 +157,4 @@ function ECICoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azV
     {
         this.az = newAZ;
     }
-}
+};
