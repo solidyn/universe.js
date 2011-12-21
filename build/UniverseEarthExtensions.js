@@ -19,16 +19,24 @@ var Constants = {
         //convert a date to the Julian Date
         //this is the time since January 1, 4713 BC (12:00)
         //unit of measure = days
+		//console.log("convertCurrentEpochToJulianDate:currentEpoch: " + currentEpoch);
         var JD = 0;                               //double
-        var year = currentEpoch.getYear() + 1900  //int
-        var month = currentEpoch.getMonth();      //int
-        var day = currentEpoch.getDate();         //int
-        var hour = currentEpoch.getHours();       //int
-        var minute = currentEpoch.getMinutes();   //int
-        var second = currentEpoch.getSeconds();   //double
+        var year = currentEpoch.getUTCFullYear();  //int
+        var month = currentEpoch.getUTCMonth() + 1;      //int
+        var day = currentEpoch.getUTCDate();         //int
+        var hour = currentEpoch.getUTCHours();       //int
+        var minute = currentEpoch.getUTCMinutes();   //int
+        var second = currentEpoch.getUTCSeconds() + (currentEpoch.getUTCMilliseconds()/1000);   //double
 
-        JD = 367 * year - (7 * (year + ((month + 9) / 12)) / 4) +
-            (275 * month / 9) + (day) + 1721013.5 +
+		// console.log("year: " + year);
+		// 		console.log("month: " + month);
+		// 		console.log("day: " + day);
+		// 		console.log("hour: " + hour);
+		// 		console.log("minute: " + minute);
+		// 		console.log("second: " + second);
+
+        JD = 367 * year - Math.floor((7 * (year + Math.floor(((month + 9) / 12))) / 4)) +
+            Math.floor((275 * month / 9)) + (day) + 1721013.5 +
             ((second / 60 + minute) / 60 + hour) / 24;
 
         return JD;
@@ -595,7 +603,7 @@ var Constants = {
     getSunPositionECIAtCurrentTime: function(currentEpoch)
     {
         //ref Vallado 266
-        var JD = convertCurrentEpochToJulianDate(currentEpoch);
+        var JD = this.convertCurrentEpochToJulianDate(currentEpoch);
 
         //julian centuries since January 1, 2000 12h UT1
         var TUT = (JD - 2451545.0) / 36525.0;
@@ -620,7 +628,107 @@ var Constants = {
             Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
 
         return sunPosition;
+    },
+
+	convertCurrentEpochToBarycentricTime: function(currentEpoch)
+	{
+        //reference Vallado 3rd edition page 201
+        var UTC = new Date(currentEpoch);
+		
+        //var newSeconds = (int) (UTC.getSeconds() - 0.463326);
+		var UTI = new Date(UTC.getTime() - 463);
+		//console.log("UTI: " + UTI)
+		
+        //Date UTI = new Date(UTC.getYear(), UTC.getMonth(), UTC.getDate(), UTC.getHours(), UTC.getMinutes(), newSeconds);
+        //newSeconds = (int) (UTI.getSeconds() + 32);
+		var TAI = new Date(UTI.getTime() + 32000);
+        //Date TAI = new Date(UTI.getYear(), UTI.getMonth(), UTI.getDate(), UTI.getHours(), UTI.getMinutes(), newSeconds);
+
+		var TT = new Date(TAI.getTime() + 32184);
+        //newSeconds = (int) (TAI.getSeconds() + 32.184);
+        //Date TT = new Date(TAI.getYear(), TAI.getMonth(), TAI.getDate(), TAI.getHours(), TAI.getMinutes(), newSeconds);
+        
+		//console.log("TT: " + TT);
+		var JDtt = this.convertCurrentEpochToJulianDate(TT);
+        var Ttt = (JDtt - 2451545.0) / 36525.0;
+        //console.log("JDtt: " + JDtt);
+		//newSeconds = (int) (TT.getSeconds() + 0.001658 * Math.sin(628.3076 * Ttt + 6.2401));  //note, higher order terms are available
+		//console.log("equation: " + (0.001658 * Math.sin(628.3076 * Ttt + 6.2401)) * 1000)
+        var TDB = new Date(TT.getTime() + ((0.001658 * Math.sin(628.3076 * Ttt + 6.2401)) * 1000));
+		//Date TDB = new Date(TT.getYear(), TT.getMonth(), TT.getDate(), TT.getHours(), TT.getMinutes(), newSeconds);
+		//console.log("TDB: " + TDB);
+        var JDtdb = this.convertCurrentEpochToJulianDate(TDB);
+        var Ttdb = (JDtdb - 2451545.0) / 36525.0;  //julian centuries since January 1, 2000 12h UT1  //this is the terrestrial time
+
+
+        //*******************************
+        //note, this may have issues due to the fact that the date objects don't use fractions of seconds
+        //*******************************
+
+        return Ttdb;
+    },
+
+    getMoonPositionECIAtCurrentTime: function(currentEpoch)
+    {
+		//console.log("currentEpoch: " + currentEpoch);
+        //reference Vallado 3rd ed page 291
+        var Ttdb = CoordinateConversionTools.convertCurrentEpochToBarycentricTime(currentEpoch);
+		//console.log("Ttdb: " + Ttdb);
+        var lambda = 218.32 + 481267.883 * Ttdb;
+        lambda += 6.29 * Math.sin(MathTools.toRadians(134.9 + 477198.85 * Ttdb));
+        lambda += -1.27 * Math.sin(MathTools.toRadians(259.2 - 413335.38 * Ttdb));
+        lambda += 0.66 * Math.sin(MathTools.toRadians(235.7 + 890534.23 * Ttdb));
+        lambda += 0.21 * Math.sin(MathTools.toRadians(269.9 + 954397.70 * Ttdb));
+        lambda += -0.19 * Math.sin(MathTools.toRadians(357.5 + 35999.05 * Ttdb));
+        lambda += -0.11 * Math.sin(MathTools.toRadians(186.6 + 96640.05 * Ttdb));  //degrees
+        if (Math.abs(lambda)>360){
+            lambda=(lambda%360);
+        }
+        if(lambda<0){
+            lambda+=360;
+        }
+
+        var phi=5.13*Math.sin(MathTools.toRadians(93.3+483202.03*Ttdb));
+        phi+=0.28*Math.sin(MathTools.toRadians(228.2+960400.87*Ttdb));
+        phi+=-0.28*Math.sin(MathTools.toRadians(318.3+6003.18*Ttdb));
+        phi+=-0.17*Math.sin(MathTools.toRadians(217.6-407332.20*Ttdb));
+        if (Math.abs(phi)>360){
+            phi=(phi%360);
+        }
+        if(phi<0){
+            phi+=360;
+        }
+
+        var parallax=0.9508+0.0518*Math.cos(MathTools.toRadians(134.9+477198.85*Ttdb));
+        parallax+=+0.0095*Math.cos(MathTools.toRadians(259.2-413335.38*Ttdb));
+        parallax+=+0.0078*Math.cos(MathTools.toRadians(235.7+890534.23*Ttdb));
+        parallax+=+0.0028*Math.cos(MathTools.toRadians(269.9+954397.70*Ttdb));
+        if (Math.abs(parallax)>360){
+            parallax=(parallax%360);
+        }
+        if(parallax<0){
+            parallax+=360;
+        }
+
+        var e=23.439291-0.0130042*Ttdb;//obliquity of the ecliptic
+        var rMoon=1/Math.sin(MathTools.toRadians(parallax));//earth radii
+        rMoon=rMoon*Constants.radiusEarth;//km
+
+		// console.log("lambda: " + lambda);
+		// console.log("phi: " + phi);
+		// console.log("parallax: " + parallax);
+        e=MathTools.toRadians(e);
+        phi=MathTools.toRadians(phi);
+        lambda=MathTools.toRadians(lambda);
+
+
+        moonPosition=new UNIVERSE.ECICoordinates();
+        moonPosition.setX(rMoon*Math.cos(phi)*Math.cos(lambda));
+        moonPosition.setY(rMoon*(Math.cos(e)*Math.cos(phi)*Math.sin(lambda)-Math.sin(e)*Math.sin(phi)));
+        moonPosition.setZ(rMoon*(Math.sin(e)*Math.cos(phi)*Math.sin(lambda)+Math.cos(e)*Math.sin(phi)));
+        return moonPosition;
     }
+
 };
 var CoordinateFunctionHelper = {
 
@@ -2737,7 +2845,6 @@ UNIVERSE.EarthExtensions = function(universe) {
     this.addMoon = function(moonOptions) {
         var moonSphereSegments = 40, moonSphereRings = 30;
         var moonSphereRadius = 1737.1;
-        var initialStateVector = {x: -360680.9359251, y: -42332.8629642, z: -30945.6526294, x_dot: 0.1634206, y_dot: -1.0634127, z_dot:  0.0412856, epoch: new Date(universe.getCurrentUniverseTime())};
 
         // Create the sphere
         var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
@@ -2770,29 +2877,15 @@ UNIVERSE.EarthExtensions = function(universe) {
 			"moon", 
 			"moon", 
 			function(elapsedTime) {
-                var eci = new UNIVERSE.ECICoordinates(
-                        this.stateVector.x,
-                        this.stateVector.y,
-                        this.stateVector.z,
-                        this.stateVector.x_dot,
-                        this.stateVector.y_dot,
-                        this.stateVector.z_dot
-                    );
-                    
-                    var time = new Date(universe.getCurrentUniverseTime());
-                    var elapsedTime = (time.getTime() - this.stateVector.epoch.getTime())/1000; // seconds
-                   
-                    var propagatedValue = OrbitPropagator.propagateOrbit(eci, elapsedTime, 100, this.stateVector.epoch);
-                    var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
-                    //console.log("propagatedValue: " + JSON.stringify(propagatedValue) + " elapsedTime: " + elapsedTime);
-                    moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
-                    
+                var time = new Date(universe.getCurrentUniverseTime());
+				var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
+				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
+				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
             },
 			function() {
                 universe.draw(this.id, moonMesh, false);
             }
 		)
-		moonObject.stateVector = initialStateVector;
 		universe.addObject(moonObject);
     }
 

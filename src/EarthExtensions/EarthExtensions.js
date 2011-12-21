@@ -100,7 +100,6 @@ UNIVERSE.EarthExtensions = function(universe) {
     this.addMoon = function(moonOptions) {
         var moonSphereSegments = 40, moonSphereRings = 30;
         var moonSphereRadius = 1737.1;
-        var initialStateVector = {x: -360680.9359251, y: -42332.8629642, z: -30945.6526294, x_dot: 0.1634206, y_dot: -1.0634127, z_dot:  0.0412856, epoch: new Date(universe.getCurrentUniverseTime())};
 
         // Create the sphere
         var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
@@ -133,29 +132,15 @@ UNIVERSE.EarthExtensions = function(universe) {
 			"moon", 
 			"moon", 
 			function(elapsedTime) {
-                var eci = new UNIVERSE.ECICoordinates(
-                        this.stateVector.x,
-                        this.stateVector.y,
-                        this.stateVector.z,
-                        this.stateVector.x_dot,
-                        this.stateVector.y_dot,
-                        this.stateVector.z_dot
-                    );
-                    
-                    var time = new Date(universe.getCurrentUniverseTime());
-                    var elapsedTime = (time.getTime() - this.stateVector.epoch.getTime())/1000; // seconds
-                   
-                    var propagatedValue = OrbitPropagator.propagateOrbit(eci, elapsedTime, 100, this.stateVector.epoch);
-                    var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
-                    //console.log("propagatedValue: " + JSON.stringify(propagatedValue) + " elapsedTime: " + elapsedTime);
-                    moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
-                    
+                var time = new Date(universe.getCurrentUniverseTime());
+				var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
+				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
+				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
             },
 			function() {
                 universe.draw(this.id, moonMesh, false);
             }
 		)
-		moonObject.stateVector = initialStateVector;
 		universe.addObject(moonObject);
     }
 
