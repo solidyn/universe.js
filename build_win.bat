@@ -31,6 +31,6 @@ java -jar ./utils/yuicompressor-2.4.7.jar -o build/UniverseEarthExtensions-min.j
 
 echo Creating docs...
 rem Create the docs
-java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/universe_web -d=docs
+java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/universe_web --suppress -d=docs
 
 echo DONE

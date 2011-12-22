@@ -50,7 +50,6 @@
 				{+resolveLinks(data.classDesc)+}
 				
 				<if test="!data.isBuiltin()">{# isn't defined in any file #}
-					<br /><i>Defined in: </i> {+new Link().toSrc(data.srcFile)+}.
 				</if>
 			</p>
 
@@ -283,7 +282,7 @@
 				
 				<if test="data.example.length">
 				<for each="example" in="data.example">
-				<pre class="code">{+example+}</pre>
+				<pre id="codeblock" class="prettyprint linenums:1 img_dropshadow">{+example+}</pre>
 				</for>
 				</if>
 				
@@ -373,16 +372,13 @@
 					</div>
 					<div class="description">
 						{+resolveLinks(member.desc)+}
-						<if test="member.srcFile != data.srcFile">
-							<br />
-							<i>Defined in: </i> {+new Link().toSrc(member.srcFile)+}.
-						</if>
+
 						<if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
 					</div>
 					
 					<if test="member.example.length">
 					<for each="example" in="member.example">
-					<pre class="code">{+example+}</pre>
+					<pre id="codeblock" class="prettyprint linenums:1 img_dropshadow">{+example+}</pre>
 					</for>
 					</if>
 
@@ -449,7 +445,7 @@
 					
 					<if test="member.example.length">
 					<for each="example" in="member.example">
-					<pre class="code">{+example+}</pre>
+					<pre id="codeblock" class="prettyprint linenums:1 img_dropshadow">{+example+}</pre>
 					</for>
 					</if>
 					
@@ -539,16 +535,13 @@
 					</div>
 					<div class="description">
 						{+resolveLinks(member.desc)+}
-						<if test="member.srcFile != data.srcFile">
-							<br />
-							<i>Defined in: </i> {+new Link().toSrc(member.srcFile)+}.
-						</if>
+
 						<if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
 					</div>
 					
 					<if test="member.example.length">
 					<for each="example" in="member.example">
-					<pre class="code">{+example+}</pre>
+					<pre id="codeblock" class="prettyprint linenums:1 img_dropshadow">{+example+}</pre>
 					</for>
 					</if>
 					

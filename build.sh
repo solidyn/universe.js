@@ -25,4 +25,4 @@ find src/EarthExtensions/EarthExtensions.js -name "*.js" |xargs cat >> build/Uni
 java -jar ./utils/yuicompressor-2.4.7.jar -o build/UniverseEarthExtensions-min.js build/UniverseEarthExtensions.js
 
 # Create the docs
-java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/jsdoc -d=docs
+java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/universe_web --suppress -d=docs
