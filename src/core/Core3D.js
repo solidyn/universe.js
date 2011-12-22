@@ -57,6 +57,13 @@ UNIVERSE.Core3D = function(container) {
         scene = new THREE.Scene();
 
         addEventListeners();
+
+		var dirLight = new THREE.DirectionalLight( 0xffffff, 1.5);
+		dirLight.position.set( -1, 0, 1 ).normalize();
+		scene.add( dirLight );
+
+		var ambientLight = new THREE.AmbientLight( 0x000000 );
+		scene.add( ambientLight );
 		
         animate();
     }
