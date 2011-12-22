@@ -320,8 +320,8 @@ var Constants = {
         var nu = kepler.getTrueAnomaly();  //double
 
         //reference vallado page 125
-        var cosNu = Math.cos(Math.toRadians(nu)); //double
-        var sinNu = Math.sin(Math.toRadians(nu)); //double
+        var cosNu = Math.cos(MathTools.toRadians(nu)); //double
+        var sinNu = Math.sin(MathTools.toRadians(nu)); //double
 
         //determine the position conversion;    //double
         var Xpqw = p * cosNu / (1 + e * cosNu); //double
@@ -610,22 +610,22 @@ var Constants = {
         var lambdaSun = 280.4606184 + 36000.77005361 * TUT;  //solar angle (deg)
         var Msun = 357.5277233 + 35999.05034 * TUT;
         var lambdaEcliptic = lambdaSun + 1.914666471 *
-            Math.sin(Math.toRadians(Msun)) + 0.019994643 *
-            Math.sin(2 * Math.toRadians(Msun));//ecliptic angle (deg)
+            Math.sin(MathTools.toRadians(Msun)) + 0.019994643 *
+            Math.sin(2 * MathTools.toRadians(Msun));//ecliptic angle (deg)
 
         //distance of the sun in AU
-        var rsun = 1.000140612 - 0.016708617 * Math.cos(Math.toRadians(Msun)) -
-            0.000139589 * Math.cos(2 * Math.toRadians(Msun));
+        var rsun = 1.000140612 - 0.016708617 * Math.cos(MathTools.toRadians(Msun)) -
+            0.000139589 * Math.cos(2 * MathTools.toRadians(Msun));
         var e = 23.439291 - 0.0130042 * TUT;  //ecliptic latitude on the earth
 
         var AU = 149597870.0;  //one astronomical unit (km)
         var sunPosition = new UNIVERSE.ECICoordinates();
 
-        sunPosition.setX(rsun * Math.cos(Math.toRadians(lambdaEcliptic)) * AU);
-        sunPosition.setY(rsun * Math.cos(Math.toRadians(e)) *
-            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
-        sunPosition.setZ(rsun * Math.sin(Math.toRadians(e)) *
-            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setX(rsun * Math.cos(MathTools.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setY(rsun * Math.cos(MathTools.toRadians(e)) *
+            Math.sin(MathTools.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setZ(rsun * Math.sin(MathTools.toRadians(e)) *
+            Math.sin(MathTools.toRadians(lambdaEcliptic)) * AU);
 
         return sunPosition;
     },
@@ -2800,7 +2800,6 @@ UNIVERSE.EarthExtensions = function(universe) {
 
         // Create the sphere
         var geometry = new THREE.SphereGeometry(earthSphereRadius, earthSphereSegments, earthSphereRings);
-		console.log("dayImageURL: " + dayImageURL);
 		var dayImageTexture   = THREE.ImageUtils.loadTexture( dayImageURL );
 		var earthAtNightTexture = THREE.ImageUtils.loadTexture( nightImageURL );
 		var nightMaterial = new THREE.MeshBasicMaterial({
@@ -2841,6 +2840,7 @@ UNIVERSE.EarthExtensions = function(universe) {
 				nightEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
         	},
  			function() {
+				// for some reason these lines have to go in this order for night to be under day...
                 universe.draw(this.id + "_day", dayEarthMesh, false);
 				universe.draw(this.id + "_night", nightEarthMesh, false);			
             });
@@ -2898,6 +2898,31 @@ UNIVERSE.EarthExtensions = function(universe) {
 		)
 		universe.addObject(moonObject);
     }
+
+	/**
+		Add the sun to the Universe at the correct position relative to the Earth-centered universe
+	*/
+	this.addSun = function() {
+		//var sunLight = new THREE.PointLight( 0xffffff, 1.5);
+		
+		var sunGraphicsObject = new UNIVERSE.GraphicsObject(
+			"sun",
+			"sun",
+			function(elapsedTime) {
+				//console.log("sun update");
+				var sunLocation = CoordinateConversionTools.getSunPositionECIAtCurrentTime(universe.getCurrentUniverseTime());
+				var convertedLocation = eciTo3DCoordinates({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z });
+				//sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
+				//console.log("sunLocation: " + JSON.stringify(sunLocation));
+				universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
+			},
+			function() {
+				//console.log("sun draw");
+				universe.draw(this.id, undefined, false);
+			}
+		)
+		universe.addObject(sunGraphicsObject);
+	}
 
 	/**
 		Add a Space Object to the Universe
@@ -3366,7 +3391,7 @@ UNIVERSE.EarthExtensions = function(universe) {
         var graphicsObjects = universe.getGraphicsObjects();
         
         for(var i in graphicsObjects) {
-            if(graphicsObjects[i].id != "earth" && graphicsObjects[i].id != "moon") {
+            if(graphicsObjects[i].id != "earth" && graphicsObjects[i].id != "moon" && graphicsObjects[i].id != "sun") {
                 universe.removeObject(graphicsObjects[i].id);
             }
         }

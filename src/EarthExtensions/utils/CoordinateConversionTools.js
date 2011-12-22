@@ -312,8 +312,8 @@ var CoordinateConversionTools = {
         var nu = kepler.getTrueAnomaly();  //double
 
         //reference vallado page 125
-        var cosNu = Math.cos(Math.toRadians(nu)); //double
-        var sinNu = Math.sin(Math.toRadians(nu)); //double
+        var cosNu = Math.cos(MathTools.toRadians(nu)); //double
+        var sinNu = Math.sin(MathTools.toRadians(nu)); //double
 
         //determine the position conversion;    //double
         var Xpqw = p * cosNu / (1 + e * cosNu); //double
@@ -602,22 +602,22 @@ var CoordinateConversionTools = {
         var lambdaSun = 280.4606184 + 36000.77005361 * TUT;  //solar angle (deg)
         var Msun = 357.5277233 + 35999.05034 * TUT;
         var lambdaEcliptic = lambdaSun + 1.914666471 *
-            Math.sin(Math.toRadians(Msun)) + 0.019994643 *
-            Math.sin(2 * Math.toRadians(Msun));//ecliptic angle (deg)
+            Math.sin(MathTools.toRadians(Msun)) + 0.019994643 *
+            Math.sin(2 * MathTools.toRadians(Msun));//ecliptic angle (deg)
 
         //distance of the sun in AU
-        var rsun = 1.000140612 - 0.016708617 * Math.cos(Math.toRadians(Msun)) -
-            0.000139589 * Math.cos(2 * Math.toRadians(Msun));
+        var rsun = 1.000140612 - 0.016708617 * Math.cos(MathTools.toRadians(Msun)) -
+            0.000139589 * Math.cos(2 * MathTools.toRadians(Msun));
         var e = 23.439291 - 0.0130042 * TUT;  //ecliptic latitude on the earth
 
         var AU = 149597870.0;  //one astronomical unit (km)
         var sunPosition = new UNIVERSE.ECICoordinates();
 
-        sunPosition.setX(rsun * Math.cos(Math.toRadians(lambdaEcliptic)) * AU);
-        sunPosition.setY(rsun * Math.cos(Math.toRadians(e)) *
-            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
-        sunPosition.setZ(rsun * Math.sin(Math.toRadians(e)) *
-            Math.sin(Math.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setX(rsun * Math.cos(MathTools.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setY(rsun * Math.cos(MathTools.toRadians(e)) *
+            Math.sin(MathTools.toRadians(lambdaEcliptic)) * AU);
+        sunPosition.setZ(rsun * Math.sin(MathTools.toRadians(e)) *
+            Math.sin(MathTools.toRadians(lambdaEcliptic)) * AU);
 
         return sunPosition;
     },

@@ -283,6 +283,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
 	this.showObject = function(id, isEnabled) {
 		core.showObject(id, isEnabled);
 	}
+	
+	this.updateLight = function(x, y, z, intensity) {
+		core.updateLight(new THREE.Vector3(x, y, z), intensity);
+	}
 
 	/**
 		Basic setup method, needs to be called after all objects are removed from the Universe

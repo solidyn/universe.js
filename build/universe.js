@@ -745,6 +745,7 @@ UNIVERSE.Core3D = function(container) {
     // Variables used to draw the 3D elements
     var camera, scene, projector, renderer, w, h;
     var vector, animate;
+	var light;
 
     var overRenderer;
 
@@ -799,12 +800,12 @@ UNIVERSE.Core3D = function(container) {
 
         addEventListeners();
 
-		var dirLight = new THREE.DirectionalLight( 0xffffff, 1.5);
-		dirLight.position.set( -1, 0, 1 ).normalize();
-		scene.add( dirLight );
-
-		var ambientLight = new THREE.AmbientLight( 0x000000 );
-		scene.add( ambientLight );
+		light = new THREE.DirectionalLight( 0xffffff, 0);
+		light.position.set( 0, 0, 0 ).normalize();
+		scene.add( light );
+		// 
+		// var ambientLight = new THREE.AmbientLight( 0x000000 );
+		// scene.add( ambientLight );
 		
         animate();
     }
@@ -987,7 +988,9 @@ UNIVERSE.Core3D = function(container) {
     // Priviledged Methods
     this.draw = function(id, shape, scale) {
         if(drawnObjects[id] == undefined) {
-            scene.add(shape);
+            if(shape != undefined) {
+				scene.add(shape);
+			}
             drawnObjects[id] = {
                 shape : shape,
                 scale : scale
@@ -1009,14 +1012,18 @@ UNIVERSE.Core3D = function(container) {
     
     this.removeObject = function(id) {
         if(drawnObjects[id] != undefined) {
-            scene.remove(drawnObjects[id].shape);
+			if(drawnObjects[id].shape != undefined) {
+				scene.remove(drawnObjects[id].shape);
+			}
             delete drawnObjects[id];
         }
     }
     
     this.removeAllObjects = function() {
         for(var i in drawnObjects) {
-            scene.remove(drawnObjects[i].shape);
+			if(drawnObject[id].shape != undefined) {
+				scene.remove(drawnObjects[i].shape);
+			}
         }
         drawnObjects = new Array();
     }
@@ -1070,6 +1077,11 @@ UNIVERSE.Core3D = function(container) {
         target.x = isNaN(x) ? 0 : x;
 	    
     }
+
+	this.updateLight = function(position, intensity) {
+		light.position = position;
+		light.intensity = intensity;
+	}
 	
     init();
 
@@ -1529,6 +1541,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
 	*/
 	this.showObject = function(id, isEnabled) {
 		core.showObject(id, isEnabled);
+	}
+	
+	this.updateLight = function(x, y, z, intensity) {
+		core.updateLight(new THREE.Vector3(x, y, z), intensity);
 	}
 
 	/**

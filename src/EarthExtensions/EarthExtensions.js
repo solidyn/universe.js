@@ -155,6 +155,31 @@ UNIVERSE.EarthExtensions = function(universe) {
     }
 
 	/**
+		Add the sun to the Universe at the correct position relative to the Earth-centered universe
+	*/
+	this.addSun = function() {
+		//var sunLight = new THREE.PointLight( 0xffffff, 1.5);
+		
+		var sunGraphicsObject = new UNIVERSE.GraphicsObject(
+			"sun",
+			"sun",
+			function(elapsedTime) {
+				//console.log("sun update");
+				var sunLocation = CoordinateConversionTools.getSunPositionECIAtCurrentTime(universe.getCurrentUniverseTime());
+				var convertedLocation = eciTo3DCoordinates({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z });
+				//sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
+				//console.log("sunLocation: " + JSON.stringify(sunLocation));
+				universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
+			},
+			function() {
+				//console.log("sun draw");
+				universe.draw(this.id, undefined, false);
+			}
+		)
+		universe.addObject(sunGraphicsObject);
+	}
+
+	/**
 		Add a Space Object to the Universe
 		@public
 		@param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
@@ -621,7 +646,7 @@ UNIVERSE.EarthExtensions = function(universe) {
         var graphicsObjects = universe.getGraphicsObjects();
         
         for(var i in graphicsObjects) {
-            if(graphicsObjects[i].id != "earth" && graphicsObjects[i].id != "moon") {
+            if(graphicsObjects[i].id != "earth" && graphicsObjects[i].id != "moon" && graphicsObjects[i].id != "sun") {
                 universe.removeObject(graphicsObjects[i].id);
             }
         }
