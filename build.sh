@@ -1,4 +1,5 @@
 rm -rf docs
+rm build/*
 
 # Write out the THREE.js files that we'll be including
 cat lib/Three/ThreeWebGL.js > build/universe.js

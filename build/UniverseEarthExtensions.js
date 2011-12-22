@@ -2792,61 +2792,34 @@ UNIVERSE.EarthExtensions = function(universe) {
 	/**
 		Add the Earth at the center of the Universe
 		@public
-		@param {Object} earthOptions - .image=the URL of the Earth image to use
+		@param {string} dayImageURL - URL of the image to be used for the sun-facing side of the Earth
+		@param {string} nightImageURL - URL of the image to be used for the dark side of the Earth
 	*/
-    this.addEarth = function(earthOptions) {
+    this.addEarth = function(dayImageURL, nightImageURL) {
         var earthSphereSegments = 40, earthSphereRings = 30;
 
         // Create the sphere
         var geometry = new THREE.SphereGeometry(earthSphereRadius, earthSphereSegments, earthSphereRings);
-		var geometry1 = new THREE.SphereGeometry(earthSphereRadius, earthSphereSegments, earthSphereRings);
-
-        // Define the material to be used for the sphere surface by pulling the image and wrapping it around the sphere
-        // var shader = {
-        //             uniforms : {
-        //                 'texture' : {
-        //                     type : 't',
-        //                     value : 0,
-        //                     texture : null
-        //                 }
-        //             },
-        //             vertexShader : ['varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );', 'vNormal = normalize( normalMatrix * normal );', 'vUv = uv;', '}'].join('\n'),
-        //             fragmentShader : ['uniform sampler2D texture;', 'varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'vec3 diffuse = texture2D( texture, vUv ).xyz;', 'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );', 'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );', 'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );', '}'].join('\n')
-        //         };
-        //         var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-        // 
-        //         uniforms['texture'].texture = THREE.ImageUtils.loadTexture(earthOptions.image);
-        // 
-        //         var material = new THREE.ShaderMaterial({
-        //                     uniforms : uniforms,
-        //                     vertexShader : shader.vertexShader,
-        //                     fragmentShader : shader.fragmentShader
-        //                 });
-
-		var planetTexture   = THREE.ImageUtils.loadTexture( earthOptions.image );
-		var earthAtNightTexture = THREE.ImageUtils.loadTexture( "/assets/universe/earth_lights_lrg-dim.png");
-		var material = new THREE.MeshBasicMaterial({
+		console.log("dayImageURL: " + dayImageURL);
+		var dayImageTexture   = THREE.ImageUtils.loadTexture( dayImageURL );
+		var earthAtNightTexture = THREE.ImageUtils.loadTexture( nightImageURL );
+		var nightMaterial = new THREE.MeshBasicMaterial({
 			 color: 0xffffff,
 	         overdraw: true,
 			 map: earthAtNightTexture,
 			 blending: THREE.AdditiveBlending
 		});
         
-        var earthMesh1 = new THREE.Mesh(geometry1, material);
+        var nightEarthMesh = new THREE.Mesh(geometry, nightMaterial);
 
-
-
-
-		
-		// var cloudsTexture   = THREE.ImageUtils.loadTexture( "textures/planets/earth_clouds_1024.png" );
-		var normalTexture   = THREE.ImageUtils.loadTexture( "/assets/universe/earth_normal_2048.jpg" );
-		var specularTexture = THREE.ImageUtils.loadTexture( "/assets/universe/earth_specular_2048.jpg" );
+		//var normalTexture   = THREE.ImageUtils.loadTexture( "/assets/universe/earth_normal_2048.jpg" );
+		//var specularTexture = THREE.ImageUtils.loadTexture( "/assets/universe/earth_specular_2048.jpg" );
 
 		// planet
-		geometry.computeTangents();
+		//geometry.computeTangents();
 
-		var earthPhongMaterial = new THREE.MeshPhongMaterial({
-			map: planetTexture,
+		var dayMaterial = new THREE.MeshPhongMaterial({
+			map: dayImageTexture,
 			color: 0xffffff,
 			// specular: 0xffffff,
 			//ambient: 0xffffff,
@@ -2857,22 +2830,19 @@ UNIVERSE.EarthExtensions = function(universe) {
 			blending: THREE.AdditiveBlending
 		})
 
-		var earthMesh = new THREE.Mesh(geometry, earthPhongMaterial);
-
-
-
+		var dayEarthMesh = new THREE.Mesh(geometry, dayMaterial);
 
 		var earthObject = new UNIVERSE.GraphicsObject(
 			"earth", 
 			"earth", 
 			function(elapsedTime) {
             	var rotationAngle = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
-            	earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
-				earthMesh1.rotation.y = rotationAngle * (2 * Math.PI / 360);
+            	dayEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
+				nightEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
         	},
  			function() {
-                universe.draw(this.id + "_ambient", earthMesh, false);
-				universe.draw(this.id + "_non_ambient", earthMesh1, false);
+                universe.draw(this.id + "_day", dayEarthMesh, false);
+				universe.draw(this.id + "_night", nightEarthMesh, false);			
             });
 		universe.addObject(earthObject);
     };
