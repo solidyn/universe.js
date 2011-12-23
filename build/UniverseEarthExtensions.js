@@ -2868,9 +2868,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	/**
 		Add the Moon to the Universe
 		@public
-		@param {Object} moonOptions - .image=the URL of the Moon image to use
+		@param {string} moonImageURL - the URL of the Moon image to use
 	*/
-    this.addMoon = function(moonOptions) {
+    this.addMoon = function(moonImageURL) {
         var moonSphereSegments = 40, moonSphereRings = 30;
         var moonSphereRadius = 1737.1;
 
@@ -2891,7 +2891,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         };
         var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
 
-        uniforms['texture'].texture = THREE.ImageUtils.loadTexture(moonOptions.image);
+        uniforms['texture'].texture = THREE.ImageUtils.loadTexture(moonImageURL);
 
         var material = new THREE.ShaderMaterial({
             uniforms : uniforms,

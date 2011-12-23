@@ -31,9 +31,7 @@
 		<script src="../build/universe.js"></script>
 
 		<script>
-			var universe = new SSI.Universe({
-			   currentUniverseTime : new Date(),
-			}, document.getElementById("universe"));
+			var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
 			
 			universe.addJsonGeometryModel("dsp", "models/DSP.js", function() {
 				universe.getObjectFromLibraryById("dsp", function(geometry) {
@@ -54,7 +52,7 @@
 				});
 			})
 			
-			universe.play({playbackSpeed: 20});
+			universe.play(new Date(), 20, undefined);
 
 		</script>
 

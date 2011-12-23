@@ -29,19 +29,20 @@
 		</div>
 
 		<script src="../build/universe.js"></script>
+		<script src="../build/UniverseEarthExtensions.js"></script>
 
 		<script>
-			var universe = new SSI.Universe({
-			   currentUniverseTime : new Date(),
-			}, document.getElementById("universe"));
+			var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
 			
-			var earthExtensions = new SSI.EarthExtensions(universe);
+			var earthExtensions = new UNIVERSE.EarthExtensions(universe, false);
 			
-			earthExtensions.addEarth({image: "img/world3000.jpg"})
+			earthExtensions.addEarth("img/world3000.jpg", "img/earth_lights_lrg-dim.png")
 			
-			earthExtensions.addMoon({image: "img/moon_1024.jpg"})
+			earthExtensions.addMoon("img/moon_1024.jpg")
 			
-			universe.play({playbackSpeed: 5000});
+			earthExtensions.addSun();
+			
+			universe.play(new Date(), 5000, undefined);
 
 		</script>
 
