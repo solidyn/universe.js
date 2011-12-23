@@ -266,6 +266,15 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.getGraphicsObjects = function() {
         return controller.getGraphicsObjects();
     }
+
+	/**
+		Get a graphics object by its id
+		@public
+		@param {string} id
+	*/
+	this.getGraphicsObjectById = function(id) {
+		return controller.getGraphicsObjectById(id);
+	}
 	
 	/**
 		@ignore

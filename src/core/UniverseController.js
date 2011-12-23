@@ -69,6 +69,10 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     this.getGraphicsObjects = function() {
         return graphicsObjects;
     }
+
+	this.getGraphicsObjectById = function(id) {
+		return graphicsObjects[id];
+	}
 };
 
 UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {

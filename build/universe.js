@@ -1099,13 +1099,14 @@ var UNIVERSE = UNIVERSE || {};
 	@param {function} drawFunction - A function that should call Universe.draw with the object's model
  */
 
-UNIVERSE.GraphicsObject = function(id, modelName, updateFunction, drawFunction) {
+UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunction, drawFunction) {
 	if(id == undefined)
 	{ 
 		return undefined;
 	}
 	this.id = id;
 	this.modelName = modelName || id;
+	this.currentLocation = currentLocation;
 	this.update = updateFunction;
 	this.draw = drawFunction;
 }
@@ -1113,10 +1114,11 @@ UNIVERSE.GraphicsObject = function(id, modelName, updateFunction, drawFunction) 
 UNIVERSE.GraphicsObject.prototype = {
 	constructor: UNIVERSE.GraphicsObject,
 	
-	set: function ( id, modelName, updateFunction, drawFunction ) {
+	set: function ( id, modelName, currentLocation, updateFunction, drawFunction ) {
 
 		this.id = id;
 		this.modelName = modelName;
+		this.currentLocation = currentLocation;
 		this.update = updateFunction;
 		this.draw = drawFunction;
 
@@ -1252,6 +1254,10 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     this.getGraphicsObjects = function() {
         return graphicsObjects;
     }
+
+	this.getGraphicsObjectById = function(id) {
+		return graphicsObjects[id];
+	}
 };
 
 UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
@@ -1525,6 +1531,15 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.getGraphicsObjects = function() {
         return controller.getGraphicsObjects();
     }
+
+	/**
+		Get a graphics object by its id
+		@public
+		@param {string} id
+	*/
+	this.getGraphicsObjectById = function(id) {
+		return controller.getGraphicsObjectById(id);
+	}
 	
 	/**
 		@ignore

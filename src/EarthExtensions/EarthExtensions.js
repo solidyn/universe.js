@@ -101,7 +101,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 		var earthObject = new UNIVERSE.GraphicsObject(
 			"earth", 
-			"earth", 
+			"earth",
+			{x:0, y:0, z:0},
 			function(elapsedTime) {
             	var rotationAngle = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
             	dayEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
@@ -157,12 +158,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 		var moonObject = new UNIVERSE.GraphicsObject(
 			"moon", 
-			"moon", 
+			"moon",
+			undefined,
 			function(elapsedTime) {
                 var time = new Date(universe.getCurrentUniverseTime());
 				var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
 				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
-				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }
+				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
+				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
             },
 			function() {
                 universe.draw(this.id, moonMesh, false);
@@ -180,6 +183,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		var sunGraphicsObject = new UNIVERSE.GraphicsObject(
 			"sun",
 			"sun",
+			undefined,
 			function(elapsedTime) {
 				//console.log("sun update");
 				var sunLocation = CoordinateConversionTools.getSunPositionECIAtCurrentTime(universe.getCurrentUniverseTime());
@@ -187,6 +191,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				//sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
 				//console.log("sunLocation: " + JSON.stringify(sunLocation));
 				universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
+				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
 			},
 			function() {
 				//console.log("sun draw");
@@ -214,6 +219,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var spaceGraphicsObject = new UNIVERSE.GraphicsObject(
 						spaceObject.id,
 						spaceObject.objectName,
+						undefined,
 						function(elapsedTime) {
 	                        // need to pass a time to the propagator
 	                        var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
@@ -222,6 +228,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 	                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
 	                            objectModel.lookAt(centerPoint);
+								this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
 	                        }
 						},
 						function() {
@@ -271,6 +278,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var groundGraphicsObject = new UNIVERSE.GraphicsObject(
 						groundObject.id,
 						groundObject.objectName,
+						undefined,
 						function(elapsedTime) {
 	                        // check earth rotation and update location
 	                        var position = eciTo3DCoordinates(groundObject.propagator());
@@ -289,7 +297,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	                        universe.draw(this.id, groundObjectMesh, true);
 	                    }
 					);
-				groundGraphicsObject.currentLocation = undefined;
 				universe.addObject(groundGraphicsObject);
             });
         });
@@ -313,6 +320,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var groundGraphicsObject = new UNIVERSE.GraphicsObject(
 					object.id + "_groundPoint",
                     object.objectName,
+					undefined,
                     function(elapsedTime) {
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
                         if(objectLocation != undefined) {
@@ -323,6 +331,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                             groundObjectMesh.position.copy(vector);
                         }
+						this.currentLocation = objectLocation;
                     },
                     function() {
                         universe.draw(this.id, groundObjectMesh, true);
@@ -365,6 +374,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
 				object.id + "_propogation",
 				object.objectName,
+				undefined,
 				function(elapsedTime) {
                 // add points onto the end of the track?
                 },
@@ -412,6 +422,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var sensorProjectionGraphicsObject = new UNIVERSE.GraphicsObject(
 					object.id + "_sensorProjection",
                     object.objectName,
+					undefined,
                     function(elapsedTime) {
 
                         var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
@@ -452,51 +463,79 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {UNIVERSE.SpaceObject} object - A Space Object to add a tracing line to the closest ground object for
 	*/
     this.addClosestGroundObjectTracingLine = function(object) {
+		var closestObject_id = undefined;
+		var closestGroundObjectLineController = new UNIVERSE.GraphicsObject(
+			object.id + "_controlLine",
+			object.objectName,
+			undefined,
+			function(elapsedTime) {
+				var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+
+		        var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
+
+				if(closestGroundObject != undefined && closestGroundObject.id != closestObject_id) {
+					earthExtensions.removeLineBetweenObjects(object.id, closestObject_id);
+					closestObject_id = closestGroundObject.id;
+					earthExtensions.addLineBetweenObjects(object.id, closestObject_id);
+				}
+			},
+			function() {
+				
+			}
+		)
+        universe.addObject(closestGroundObjectLineController);
+    }
+
+	/**
+		Add a Line between two graphics objects
+		@public
+		@param {string} object1_id - starting object of the line
+		@param {string} object2_id - end object of the line
+	*/
+    this.addLineBetweenObjects = function(object1_id, object2_id) {
         var objectGeometry, objectMaterial;
         
         universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
             objectMaterial = retrieved_material;
 
             var line = undefined;
-
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-				object.id + "_controlLine",
-				object.objectName,
+				object1_id + "_to_" + object2_id,
+				undefined,
+				undefined,
 				function(elapsedTime) {    
-                    var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                    var object1Location = universe.getGraphicsObjectById(object1_id).currentLocation;
+					var object2Location = universe.getGraphicsObjectById(object2_id).currentLocation;
                     
-                    var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
-                         
-                    if(closestGroundObject != undefined) {
-                        objectGeometry = new THREE.Geometry();
-                        var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-                        objectGeometry.vertices.push(new THREE.Vertex(vector));
+					objectGeometry = new THREE.Geometry();
+                    var vector1 = new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z);
+                    objectGeometry.vertices.push(new THREE.Vertex(vector1));
                         
-                        var vector2 = new THREE.Vector3(closestGroundObject.currentLocation.x, closestGroundObject.currentLocation.y, closestGroundObject.currentLocation.z);
-                        objectGeometry.vertices.push(new THREE.Vertex(vector2));
-                        
-                        line = new THREE.Line(objectGeometry, objectMaterial);
-                    }
+                    var vector2 = new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z);
+                    objectGeometry.vertices.push(new THREE.Vertex(vector2));
+                    
+					line = new THREE.Line(objectGeometry, objectMaterial);
                 },
 				function() {
                     universe.unDraw(this.id);
                     if(line != undefined) {
                         universe.draw(this.id, line, false);
-                        
-                        //TODO: this is not perfect.  It does not allow the vehicle to override the global setting as the other settings do
-                        if(enableControlLines != undefined) {
-                            earthExtensions.showControlLineForId(enableControlLines, object.id);
-                        }
-                        else {
-                            earthExtensions.showControlLineForId(object.showControlLine, object.id);                            
-                        }
-
                     }
                 }
 			);
 			universe.addObject(lineGraphicsObject);
         });
     }
+
+	/**
+		Remove a Line between two graphics objects
+		@public
+		@param {string} object1_id - starting object of the line
+		@param {string} object2_id - end object of the line
+	*/
+	this.removeLineBetweenObjects = function(object1_id, object2_id) {
+		universe.removeObject(object1_id + "_to_" + object2_id);
+	}
     
 	/**
 		Return the closest Ground Object to a location
