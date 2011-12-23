@@ -2749,8 +2749,9 @@ UNIVERSE.SpaceObject.prototype = {
 	Extensions for doing Earth-based 3D modeling with Universe.js
 	@constructor
 	@param {UNIVERSE.Universe} universe - The Universe to draw in
+	@param {boolean} isSunLighting - Should the Earth be lit by the sun or not
  */
-UNIVERSE.EarthExtensions = function(universe) {
+UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var earthExtensions = this;
 	
 	// constants
@@ -2760,6 +2761,9 @@ UNIVERSE.EarthExtensions = function(universe) {
 	
 	// have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableControlLines = undefined;
+
+	// Is the sun-lighting on the Earth enabled or disabled
+	var useSunLighting = isSunLighting ? isSunLighting : true;
 
     universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(200, 20, 10));
     universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
@@ -2830,6 +2834,15 @@ UNIVERSE.EarthExtensions = function(universe) {
 		})
 
 		var dayEarthMesh = new THREE.Mesh(geometry, dayMaterial);
+		
+		var earthMaterial = new THREE.MeshBasicMaterial({
+			 color: 0xffffff,
+	         overdraw: true,
+			 map: dayImageTexture,
+			 blending: THREE.AdditiveBlending
+		});
+		
+		var earthMesh = new THREE.Mesh(geometry, earthMaterial);
 
 		var earthObject = new UNIVERSE.GraphicsObject(
 			"earth", 
@@ -2838,11 +2851,15 @@ UNIVERSE.EarthExtensions = function(universe) {
             	var rotationAngle = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
             	dayEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
 				nightEarthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
+				earthMesh.rotation.y = rotationAngle * (2 * Math.PI / 360);
         	},
  			function() {
 				// for some reason these lines have to go in this order for night to be under day...
-                universe.draw(this.id + "_day", dayEarthMesh, false);
-				universe.draw(this.id + "_night", nightEarthMesh, false);			
+					universe.draw(this.id + "_day", dayEarthMesh, false);
+					universe.draw(this.id + "_night", nightEarthMesh, false);
+					universe.draw(this.id, earthMesh, false);
+					earthExtensions.useSunLighting(useSunLighting);
+                			
             });
 		universe.addObject(earthObject);
     };
@@ -3382,6 +3399,18 @@ UNIVERSE.EarthExtensions = function(universe) {
     this.showControlLineForId = function(isEnabled, id) {
         universe.showObject(id + "_controlLine", isEnabled);
     }
+
+	/**
+		Turn on or off sun lighting
+		@public
+		@param {boolean} isSunLighting
+	*/
+	this.useSunLighting = function(isSunLighting) {
+		useSunLighting = isSunLighting;
+		universe.showObject("earth", !isSunLighting);
+		universe.showObject("earth_day", isSunLighting);
+		universe.showObject("earth_night", isSunLighting);
+	}
 
 	/**
 		Remove all objects from the Universe except the Earth and Moon
