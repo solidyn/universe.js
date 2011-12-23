@@ -2991,10 +2991,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                 earthExtensions.addSensorProjection(spaceObject);
                 earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
-                
-                earthExtensions.addClosestGroundObjectTracingLine(spaceObject);
-                // Have to do the below on draw for the control line since it creates a new line every draw
-                // earthExtensions.showControlLineForId(spaceObject.showControlLine, spaceObject.id);
             });
         });
     };
@@ -3229,51 +3225,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			}
 		)
         universe.addObject(closestGroundObjectLineController);
-
-		// var objectGeometry, objectMaterial;
-		//         
-		//         universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
-		//             objectMaterial = retrieved_material;
-		// 
-		//             var line = undefined;
-		// 
-		// 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-		// 				object.id + "_controlLine",
-		// 				object.objectName,
-		// 				function(elapsedTime) {    
-		//                     var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
-		//                     
-		//                     var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
-		//                          
-		//                     if(closestGroundObject != undefined) {
-		//                         objectGeometry = new THREE.Geometry();
-		//                         var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-		//                         objectGeometry.vertices.push(new THREE.Vertex(vector));
-		//                         
-		//                         var vector2 = new THREE.Vector3(closestGroundObject.currentLocation.x, closestGroundObject.currentLocation.y, closestGroundObject.currentLocation.z);
-		//                         objectGeometry.vertices.push(new THREE.Vertex(vector2));
-		//                         
-		//                         line = new THREE.Line(objectGeometry, objectMaterial);
-		//                     }
-		//                 },
-		// 				function() {
-		//                     universe.unDraw(this.id);
-		//                     if(line != undefined) {
-		//                         universe.draw(this.id, line, false);
-		//                         
-		//                         //TODO: this is not perfect.  It does not allow the vehicle to override the global setting as the other settings do
-		//                         if(enableControlLines != undefined) {
-		//                             earthExtensions.showControlLineForId(enableControlLines, object.id);
-		//                         }
-		//                         else {
-		//                             earthExtensions.showControlLineForId(object.showControlLine, object.id);                            
-		//                         }
-		// 
-		//                     }
-		//                 }
-		// 			);
-		// 			universe.addObject(lineGraphicsObject);
-        //});
     }
 
 	/**
@@ -3305,8 +3256,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     objectGeometry.vertices.push(new THREE.Vertex(vector2));
                     
 					line = new THREE.Line(objectGeometry, objectMaterial);
-
-                    
                 },
 				function() {
                     universe.unDraw(this.id);

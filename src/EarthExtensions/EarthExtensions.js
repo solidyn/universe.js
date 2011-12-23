@@ -246,10 +246,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                 earthExtensions.addSensorProjection(spaceObject);
                 earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
-                
-                earthExtensions.addClosestGroundObjectTracingLine(spaceObject);
-                // Have to do the below on draw for the control line since it creates a new line every draw
-                // earthExtensions.showControlLineForId(spaceObject.showControlLine, spaceObject.id);
             });
         });
     };
