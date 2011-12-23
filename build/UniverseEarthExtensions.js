@@ -2760,7 +2760,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var centerPoint = new THREE.Vector3(0,0,0);
 	
 	// have to do this this way since the decision of whether to show or hide it has to be made at draw time
-    var enableControlLines = undefined;
+    var enableLinkLines = undefined;
 
 	// Is the sun-lighting on the Earth enabled or disabled
 	var useSunLighting = isSunLighting ? isSunLighting : true;
@@ -3260,7 +3260,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				function() {
                     universe.unDraw(this.id);
                     if(line != undefined) {
-                        universe.draw(this.id, line, false);
+						universe.draw(this.id, line, false)	;
+						//TODO: this is not perfect.  It does not allow the vehicle to override the global setting as the other settings do
+						if(enableLinkLines != undefined) {
+							earthExtensions.showLineBetweenObjectsForId(enableLinkLines, object1_id);
+						}
+                      	else {
+                        	earthExtensions.showLineBetweenObjectsForId(universe.getGraphicsObjectById(object1_id).showControlLine, object1_id);                            
+						}   
                     }
                 }
 			);
@@ -3410,29 +3417,35 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     }
     
 	/**
-		Enable or disable display of all control lines
+		Enable or disable display of all lines between objects
 		@public
 		@param {boolean} isEnabled
 	*/
-    this.showAllControlLines = function(isEnabled) {
-        enableControlLines = isEnabled;
+    this.showAllLinesBetweenObjects = function(isEnabled) {
+        enableLinkLines = isEnabled;
         var graphicsObjects = universe.getGraphicsObjects();
 
         for(var i in graphicsObjects) {
-            if(graphicsObjects[i].id.indexOf("_controlLine") != -1){
+            if(graphicsObjects[i].id.indexOf("_to_") != -1){
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
     }
     
 	/**
-		Enable or disable display of control lines for an object
+		Enable or disable display of lines for an object
 		@public
 		@param {string} id - identifier for the object
 		@param {boolean} isEnabled
 	*/
-    this.showControlLineForId = function(isEnabled, id) {
-        universe.showObject(id + "_controlLine", isEnabled);
+    this.showLineBetweenObjectsForId = function(isEnabled, id) {
+		var graphicsObjects = universe.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf(id + "_to_") != -1 || graphicsObjects[i].id.indexOf("_to_" + id) != -1 ){
+                universe.showObject(graphicsObjects[i].id, isEnabled);
+            }
+        }
     }
 
 	/**
