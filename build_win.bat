@@ -1,6 +1,7 @@
 @echo off
 rem Set the tool path to a location of git
 set bin="C:\Program Files (x86)\Git\bin"
+set path=%bin%;%path%
 
 rm -rf docs
 

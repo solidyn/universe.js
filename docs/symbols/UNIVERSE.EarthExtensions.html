@@ -114,7 +114,7 @@
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/UNIVERSE.EarthExtensions.html#constructor">UNIVERSE.EarthExtensions</a></b>(universe, isSunLighting)
+								<b><a href="../symbols/UNIVERSE.EarthExtensions.html#constructor">UNIVERSE.EarthExtensions</a></b>(universe)
 							</div>
 							<div class="description">Extensions for doing Earth-based 3D modeling with Universe.js</div>
 						</td>
@@ -179,16 +179,7 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addLineBetweenObjects">addLineBetweenObjects</a></b>(object1_id, object2_id)
-								</div>
-								<div class="description">Add a Line between two graphics objects</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addMoon">addMoon</a></b>(moonImageURL)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addMoon">addMoon</a></b>(moonOptions)
 								</div>
 								<div class="description">Add the Moon to the Universe</div>
 							</td>
@@ -224,15 +215,6 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSun">addSun</a></b>()
-								</div>
-								<div class="description">Add the sun to the Universe at the correct position relative to the Earth-centered universe</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#findClosestGroundObject">findClosestGroundObject</a></b>(location)
 								</div>
 								<div class="description">Return the closest Ground Object to a location</div>
@@ -260,15 +242,6 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#removeLineBetweenObjects">removeLineBetweenObjects</a></b>(object1_id, object2_id)
-								</div>
-								<div class="description">Remove a Line between two graphics objects</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#setup">setup</a></b>()
 								</div>
 								<div class="description">Set up the Universe with the Earth Extensions</div>
@@ -278,18 +251,18 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllGroundTracks">showAllGroundTracks</a></b>(isEnabled)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllControlLines">showAllControlLines</a></b>(isEnabled)
 								</div>
-								<div class="description">Enable or disable display of all ground tracks</div>
+								<div class="description">Enable or disable display of all control lines</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllLinesBetweenObjects">showAllLinesBetweenObjects</a></b>(isEnabled)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllGroundTracks">showAllGroundTracks</a></b>(isEnabled)
 								</div>
-								<div class="description">Enable or disable display of all lines between objects</div>
+								<div class="description">Enable or disable display of all ground tracks</div>
 							</td>
 						</tr>
 					
@@ -314,18 +287,18 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showGroundTrackForId">showGroundTrackForId</a></b>(id, isEnabled)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showControlLineForId">showControlLineForId</a></b>(id, isEnabled)
 								</div>
-								<div class="description">Enable or disable display of a ground track for an object</div>
+								<div class="description">Enable or disable display of control lines for an object</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showLineBetweenObjectsForId">showLineBetweenObjectsForId</a></b>(id, isEnabled)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showGroundTrackForId">showGroundTrackForId</a></b>(id, isEnabled)
 								</div>
-								<div class="description">Enable or disable display of lines for an object</div>
+								<div class="description">Enable or disable display of a ground track for an object</div>
 							</td>
 						</tr>
 					
@@ -356,15 +329,6 @@
 							</td>
 						</tr>
 					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#useSunLighting">useSunLighting</a></b>(isSunLighting)
-								</div>
-								<div class="description">Turn on or off sun lighting</div>
-							</td>
-						</tr>
-					
 					</tbody>
 				</table>
 				
@@ -382,7 +346,7 @@
 				</div>
 				
 				<div class="fixedFont">
-						<b>UNIVERSE.EarthExtensions</b>(universe, isSunLighting)
+						<b>UNIVERSE.EarthExtensions</b>(universe)
 				</div>
 				
 				<div class="description">
@@ -402,12 +366,6 @@
 								
 							</dt>
 								<dd>- The Universe to draw in</dd>
-						
-							<dt>
-								<span class="light fixedFont">{boolean}</span>  <b>isSunLighting</b>
-								
-							</dt>
-								<dd>- Should the Earth be lit by the sun or not</dd>
 						
 						</dl>
 					
@@ -580,53 +538,11 @@
 
 					<hr />
 				
-					<a name="addLineBetweenObjects"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addLineBetweenObjects</b>(object1_id, object2_id)
-					
-					</div>
-					<div class="description">
-						Add a Line between two graphics objects
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>object1_id</b>
-									
-								</dt>
-								<dd>- starting object of the line</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>object2_id</b>
-									
-								</dt>
-								<dd>- end object of the line</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="addMoon"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>addMoon</b>(moonImageURL)
+					<b>addMoon</b>(moonOptions)
 					
 					</div>
 					<div class="description">
@@ -642,10 +558,10 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>moonImageURL</b>
+									<span class="light fixedFont">{Object}</span> <b>moonOptions</b>
 									
 								</dt>
-								<dd>- the URL of the Moon image to use</dd>
+								<dd>- .image=the URL of the Moon image to use</dd>
 							
 							</dl>
 						
@@ -766,31 +682,6 @@
 
 					<hr />
 				
-					<a name="addSun"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>addSun</b>()
-					
-					</div>
-					<div class="description">
-						Add the sun to the Universe at the correct position relative to the Earth-centered universe
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="findClosestGroundObject"> </a>
 					<div class="fixedFont">
 					
@@ -888,48 +779,6 @@
 
 					<hr />
 				
-					<a name="removeLineBetweenObjects"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>removeLineBetweenObjects</b>(object1_id, object2_id)
-					
-					</div>
-					<div class="description">
-						Remove a Line between two graphics objects
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>object1_id</b>
-									
-								</dt>
-								<dd>- starting object of the line</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>object2_id</b>
-									
-								</dt>
-								<dd>- end object of the line</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="setup"> </a>
 					<div class="fixedFont">
 					
@@ -955,15 +804,15 @@
 
 					<hr />
 				
-					<a name="showAllGroundTracks"> </a>
+					<a name="showAllControlLines"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>showAllGroundTracks</b>(isEnabled)
+					<b>showAllControlLines</b>(isEnabled)
 					
 					</div>
 					<div class="description">
-						Enable or disable display of all ground tracks
+						Enable or disable display of all control lines
 						
 						
 					</div>
@@ -991,15 +840,15 @@
 
 					<hr />
 				
-					<a name="showAllLinesBetweenObjects"> </a>
+					<a name="showAllGroundTracks"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>showAllLinesBetweenObjects</b>(isEnabled)
+					<b>showAllGroundTracks</b>(isEnabled)
 					
 					</div>
 					<div class="description">
-						Enable or disable display of all lines between objects
+						Enable or disable display of all ground tracks
 						
 						
 					</div>
@@ -1099,15 +948,15 @@
 
 					<hr />
 				
-					<a name="showGroundTrackForId"> </a>
+					<a name="showControlLineForId"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>showGroundTrackForId</b>(id, isEnabled)
+					<b>showControlLineForId</b>(id, isEnabled)
 					
 					</div>
 					<div class="description">
-						Enable or disable display of a ground track for an object
+						Enable or disable display of control lines for an object
 						
 						
 					</div>
@@ -1141,15 +990,15 @@
 
 					<hr />
 				
-					<a name="showLineBetweenObjectsForId"> </a>
+					<a name="showGroundTrackForId"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>showLineBetweenObjectsForId</b>(id, isEnabled)
+					<b>showGroundTrackForId</b>(id, isEnabled)
 					
 					</div>
 					<div class="description">
-						Enable or disable display of lines for an object
+						Enable or disable display of a ground track for an object
 						
 						
 					</div>
@@ -1307,42 +1156,6 @@
 						
 						
 
-					<hr />
-				
-					<a name="useSunLighting"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>useSunLighting</b>(isSunLighting)
-					
-					</div>
-					<div class="description">
-						Turn on or off sun lighting
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>isSunLighting</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -1357,7 +1170,7 @@
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Jan 02 2012 12:00:42 GMT-0700 (MST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Dec 21 2011 21:11:58 GMT-0700 (MST)
 		</div>
 
                
