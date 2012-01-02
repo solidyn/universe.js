@@ -132,29 +132,30 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         // Create the sphere
         var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
 
-        // Define the material to be used for the sphere surface by pulling the image and wrapping it around the sphere
-        var shader = {
-            uniforms : {
-                'texture' : {
-                    type : 't',
-                    value : 0,
-                    texture : null
-                }
-            },
-            vertexShader : ['varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );', 'vNormal = normalize( normalMatrix * normal );', 'vUv = uv;', '}'].join('\n'),
-            fragmentShader : ['uniform sampler2D texture;', 'varying vec3 vNormal;', 'varying vec2 vUv;', 'void main() {', 'vec3 diffuse = texture2D( texture, vUv ).xyz;', 'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );', 'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );', 'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );', '}'].join('\n')
-        };
-        var uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+		var moonTexture = THREE.ImageUtils.loadTexture(moonImageURL);
+		
+		var dayMaterial = new THREE.MeshPhongMaterial({
+			map: moonTexture,
+			color: 0xffffff,
+			// specular: 0xffffff,
+			//ambient: 0xffffff,
+			// shininess: 15,
+			//opacity: 0.5,
+			transparent: true,
+			// reflectivity: 1
+			blending: THREE.AdditiveBlending
+		})
 
-        uniforms['texture'].texture = THREE.ImageUtils.loadTexture(moonImageURL);
-
-        var material = new THREE.ShaderMaterial({
-            uniforms : uniforms,
-            vertexShader : shader.vertexShader,
-            fragmentShader : shader.fragmentShader
-        });
-
-        var moonMesh = new THREE.Mesh(geometry, material);
+		var dayMoonMesh = new THREE.Mesh(geometry, dayMaterial);
+		
+		var moonMaterial = new THREE.MeshBasicMaterial({
+			 color: 0xffffff,
+	         overdraw: true,
+			 map: moonTexture,
+			 blending: THREE.AdditiveBlending
+		});
+		
+		var moonMesh = new THREE.Mesh(geometry, moonMaterial);
 
 		var moonObject = new UNIVERSE.GraphicsObject(
 			"moon", 
@@ -164,11 +165,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 var time = new Date(universe.getCurrentUniverseTime());
 				var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
 				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
+				dayMoonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
 				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
 				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
             },
 			function() {
-                universe.draw(this.id, moonMesh, false);
+				universe.draw(this.id + "_day", dayMoonMesh, false);
+				universe.draw(this.id, moonMesh, false);
+				earthExtensions.useSunLighting(useSunLighting);
             }
 		)
 		universe.addObject(moonObject);
@@ -499,9 +503,18 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				object1_id + "_to_" + object2_id,
 				undefined,
 				undefined,
-				function(elapsedTime) {    
-                    var object1Location = universe.getGraphicsObjectById(object1_id).currentLocation;
-					var object2Location = universe.getGraphicsObjectById(object2_id).currentLocation;
+				function(elapsedTime) {
+					var object1 = universe.getGraphicsObjectById(object1_id);
+					var object2 = universe.getGraphicsObjectById(object2_id);
+					if(object1 == undefined || object2 == undefined) {
+						return;
+					}
+                    var object1Location = object1.currentLocation;
+					var object2Location = object2.currentLocation;
+					
+					if(object1Location == undefined || object2Location == undefined) {
+						return;
+					}
                     
 					objectGeometry = new THREE.Geometry();
                     var vector1 = new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z);
