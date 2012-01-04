@@ -3237,11 +3237,19 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object1_id - starting object of the line
 		@param {string} object2_id - end object of the line
 	*/
-    this.addLineBetweenObjects = function(object1_id, object2_id) {
+    this.addLineBetweenObjects = function(object1_id, object2_id, color) {
         var objectGeometry, objectMaterial;
         
         universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
-            objectMaterial = retrieved_material;
+            if(color) {
+				objectMaterial = new THREE.LineBasicMaterial({
+	                color : color,
+	                opacity : 1
+	            });
+			}
+			else {
+				objectMaterial = retrieved_material;
+			}
 
             var line = undefined;
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
@@ -3296,6 +3304,19 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
 	this.removeLineBetweenObjects = function(object1_id, object2_id) {
 		universe.removeObject(object1_id + "_to_" + object2_id);
+	}
+	
+	/**
+		Remove all Lines between two graphics objects
+		@public
+	*/
+	this.removeAllLinesBetweenObjects = function() {
+		var graphicsObjects = universe.getGraphicsObjects();
+		for(var i in graphicsObjects) {
+            if(i.indexOf("_to_") > -1) {
+				universe.removeObject(i);
+			}
+		}
 	}
     
 	/**
