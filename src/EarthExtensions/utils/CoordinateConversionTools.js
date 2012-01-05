@@ -492,7 +492,7 @@ var CoordinateConversionTools = {
      */
     buildRotationMatrixToConvertECItoRSW: function(satellite)
     {
-        var satelliteKepler = satellite.getKepler(); //KeplerianCoords
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoords
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
         var w = satelliteKepler.getArgOfPerigee();  //double
@@ -526,7 +526,7 @@ var CoordinateConversionTools = {
     convertTargetECIToSatelliteRSW: function(satellite, targetECI)
     {
         var rsw = new RSWcoordinates();
-        var satelliteKepler = satellite.getKepler(); //KeplerianCoordinates
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoordinates
         var satelliteECI = satellite.getEci();       //ECICoordinates
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
@@ -561,7 +561,7 @@ var CoordinateConversionTools = {
     convertRSWToECI: function(satellite, rsw)
     {
         var eci = new UNIVERSE.ECICoordinates();
-        var satelliteKepler = satellite.getKepler();
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI());
 
         var nu = satelliteKepler.getTrueAnomaly();
         var w = satelliteKepler.getArgOfPerigee();

@@ -135,4 +135,4 @@ var QuaternionMath = {
 
         return q;
     }
-}
+};

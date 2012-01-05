@@ -140,4 +140,4 @@ function Quaternion() {
 
         return allZeros;
     }
-}
+};

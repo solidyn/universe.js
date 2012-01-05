@@ -155,4 +155,4 @@ function ECEFCoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, az
     {
         this.az = newAZ;
     }
-}
+};
