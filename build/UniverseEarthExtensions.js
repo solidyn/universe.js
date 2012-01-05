@@ -1124,6 +1124,8 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         var canSee = false;
         
         var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+		console.log("radius sensor: " + radiusSensor);
+		console.log("relative radius: " + relativeRadius);
         if(radiusSensor > relativeRadius){
             canSee = true;
         }
@@ -2737,8 +2739,10 @@ UNIVERSE.Sensor = function(name, shape) {
             FOVboundary[2] = el * Math.sin(MathTools.toRadians(az));  //cross
 
             //ensure that it is a unit vector
-            //var FOVmagnitude = MathTools.magnitude(FOVboundary);
-			var FOVmagnitude = 0.01
+            var FOVmagnitude = MathTools.magnitude(FOVboundary);
+			
+			// For testing purposes, can set this way to have longer vectors that actually show up in 3
+			//var FOVmagnitude = 0.01
             FOVboundary[0] = FOVboundary[0] / FOVmagnitude;
             FOVboundary[1] = FOVboundary[1] / FOVmagnitude;
             FOVboundary[2] = FOVboundary[2] / FOVmagnitude;
