@@ -1,4 +1,4 @@
-rm -rf docs
+rm -rf docs/*
 rm build/*
 
 # Write out the THREE.js files that we'll be including
