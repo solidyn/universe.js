@@ -45,6 +45,6 @@ UNIVERSE.SpaceObject.prototype = {
 	getEci: function () {
 		var location = this.propagator();
 		
-		return new ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
+		return new UNIVERSE.ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
 	}
 };

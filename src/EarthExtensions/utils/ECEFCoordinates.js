@@ -1,4 +1,6 @@
-function ECEFCoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal)  {
+var UNIVERSE = UNIVERSE || {};
+
+UNIVERSE.ECEFCoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal)  {
 
     // define variables as <var name>: <value>
 

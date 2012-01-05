@@ -1,5 +1,6 @@
+var UNIVERSE = UNIVERSE || {};
 
-function LLACoordinates(lat, lon, alt) {
+UNIVERSE.LLACoordinates = function(lat, lon, alt) {
 
     // define variables as <var name>: <value>
 
@@ -54,4 +55,4 @@ function LLACoordinates(lat, lon, alt) {
     {
         this.longitude = setLongitude;
     }
-}
+};

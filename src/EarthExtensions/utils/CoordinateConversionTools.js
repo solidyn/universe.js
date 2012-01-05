@@ -92,7 +92,7 @@ var CoordinateConversionTools = {
         var y = (cearth + hellp) * (Math.cos(lat) * Math.sin(lon)); //double
         var z = (searth + hellp) * (Math.sin(lat));                 //double
 
-        var ecef = new ECEFCoordinates(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        var ecef = new UNIVERSE.ECEFCoordinates(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
         return ecef;
     },
@@ -110,7 +110,7 @@ var CoordinateConversionTools = {
         //alt = ground station altitude (km)
 
         //REFER TO VALLADO PAGE 177
-        var lla = new LLAcoordinates();
+        var lla = new UNIVERSE.LLACoordinates();
 
         var ri = ecef.getX(); //double
         var rj = ecef.getY(); //double
@@ -181,7 +181,7 @@ var CoordinateConversionTools = {
     convertECItoECEF: function(eci, GST)
     {
         //GST is in degrees
-        var ecef = new ECEFcoordinates();
+        var ecef = new UNIVERSE.ECEFCoordinates();
 
         //convert the position
         eciPos = new Array(); //Double[3];
@@ -202,21 +202,21 @@ var CoordinateConversionTools = {
 
         xyz = MathTools.rot3(GST, eciVel);
 
-        ecef.setVx(xyz[0]);
-        ecef.setVy(xyz[1]);
-        ecef.setVz(xyz[2]);
+        ecef.setVX(xyz[0]);
+        ecef.setVY(xyz[1]);
+        ecef.setVZ(xyz[2]);
 
         //convert the acceleration
         var eciAcc = new Array(); //Double[3];
-        eciAcc[0] = eci.getAx();
-        eciAcc[1] = eci.getAy();
-        eciAcc[2] = eci.getAz();
+        eciAcc[0] = eci.getAX();
+        eciAcc[1] = eci.getAY();
+        eciAcc[2] = eci.getAZ();
 
         xyz = MathTools.rot3(GST, eciAcc);
 
-        ecef.setAx(xyz[0]);
-        ecef.setAy(xyz[1]);
-        ecef.setAz(xyz[2]);
+        ecef.setAX(xyz[0]);
+        ecef.setAY(xyz[1]);
+        ecef.setAZ(xyz[2]);
 
         return ecef;
     },
@@ -280,8 +280,8 @@ var CoordinateConversionTools = {
      */
     convertECItoLLA: function(eci, GST)
     {
-        var ecef = convertECItoECEF(eci, GST); //ECEFCoordinates
-        return convertECEFtoLLA(ecef);
+        var ecef = this.convertECItoECEF(eci, GST); //ECEFCoordinates
+        return this.convertECEFtoLLA(ecef);
     },
 
     /**
@@ -343,9 +343,9 @@ var CoordinateConversionTools = {
         eciValues = MathTools.rot3(-kepler.getArgOfPerigee(), pqw);
         eciValues = MathTools.rot1(-kepler.getInclination(), eciValues);
         eciValues = MathTools.rot3(-kepler.getRaan(), eciValues);
-        eci.setVx(eciValues[0]);
-        eci.setVy(eciValues[1]);
-        eci.setVz(eciValues[2]);
+        eci.setVX(eciValues[0]);
+        eci.setVY(eciValues[1]);
+        eci.setVZ(eciValues[2]);
 
         return eci;
     },
@@ -492,7 +492,7 @@ var CoordinateConversionTools = {
      */
     buildRotationMatrixToConvertECItoRSW: function(satellite)
     {
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoords
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci()); //KeplerianCoords
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
         var w = satelliteKepler.getArgOfPerigee();  //double
@@ -508,9 +508,9 @@ var CoordinateConversionTools = {
         }
 
         netRotationMatrix = MathTools.buildRotationMatrix3(raan);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix1(inc), netRotationMatrix);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(w), netRotationMatrix);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(nu), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix1(inc), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix3(w), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix3(nu), netRotationMatrix);
 
         return netRotationMatrix;
     },
@@ -526,7 +526,7 @@ var CoordinateConversionTools = {
     convertTargetECIToSatelliteRSW: function(satellite, targetECI)
     {
         var rsw = new RSWcoordinates();
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoordinates
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci()); //KeplerianCoordinates
         var satelliteECI = satellite.getEci();       //ECICoordinates
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
@@ -561,7 +561,7 @@ var CoordinateConversionTools = {
     convertRSWToECI: function(satellite, rsw)
     {
         var eci = new UNIVERSE.ECICoordinates();
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI());
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci());
 
         var nu = satelliteKepler.getTrueAnomaly();
         var w = satelliteKepler.getArgOfPerigee();

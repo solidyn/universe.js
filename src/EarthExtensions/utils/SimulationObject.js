@@ -4,9 +4,9 @@ var SimulationObject = {
 
     name:         "",
     eciCoords:    UNIVERSE.ECICoordinates,
-    ecefCoords:   ECEFCoordinates,
+    ecefCoords:   UNIVERSE.ECEFCoordinates,
     keplerCoords: KeplerianCoordinates,
-    llaCoords:    LLACoordinates,
+    llaCoords:    UNIVERSE.LLACoordinates,
     sensorList:   new Array(),
 
     /**

@@ -72,7 +72,7 @@ var QuaternionMath = {
         A[2][1] = 2*q2*q3-2*q0*q1;
         A[2][2] = 2*q0*q0-1+2*q3*q3;
 
-        var matrixProduct = MathTools.multiply(A, inputVector);
+        var matrixProduct = MathTools.multiply2dBy1d(A, inputVector);
 
         return matrixProduct;
     },
@@ -100,9 +100,9 @@ var QuaternionMath = {
 
         //equivalentRotationMatrix=Rot3(gamma*180/pi)*Rot2(theta*180/pi)*Rot1(phi*180/pi);
         var EulerAngles = new Array(3); //Double[3];
-        EulerAngles[0] = Math.toDegrees(phi);     //deg  (rotation about the x-axis)
-        EulerAngles[1] = Math.toDegrees(theta);   //deg  (rotation about the y-axis)
-        EulerAngles[2] = Math.toDegrees(gamma);   //deg  (rotation about the z-axis)
+        EulerAngles[0] = MathTools.toDegrees(phi);     //deg  (rotation about the x-axis)
+        EulerAngles[1] = MathTools.toDegrees(theta);   //deg  (rotation about the y-axis)
+        EulerAngles[2] = MathTools.toDegrees(gamma);   //deg  (rotation about the z-axis)
 
         //remember, the equivalentRotationMatrix=Rot3(gamma*180/pi)*Rot2(theta*180/pi)*Rot1(phi*180/pi);
         return EulerAngles;

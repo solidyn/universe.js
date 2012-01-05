@@ -100,7 +100,7 @@ var Constants = {
         var y = (cearth + hellp) * (Math.cos(lat) * Math.sin(lon)); //double
         var z = (searth + hellp) * (Math.sin(lat));                 //double
 
-        var ecef = new ECEFCoordinates(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        var ecef = new UNIVERSE.ECEFCoordinates(x, y, z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
         return ecef;
     },
@@ -118,7 +118,7 @@ var Constants = {
         //alt = ground station altitude (km)
 
         //REFER TO VALLADO PAGE 177
-        var lla = new LLAcoordinates();
+        var lla = new UNIVERSE.LLACoordinates();
 
         var ri = ecef.getX(); //double
         var rj = ecef.getY(); //double
@@ -189,7 +189,7 @@ var Constants = {
     convertECItoECEF: function(eci, GST)
     {
         //GST is in degrees
-        var ecef = new ECEFcoordinates();
+        var ecef = new UNIVERSE.ECEFCoordinates();
 
         //convert the position
         eciPos = new Array(); //Double[3];
@@ -210,21 +210,21 @@ var Constants = {
 
         xyz = MathTools.rot3(GST, eciVel);
 
-        ecef.setVx(xyz[0]);
-        ecef.setVy(xyz[1]);
-        ecef.setVz(xyz[2]);
+        ecef.setVX(xyz[0]);
+        ecef.setVY(xyz[1]);
+        ecef.setVZ(xyz[2]);
 
         //convert the acceleration
         var eciAcc = new Array(); //Double[3];
-        eciAcc[0] = eci.getAx();
-        eciAcc[1] = eci.getAy();
-        eciAcc[2] = eci.getAz();
+        eciAcc[0] = eci.getAX();
+        eciAcc[1] = eci.getAY();
+        eciAcc[2] = eci.getAZ();
 
         xyz = MathTools.rot3(GST, eciAcc);
 
-        ecef.setAx(xyz[0]);
-        ecef.setAy(xyz[1]);
-        ecef.setAz(xyz[2]);
+        ecef.setAX(xyz[0]);
+        ecef.setAY(xyz[1]);
+        ecef.setAZ(xyz[2]);
 
         return ecef;
     },
@@ -288,8 +288,8 @@ var Constants = {
      */
     convertECItoLLA: function(eci, GST)
     {
-        var ecef = convertECItoECEF(eci, GST); //ECEFCoordinates
-        return convertECEFtoLLA(ecef);
+        var ecef = this.convertECItoECEF(eci, GST); //ECEFCoordinates
+        return this.convertECEFtoLLA(ecef);
     },
 
     /**
@@ -351,9 +351,9 @@ var Constants = {
         eciValues = MathTools.rot3(-kepler.getArgOfPerigee(), pqw);
         eciValues = MathTools.rot1(-kepler.getInclination(), eciValues);
         eciValues = MathTools.rot3(-kepler.getRaan(), eciValues);
-        eci.setVx(eciValues[0]);
-        eci.setVy(eciValues[1]);
-        eci.setVz(eciValues[2]);
+        eci.setVX(eciValues[0]);
+        eci.setVY(eciValues[1]);
+        eci.setVZ(eciValues[2]);
 
         return eci;
     },
@@ -500,7 +500,7 @@ var Constants = {
      */
     buildRotationMatrixToConvertECItoRSW: function(satellite)
     {
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoords
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci()); //KeplerianCoords
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
         var w = satelliteKepler.getArgOfPerigee();  //double
@@ -516,9 +516,9 @@ var Constants = {
         }
 
         netRotationMatrix = MathTools.buildRotationMatrix3(raan);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix1(inc), netRotationMatrix);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(w), netRotationMatrix);
-        netRotationMatrix = MathTools.multiply(MathTools.buildRotationMatrix3(nu), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix1(inc), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix3(w), netRotationMatrix);
+        netRotationMatrix = MathTools.multiply2dBy2d(MathTools.buildRotationMatrix3(nu), netRotationMatrix);
 
         return netRotationMatrix;
     },
@@ -534,7 +534,7 @@ var Constants = {
     convertTargetECIToSatelliteRSW: function(satellite, targetECI)
     {
         var rsw = new RSWcoordinates();
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI()); //KeplerianCoordinates
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci()); //KeplerianCoordinates
         var satelliteECI = satellite.getEci();       //ECICoordinates
 
         var nu = satelliteKepler.getTrueAnomaly();  //double
@@ -569,7 +569,7 @@ var Constants = {
     convertRSWToECI: function(satellite, rsw)
     {
         var eci = new UNIVERSE.ECICoordinates();
-        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getECI());
+        var satelliteKepler = CoordinateConversionTools.convertECIToKeplerian(satellite.getEci());
 
         var nu = satelliteKepler.getTrueAnomaly();
         var w = satelliteKepler.getArgOfPerigee();
@@ -737,14 +737,14 @@ var CoordinateFunctionHelper = {
      */
     updateKeplerianAnglesUsingTrueAnomaly: function(keplerianCoords)
     {
-        var nu = Math.toRadians(trueAnomaly);
+        var nu = MathTools.toRadians(trueAnomaly);
         var sinEA = Math.sin(nu) * Math.sqrt(1 - keplerianCoords.eccentricity * keplerianCoords.eccentricity) /
             (1 + keplerianCoords.eccentricity * Math.cos(nu));
         var cosEA = (keplerianCoords.eccentricity + Math.cos(nu)) /
             (1 + keplerianCoords.eccentricity * Math.cos(nu));
 
-        keplerianCoords.eccentricAnomaly = Math.toDegrees(Math.atan2(sinEA, cosEA));
-        keplerianCoords.meanAnomaly = Math.toDegrees(Math.toRadians(keplerianCoords.eccentricAnomaly) -
+        keplerianCoords.eccentricAnomaly = MathTools.toDegrees(Math.atan2(sinEA, cosEA));
+        keplerianCoords.meanAnomaly = MathTools.toDegrees(MathTools.toRadians(keplerianCoords.eccentricAnomaly) -
             keplerianCoords.eccentricity * sinEA);
     },
 
@@ -756,7 +756,9 @@ var CoordinateFunctionHelper = {
         keplerianCoords.trueAnomaly = newTrueAnomaly;
         updateAnglesUsingTrueAnomaly(keplerianCoords);
     }
-};function ECEFCoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal)  {
+};var UNIVERSE = UNIVERSE || {};
+
+UNIVERSE.ECEFCoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal, ayVal, azVal)  {
 
     // define variables as <var name>: <value>
 
@@ -1099,7 +1101,7 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         return this.semiMinorAngle;
     }
 
-    this.setSemiMinorAngle(semiMinorAngle)
+    this.setSemiMinorAngle = function(semiMinorAngle)
     {
         this.semiMinorAngle = semiMinorAngle;
     }
@@ -1119,11 +1121,11 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
     }
 
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
-        var canSee=false;
+        var canSee = false;
         
-        var radiusSensor=getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-        if(radiusSensor>relativeRadius){
-            canSee=true;
+        var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+        if(radiusSensor > relativeRadius){
+            canSee = true;
         }
         return canSee;
     }
@@ -1223,8 +1225,9 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
     this.setMeanMotion = function(theMeanMotion) {
          this.meanMotion = theMeanMotion;
     }
-}
-function LLACoordinates(lat, lon, alt) {
+}var UNIVERSE = UNIVERSE || {};
+
+UNIVERSE.LLACoordinates = function(lat, lon, alt) {
 
     // define variables as <var name>: <value>
 
@@ -1279,7 +1282,7 @@ function LLACoordinates(lat, lon, alt) {
     {
         this.longitude = setLongitude;
     }
-}
+};
 var MathTools = {
 
     /**
@@ -1339,11 +1342,11 @@ var MathTools = {
     angleBetweenTwoVectors: function(x, y)
     {
         var angle = 0;                 //double
-        var magX = magnitude(x);       //double
-        var magY = magnitude(y);       //double
-        var xDotY = dotMultiply(x, y); //double
+        var magX = MathTools.magnitude(x);       //double
+        var magY = MathTools.magnitude(y);       //double
+        var xDotY = MathTools.dotMultiply(x, y); //double
 
-        angle = Math.toDegrees(Math.acos(xDotY / (magX * magY)));
+        angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
         return angle; //deg
     },
@@ -1470,7 +1473,7 @@ var MathTools = {
      */
     buildRotationMatrix1: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -1500,7 +1503,7 @@ var MathTools = {
      */
     buildRotationMatrix2: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -1530,7 +1533,7 @@ var MathTools = {
      */
     buildRotationMatrix3: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -1783,7 +1786,7 @@ var MathTools = {
 
         for(i = 0; i < x1; i++)
         {
-           result[i] = new Array(y2);
+           returnVal[i] = new Array(y2);
         }
 
         //each row of the target matrix
@@ -1983,9 +1986,9 @@ var MathTools = {
         return returnVal;
     }
 }
-function Quaternion() {
+function Quaternion(wVal, xVal, yVal, zVal) {
 
-    this.w = xVal ? xVal : 0.0,
+    this.w = wVal ? wVal : 0.0,
     this.x = xVal ? xVal : 0.0,
     this.y = yVal ? yVal : 0.0,
     this.z = zVal ? zVal : 0.0,
@@ -2041,7 +2044,7 @@ function Quaternion() {
     this.setW = function(newW)
     {
         this.w = newW;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -2060,7 +2063,7 @@ function Quaternion() {
     this.setX = function(newX)
     {
         this.x = newX;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -2079,7 +2082,7 @@ function Quaternion() {
     this.setY = function(newY)
     {
         this.y = newY;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -2098,7 +2101,7 @@ function Quaternion() {
     this.setZ = function(newZ)
     {
         this.z = newZ;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -2198,7 +2201,7 @@ function Quaternion() {
         A[2][1] = 2*q2*q3-2*q0*q1;
         A[2][2] = 2*q0*q0-1+2*q3*q3;
 
-        var matrixProduct = MathTools.multiply(A, inputVector);
+        var matrixProduct = MathTools.multiply2dBy1d(A, inputVector);
 
         return matrixProduct;
     },
@@ -2226,9 +2229,9 @@ function Quaternion() {
 
         //equivalentRotationMatrix=Rot3(gamma*180/pi)*Rot2(theta*180/pi)*Rot1(phi*180/pi);
         var EulerAngles = new Array(3); //Double[3];
-        EulerAngles[0] = Math.toDegrees(phi);     //deg  (rotation about the x-axis)
-        EulerAngles[1] = Math.toDegrees(theta);   //deg  (rotation about the y-axis)
-        EulerAngles[2] = Math.toDegrees(gamma);   //deg  (rotation about the z-axis)
+        EulerAngles[0] = MathTools.toDegrees(phi);     //deg  (rotation about the x-axis)
+        EulerAngles[1] = MathTools.toDegrees(theta);   //deg  (rotation about the y-axis)
+        EulerAngles[2] = MathTools.toDegrees(gamma);   //deg  (rotation about the z-axis)
 
         //remember, the equivalentRotationMatrix=Rot3(gamma*180/pi)*Rot2(theta*180/pi)*Rot1(phi*180/pi);
         return EulerAngles;
@@ -2433,10 +2436,10 @@ UNIVERSE.Sensor = function(name, shape) {
     this.rotationAxis[0] = 0.0;
     this.rotationAxis[1] = 0.0;
     this.rotationAxis[2] = 1.0;
-    this.quaternionFromRSWToSensor.setW(Math.cos(rotationRadians / 2.0));
-    this.quaternionFromRSWToSensor.setX(Math.sin(rotationRadians / 2.0) * rotationAxis[0]);
-    this.quaternionFromRSWToSensor.setY(Math.sin(rotationRadians / 2.0) * rotationAxis[1]);
-    this.quaternionFromRSWToSensor.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis[2]);
+    this.quaternionFromRSWToSensor.setW(Math.cos(this.rotationRadians / 2.0));
+    this.quaternionFromRSWToSensor.setX(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[0]);
+    this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[1]);
+    this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[2]);
 
 	
     this.rotateSensorAboutRadialVector = function(rotationAngle)
@@ -2593,7 +2596,7 @@ UNIVERSE.Sensor = function(name, shape) {
         var topline = new Array();
         topline[0] = 1.0;//center
         topline[1] = 0.0;//left
-        topline[2] = Math.tan(Math.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
+        topline[2] = Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
         //System.out.println("topline: " + topline[0] + ", " + topline[1] + ", " + topline[2]);
 
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
@@ -2622,7 +2625,7 @@ UNIVERSE.Sensor = function(name, shape) {
             az = 360 - az;
         }
         //correct the azimuth
-        //System.out.println("a (CL-RL): " + Math.toDegrees(a) + " b (CL-TGTL): " + Math.toDegrees(b) + " c (RL-TGTL): " + Math.toDegrees(c) + " d (TL-TGTL): " + Math.toDegrees(d) + " e (TL-CL): " + Math.toDegrees(e) + " C (az):" + Math.toDegrees(C));
+        //System.out.println("a (CL-RL): " + MathTools.toDegrees(a) + " b (CL-TGTL): " + MathTools.toDegrees(b) + " c (RL-TGTL): " + MathTools.toDegrees(c) + " d (TL-TGTL): " + MathTools.toDegrees(d) + " e (TL-CL): " + MathTools.toDegrees(e) + " C (az):" + MathTools.toDegrees(C));
 
 
         //return the azimuth and elevation
@@ -2677,16 +2680,17 @@ UNIVERSE.Sensor = function(name, shape) {
     {
 
         //first, correct the target azimuth and elevation to be in the same frame of reference as the sensor FOV
-        var azel = determineTargetAzElRelativeToSensor(satellite, targetPosition);
+        var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
 
         //System.out.println("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
-
+		console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
 
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
-        var earthObscured = checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
+        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
         if (earthObscured)
         {
+			console.log("earth obscured")
             return false;
         }
         else
@@ -2697,6 +2701,7 @@ UNIVERSE.Sensor = function(name, shape) {
             }
             else
             {
+				console.log("not in FOV");
                 return false;
             }
         }
@@ -2732,7 +2737,8 @@ UNIVERSE.Sensor = function(name, shape) {
             FOVboundary[2] = el * Math.sin(MathTools.toRadians(az));  //cross
 
             //ensure that it is a unit vector
-            var FOVmagnitude = MathTools.magnitude(FOVboundary);
+            //var FOVmagnitude = MathTools.magnitude(FOVboundary);
+			var FOVmagnitude = 0.01
             FOVboundary[0] = FOVboundary[0] / FOVmagnitude;
             FOVboundary[1] = FOVboundary[1] / FOVmagnitude;
             FOVboundary[2] = FOVboundary[2] / FOVmagnitude;
@@ -2745,8 +2751,7 @@ UNIVERSE.Sensor = function(name, shape) {
             quaternionFromSensorToRSW.setY(-this.quaternionFromRSWToSensor.getY());
             quaternionFromSensorToRSW.setZ(-this.quaternionFromRSWToSensor.getZ());
 
-            FOVboundary = QuaternionMath.applyQuaternionRotation(quaternionFromRSWToSensor, FOVboundary);
-
+            FOVboundary = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, FOVboundary);
 
             /*
             //rotate about along track
@@ -2756,7 +2761,7 @@ UNIVERSE.Sensor = function(name, shape) {
             //rotate about radial
             FOVboundary = MathTools.applyRot1(this.radialRotationAngle, FOVboundary);
              */
-            var rswPoint = new RSWcoordinates(FOVboudary[0], FOVboundary[1], FOVboundary[2]);
+            var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 
             //convert the RSW to ECI
             var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
@@ -2764,7 +2769,7 @@ UNIVERSE.Sensor = function(name, shape) {
             FOV[i][1] = satYpos + eciTemp.getY();
             FOV[i][2] = satZpos + eciTemp.getZ();
 
-            System.out.println(i + "," + az + "," + el + "," + FOV[i][0] + "," + FOV[i][1] + "," + FOV[i][2]);
+            //System.out.println(i + "," + az + "," + el + "," + FOV[i][0] + "," + FOV[i][1] + "," + FOV[i][2]);
         }
 
         return FOV;
@@ -2911,16 +2916,15 @@ UNIVERSE.Sensor = function(name, shape) {
         return result;
          */
     }
-}
-var SimulationObject = {
+};var SimulationObject = {
 
     // define variables as <var name>: value
 
     name:         "",
     eciCoords:    UNIVERSE.ECICoordinates,
-    ecefCoords:   ECEFCoordinates,
+    ecefCoords:   UNIVERSE.ECEFCoordinates,
     keplerCoords: KeplerianCoordinates,
-    llaCoords:    LLACoordinates,
+    llaCoords:    UNIVERSE.LLACoordinates,
     sensorList:   new Array(),
 
     /**
@@ -3447,7 +3451,7 @@ UNIVERSE.SpaceObject.prototype = {
 	getEci: function () {
 		var location = this.propagator();
 		
-		return new ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
+		return new UNIVERSE.ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
 	}
 };var UNIVERSE = UNIVERSE || {};
 

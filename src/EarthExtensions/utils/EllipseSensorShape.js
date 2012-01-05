@@ -25,7 +25,7 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         return this.semiMinorAngle;
     }
 
-    this.setSemiMinorAngle(semiMinorAngle)
+    this.setSemiMinorAngle = function(semiMinorAngle)
     {
         this.semiMinorAngle = semiMinorAngle;
     }
@@ -45,11 +45,11 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
     }
 
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
-        var canSee=false;
+        var canSee = false;
         
-        var radiusSensor=getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-        if(radiusSensor>relativeRadius){
-            canSee=true;
+        var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+        if(radiusSensor > relativeRadius){
+            canSee = true;
         }
         return canSee;
     }

@@ -27,10 +27,10 @@ UNIVERSE.Sensor = function(name, shape) {
     this.rotationAxis[0] = 0.0;
     this.rotationAxis[1] = 0.0;
     this.rotationAxis[2] = 1.0;
-    this.quaternionFromRSWToSensor.setW(Math.cos(rotationRadians / 2.0));
-    this.quaternionFromRSWToSensor.setX(Math.sin(rotationRadians / 2.0) * rotationAxis[0]);
-    this.quaternionFromRSWToSensor.setY(Math.sin(rotationRadians / 2.0) * rotationAxis[1]);
-    this.quaternionFromRSWToSensor.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis[2]);
+    this.quaternionFromRSWToSensor.setW(Math.cos(this.rotationRadians / 2.0));
+    this.quaternionFromRSWToSensor.setX(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[0]);
+    this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[1]);
+    this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[2]);
 
 	
     this.rotateSensorAboutRadialVector = function(rotationAngle)
@@ -187,7 +187,7 @@ UNIVERSE.Sensor = function(name, shape) {
         var topline = new Array();
         topline[0] = 1.0;//center
         topline[1] = 0.0;//left
-        topline[2] = Math.tan(Math.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
+        topline[2] = Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
         //System.out.println("topline: " + topline[0] + ", " + topline[1] + ", " + topline[2]);
 
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
@@ -216,7 +216,7 @@ UNIVERSE.Sensor = function(name, shape) {
             az = 360 - az;
         }
         //correct the azimuth
-        //System.out.println("a (CL-RL): " + Math.toDegrees(a) + " b (CL-TGTL): " + Math.toDegrees(b) + " c (RL-TGTL): " + Math.toDegrees(c) + " d (TL-TGTL): " + Math.toDegrees(d) + " e (TL-CL): " + Math.toDegrees(e) + " C (az):" + Math.toDegrees(C));
+        //System.out.println("a (CL-RL): " + MathTools.toDegrees(a) + " b (CL-TGTL): " + MathTools.toDegrees(b) + " c (RL-TGTL): " + MathTools.toDegrees(c) + " d (TL-TGTL): " + MathTools.toDegrees(d) + " e (TL-CL): " + MathTools.toDegrees(e) + " C (az):" + MathTools.toDegrees(C));
 
 
         //return the azimuth and elevation
@@ -271,16 +271,17 @@ UNIVERSE.Sensor = function(name, shape) {
     {
 
         //first, correct the target azimuth and elevation to be in the same frame of reference as the sensor FOV
-        var azel = determineTargetAzElRelativeToSensor(satellite, targetPosition);
+        var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
 
         //System.out.println("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
-
+		console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
 
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
-        var earthObscured = checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
+        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
         if (earthObscured)
         {
+			console.log("earth obscured")
             return false;
         }
         else
@@ -291,6 +292,7 @@ UNIVERSE.Sensor = function(name, shape) {
             }
             else
             {
+				console.log("not in FOV");
                 return false;
             }
         }
@@ -327,6 +329,9 @@ UNIVERSE.Sensor = function(name, shape) {
 
             //ensure that it is a unit vector
             var FOVmagnitude = MathTools.magnitude(FOVboundary);
+			
+			// For testing purposes, can set this way to have longer vectors that actually show up in 3
+			//var FOVmagnitude = 0.01
             FOVboundary[0] = FOVboundary[0] / FOVmagnitude;
             FOVboundary[1] = FOVboundary[1] / FOVmagnitude;
             FOVboundary[2] = FOVboundary[2] / FOVmagnitude;
@@ -339,8 +344,7 @@ UNIVERSE.Sensor = function(name, shape) {
             quaternionFromSensorToRSW.setY(-this.quaternionFromRSWToSensor.getY());
             quaternionFromSensorToRSW.setZ(-this.quaternionFromRSWToSensor.getZ());
 
-            FOVboundary = QuaternionMath.applyQuaternionRotation(quaternionFromRSWToSensor, FOVboundary);
-
+            FOVboundary = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, FOVboundary);
 
             /*
             //rotate about along track
@@ -350,7 +354,7 @@ UNIVERSE.Sensor = function(name, shape) {
             //rotate about radial
             FOVboundary = MathTools.applyRot1(this.radialRotationAngle, FOVboundary);
              */
-            var rswPoint = new RSWcoordinates(FOVboudary[0], FOVboundary[1], FOVboundary[2]);
+            var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 
             //convert the RSW to ECI
             var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
@@ -358,7 +362,7 @@ UNIVERSE.Sensor = function(name, shape) {
             FOV[i][1] = satYpos + eciTemp.getY();
             FOV[i][2] = satZpos + eciTemp.getZ();
 
-            System.out.println(i + "," + az + "," + el + "," + FOV[i][0] + "," + FOV[i][1] + "," + FOV[i][2]);
+            //System.out.println(i + "," + az + "," + el + "," + FOV[i][0] + "," + FOV[i][1] + "," + FOV[i][2]);
         }
 
         return FOV;
@@ -505,4 +509,4 @@ UNIVERSE.Sensor = function(name, shape) {
         return result;
          */
     }
-}
+};

@@ -1,7 +1,7 @@
 
-function Quaternion() {
+function Quaternion(wVal, xVal, yVal, zVal) {
 
-    this.w = xVal ? xVal : 0.0,
+    this.w = wVal ? wVal : 0.0,
     this.x = xVal ? xVal : 0.0,
     this.y = yVal ? yVal : 0.0,
     this.z = zVal ? zVal : 0.0,
@@ -57,7 +57,7 @@ function Quaternion() {
     this.setW = function(newW)
     {
         this.w = newW;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -76,7 +76,7 @@ function Quaternion() {
     this.setX = function(newX)
     {
         this.x = newX;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -95,7 +95,7 @@ function Quaternion() {
     this.setY = function(newY)
     {
         this.y = newY;
-        updateQ();
+        this.updateQ();
     }
 
     /**
@@ -114,7 +114,7 @@ function Quaternion() {
     this.setZ = function(newZ)
     {
         this.z = newZ;
-        updateQ();
+        this.updateQ();
     }
 
     /**

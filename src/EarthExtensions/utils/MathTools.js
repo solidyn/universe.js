@@ -58,11 +58,11 @@ var MathTools = {
     angleBetweenTwoVectors: function(x, y)
     {
         var angle = 0;                 //double
-        var magX = magnitude(x);       //double
-        var magY = magnitude(y);       //double
-        var xDotY = dotMultiply(x, y); //double
+        var magX = MathTools.magnitude(x);       //double
+        var magY = MathTools.magnitude(y);       //double
+        var xDotY = MathTools.dotMultiply(x, y); //double
 
-        angle = Math.toDegrees(Math.acos(xDotY / (magX * magY)));
+        angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
         return angle; //deg
     },
@@ -189,7 +189,7 @@ var MathTools = {
      */
     buildRotationMatrix1: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -219,7 +219,7 @@ var MathTools = {
      */
     buildRotationMatrix2: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -249,7 +249,7 @@ var MathTools = {
      */
     buildRotationMatrix3: function(x)
     {
-        x = Math.toRadians(x);
+        x = MathTools.toRadians(x);
         var result = new Array(); //Double[3][3];
 
         var i = 0;
@@ -502,7 +502,7 @@ var MathTools = {
 
         for(i = 0; i < x1; i++)
         {
-           result[i] = new Array(y2);
+           returnVal[i] = new Array(y2);
         }
 
         //each row of the target matrix
