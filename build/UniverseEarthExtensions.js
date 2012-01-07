@@ -3826,6 +3826,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                 earthExtensions.addSensorProjection(spaceObject);
                 earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
+
+				earthExtensions.addSensorFootprintProjection(spaceObject);
             });
         });
     };
@@ -4032,6 +4034,54 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             });
         }
     }
+
+	this.addSensorFootprintProjection = function(spaceObject) {
+		if(spaceObject.sensors.length > 0 ) {
+			console.log("sensor length: " + spaceObject.sensors.length);
+			for(var i = 0; i < spaceObject.sensors.length; i++) {
+            	
+				console.log("sensors: " + JSON.stringify(spaceObject.sensors));
+	            var objectGeometry, objectMaterial;
+
+	            objectMaterial = new THREE.LineBasicMaterial({
+	                color : 0x990000,
+	                opacity : 1,
+	                linewidth : 5
+	            });
+
+	            var line = undefined;
+	            var lineGraphicsObject = new UNIVERSE.GraphicsObject(
+	                spaceObject.id + "_sensor"+i,
+	                undefined,
+	                undefined,
+	                function(elapsedTime) {
+						var points = this.sensor.buildPointsToDefineSensorShapeInECI(30, spaceObject);
+			            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
+			            var extendedPoints = this.sensor.findProjectionPoints(points, spaceObject, 1000);
+			            //console.log("points: " + JSON.stringify(extendedPoints));
+			
+	                    objectGeometry = new THREE.Geometry();
+	                    
+	                    for(var j = 0; j< extendedPoints.length; j++) {
+	                        var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
+	                        objectGeometry.vertices.push(new THREE.Vertex(vector));
+	                    }
+	                    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+
+	                    line = new THREE.Line(objectGeometry, objectMaterial);
+	                },
+	                function() {
+	                    GlobeViewModel.universe.unDraw(this.id);
+	                    if(line != undefined) {
+	                        GlobeViewModel.universe.draw(this.id, line, false) ;
+	                    }
+	                }
+	            );
+				lineGraphicsObject.sensor = spaceObject.sensors[i];
+	            GlobeViewModel.universe.addObject(lineGraphicsObject);
+			}
+        }
+	}
     
 	/**
 		Add a Tracing Line to the closest ground object for an Object
