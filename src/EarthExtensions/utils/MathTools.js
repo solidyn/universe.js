@@ -21,6 +21,15 @@ var MathTools = {
         return xTimesA;
     },
 
+	scalarMultiplyVector: function(x, a) 
+	{
+		return {
+			x: x.x * a,
+			y: x.y * a,
+			z: x.z * a
+		}
+	},
+
     /**
      *
      * @param x Double[]
@@ -48,6 +57,13 @@ var MathTools = {
         }
     },
 
+	dotMultiplyVector: function(x, y)
+	{
+        var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
+
+        return xDotY;
+	},
+
     /**
      *
      * @param x Double[]
@@ -63,6 +79,11 @@ var MathTools = {
         var xDotY = MathTools.dotMultiply(x, y); //double
 
         angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
+
+		if (angle > 90)
+        {
+            angle = 180 - angle;
+        }
 
         return angle; //deg
     },
@@ -80,6 +101,11 @@ var MathTools = {
 
         return vectorMagnitude;
     },
+
+	magnitudeVector: function(x)
+	{
+		return Math.sqrt(x.x*x.x + x.y * x.y + x.z * x.z);
+	},
 
     /**
      *

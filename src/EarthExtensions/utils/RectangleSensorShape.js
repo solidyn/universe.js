@@ -5,7 +5,7 @@
 
 var UNIVERSE = UNIVERSE || {};
 
-UNIVERSE.RectangleSensorShpae = function(shapeName, width, height)
+UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
 {
 	this.shapeName = shapeName;
     this.width = width;
@@ -26,12 +26,12 @@ UNIVERSE.RectangleSensorShpae = function(shapeName, width, height)
         return this.width;
     }
 
-    this.setWidth(width)
+    this.setWidth = function(width)
     {
         this.width = width;
     }
 
-    this.getAngularExtentOfSensorAtSpecifiedAzimuth(checkAngle)
+    this.getAngularExtentOfSensorAtSpecifiedAzimuth = function(checkAngle)
     {
 
         if ((this.height == 0) && (this.width == 0))
@@ -77,7 +77,7 @@ UNIVERSE.RectangleSensorShpae = function(shapeName, width, height)
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
         var canSee=false;
         
-        var radiusSensor=getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+        var radiusSensor=this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
         if(radiusSensor>relativeRadius){
             canSee=true;
         }
