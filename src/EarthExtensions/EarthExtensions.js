@@ -465,13 +465,31 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			for(var i = 0; i < spaceObject.sensors.length; i++) {
             	
 				console.log("sensors: " + JSON.stringify(spaceObject.sensors));
-	            var objectGeometry, objectMaterial;
+	            //var objectGeometry, objectMaterial;
 
-	            objectMaterial = new THREE.LineBasicMaterial({
-	                color : 0x990000,
-	                opacity : 1,
-	                linewidth : 5
-	            });
+	            //objectMaterial = new THREE.LineBasicMaterial({
+	            //    color : 0x990000,
+	            //    opacity : 1,
+	            //    linewidth : 5
+	            //});
+	
+				
+				var objectGeometry = new THREE.Geometry(),
+				    objectMaterial = new THREE.ParticleBasicMaterial({
+				        color: 0x990000,
+				        size: 20
+				    });
+				
+				var points = spaceObject.sensor[i].buildPointsToDefineSensorShapeInECI(30, spaceObject);
+	            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
+	            var extendedPoints = spaceObject.sensor[i].findProjectionPoints(points, spaceObject, 1000);
+	            //console.log("points: " + JSON.stringify(extendedPoints));
+	
+				objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+				
+				var particleSystem = new THREE.ParticleSystem(
+				    objectGeometry,
+				    objectMaterial);
 
 	            var line = undefined;
 	            var lineGraphicsObject = new UNIVERSE.GraphicsObject(
@@ -484,20 +502,30 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			            var extendedPoints = this.sensor.findProjectionPoints(points, spaceObject, 1000);
 			            //console.log("points: " + JSON.stringify(extendedPoints));
 			
-	                    objectGeometry = new THREE.Geometry();
+	                    //objectGeometry = new THREE.Geometry();
 	                    
 	                    for(var j = 0; j< extendedPoints.length; j++) {
-	                        var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
-	                        objectGeometry.vertices.push(new THREE.Vertex(vector));
-	                    }
-	                    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+	                        //var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
+	                        //objectGeometry.vertices.push(new THREE.Vertex(vector));
+							var particle = objectGeometry.vertices[j];
 
-	                    line = new THREE.Line(objectGeometry, objectMaterial);
+					        // check if we need to reset
+					        particle.position = {
+								x: -extendedPoints[j].x,
+								y: extendedPoints[j].z,
+								z: extendedPoints[j].y
+							}
+	                    }
+	
+						particleSystem.geometry.__dirtyVertices = true;
+	                    //objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+
+	                    //line = new THREE.Line(objectGeometry, objectMaterial);
 	                },
 	                function() {
-	                    GlobeViewModel.universe.unDraw(this.id);
+	                    //GlobeViewModel.universe.unDraw(this.id);
 	                    if(line != undefined) {
-	                        GlobeViewModel.universe.draw(this.id, line, false) ;
+	                        GlobeViewModel.universe.draw(this.id, particleSystem, false) ;
 	                    }
 	                }
 	            );
