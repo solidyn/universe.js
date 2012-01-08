@@ -176,7 +176,16 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorFootprintProjection">addSensorFootprintProjection</a></b>(spaceObject)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorFootprintProjection">addSensorFootprintProjection</a></b>(sensor, spaceObject)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorFootprintProjections">addSensorFootprintProjections</a></b>(spaceObject)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -224,6 +233,15 @@
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#findClosestObject">findClosestObject</a></b>(location)
 								</div>
 								<div class="description">Return the closest Object to a location</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;inner&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#-get_random_color">get_random_color</a></b>()
+								</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -293,6 +311,15 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllSensorFootprintProjections">showAllSensorFootprintProjections</a></b>(isEnabled)
+								</div>
+								<div class="description">Enable or disable display of all sensor projections</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllSensorProjections">showAllSensorProjections</a></b>(isEnabled)
 								</div>
 								<div class="description">Enable or disable display of all sensor projections</div>
@@ -332,6 +359,15 @@
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showOrbitLineForObject">showOrbitLineForObject</a></b>(id, isEnabled)
 								</div>
 								<div class="description">Enable or disable orbit lines for a specific object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showSensorFootprintProjectionsForId">showSensorFootprintProjectionsForId</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable display of sensor projections for an object</div>
 							</td>
 						</tr>
 					
@@ -692,7 +728,49 @@
 					<div class="fixedFont">
 					
 					
-					<b>addSensorFootprintProjection</b>(spaceObject)
+					<b>addSensorFootprintProjection</b>(sensor, spaceObject)
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>sensor</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>spaceObject</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorFootprintProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorFootprintProjections</b>(spaceObject)
 					
 					</div>
 					<div class="description">
@@ -883,6 +961,31 @@
 								<dd>- the location to find the closest point to</dd>
 							
 							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="-get_random_color"> </a>
+					<div class="fixedFont">&lt;inner&gt; 
+					
+					
+					<b>get_random_color</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
 						
 						
 						
@@ -1118,6 +1221,42 @@
 
 					<hr />
 				
+					<a name="showAllSensorFootprintProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllSensorFootprintProjections</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of all sensor projections
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="showAllSensorProjections"> </a>
 					<div class="fixedFont">
 					
@@ -1322,6 +1461,48 @@
 
 					<hr />
 				
+					<a name="showSensorFootprintProjectionsForId"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showSensorFootprintProjectionsForId</b>(id, isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of sensor projections for an object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="showSensorProjectionForId"> </a>
 					<div class="fixedFont">
 					
@@ -1412,7 +1593,7 @@
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jan 07 2012 12:13:43 GMT-0700 (MST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Jan 07 2012 17:51:46 GMT-0700 (MST)
 		</div>
 
                

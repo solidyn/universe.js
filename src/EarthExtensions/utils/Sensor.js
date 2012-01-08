@@ -383,7 +383,7 @@ UNIVERSE.Sensor = function(name, shape) {
 			// d = ((I*c) +/- sqrt((I*c)^2 - c*c + r*r))
 			var I = shiftedBoundaryPoint;
 			var c = shiftedEarthCenter;
-			var r = Constants.radiusEarth;
+			var r = Constants.radiusEarth + 20;
 			
 			var Idotc = MathTools.dotMultiplyVector(I, c);
 			
@@ -434,7 +434,7 @@ UNIVERSE.Sensor = function(name, shape) {
 				
 				// scale down to the earth's surface
 				var tangentPointMagnitude = MathTools.magnitudeVector(tangentPoint);
-				var scaleToEarthSurface = Constants.radiusEarth/tangentPointMagnitude;
+				var scaleToEarthSurface = (Constants.radiusEarth + 20)/tangentPointMagnitude;
 				
 				var tangentPointOnSurface = MathTools.scalarMultiplyVector(tangentPoint, scaleToEarthSurface)
 

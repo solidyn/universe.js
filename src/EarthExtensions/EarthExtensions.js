@@ -251,7 +251,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 earthExtensions.addSensorProjection(spaceObject);
                 earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
 
-				earthExtensions.addSensorFootprintProjection(spaceObject);
+				earthExtensions.addSensorFootprintProjections(spaceObject);
+				earthExtensions.showSensorFootprintProjectionsForId(spaceObject.showSensorFootprintProjections, spaceObject.id);
             });
         });
     };
@@ -459,80 +460,73 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
     }
 
-	this.addSensorFootprintProjection = function(spaceObject) {
+	this.addSensorFootprintProjections = function(spaceObject) {
 		if(spaceObject.sensors.length > 0 ) {
-			console.log("sensor length: " + spaceObject.sensors.length);
 			for(var i = 0; i < spaceObject.sensors.length; i++) {
-            	
-				console.log("sensors: " + JSON.stringify(spaceObject.sensors));
-	            //var objectGeometry, objectMaterial;
-
-	            //objectMaterial = new THREE.LineBasicMaterial({
-	            //    color : 0x990000,
-	            //    opacity : 1,
-	            //    linewidth : 5
-	            //});
-	
-				
-				var objectGeometry = new THREE.Geometry(),
-				    objectMaterial = new THREE.ParticleBasicMaterial({
-				        color: 0x990000,
-				        size: 20
-				    });
-				
-				var points = spaceObject.sensor[i].buildPointsToDefineSensorShapeInECI(30, spaceObject);
-	            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
-	            var extendedPoints = spaceObject.sensor[i].findProjectionPoints(points, spaceObject, 1000);
-	            //console.log("points: " + JSON.stringify(extendedPoints));
-	
-				objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
-				
-				var particleSystem = new THREE.ParticleSystem(
-				    objectGeometry,
-				    objectMaterial);
-
-	            var line = undefined;
-	            var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-	                spaceObject.id + "_sensor"+i,
-	                undefined,
-	                undefined,
-	                function(elapsedTime) {
-						var points = this.sensor.buildPointsToDefineSensorShapeInECI(30, spaceObject);
-			            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
-			            var extendedPoints = this.sensor.findProjectionPoints(points, spaceObject, 1000);
-			            //console.log("points: " + JSON.stringify(extendedPoints));
-			
-	                    //objectGeometry = new THREE.Geometry();
-	                    
-	                    for(var j = 0; j< extendedPoints.length; j++) {
-	                        //var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
-	                        //objectGeometry.vertices.push(new THREE.Vertex(vector));
-							var particle = objectGeometry.vertices[j];
-
-					        // check if we need to reset
-					        particle.position = {
-								x: -extendedPoints[j].x,
-								y: extendedPoints[j].z,
-								z: extendedPoints[j].y
-							}
-	                    }
-	
-						particleSystem.geometry.__dirtyVertices = true;
-	                    //objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
-
-	                    //line = new THREE.Line(objectGeometry, objectMaterial);
-	                },
-	                function() {
-	                    //GlobeViewModel.universe.unDraw(this.id);
-	                    if(line != undefined) {
-	                        GlobeViewModel.universe.draw(this.id, particleSystem, false) ;
-	                    }
-	                }
-	            );
-				lineGraphicsObject.sensor = spaceObject.sensors[i];
-	            GlobeViewModel.universe.addObject(lineGraphicsObject);
+            	this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject)
 			}
         }
+	}
+	
+	this.addSensorFootprintProjection = function(sensor, spaceObject) {
+		var objectMaterial = new THREE.LineBasicMaterial({
+            color : get_random_color(),
+            opacity : .5,
+            linewidth : 3
+        });
+
+		//console.log("sensor: " + JSON.stringify(spaceObject.sensors[i]));
+        var objectGeometry = new THREE.Geometry();
+
+        var points = sensor.buildPointsToDefineSensorShapeInECI(40, spaceObject);
+        //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
+        var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
+		
+        for(var j = 0; j< extendedPoints.length; j++) {
+            var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
+            objectGeometry.vertices.push(new THREE.Vertex(vector));
+        }
+
+        objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+
+		var line = new THREE.Line(objectGeometry, objectMaterial);
+
+        
+        var lineGraphicsObject = new UNIVERSE.GraphicsObject(
+            spaceObject.id + "_footprint_" + sensor.name,
+            undefined,
+            undefined,
+            function(elapsedTime) {
+				var points = this.sensor.buildPointsToDefineSensorShapeInECI(40, spaceObject);
+	            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
+	            var extendedPoints = this.sensor.findProjectionPoints(points, spaceObject, 1000);
+	            //console.log("points: " + JSON.stringify(extendedPoints));
+	
+				for(var k = 0; k < extendedPoints.length; k++) {
+					line.geometry.vertices[k].position = {
+						x: -extendedPoints[k].x, 
+						y: extendedPoints[k].z, 
+						z: extendedPoints[k].y
+					}
+				}
+				
+				line.geometry.vertices[extendedPoints.length].position = {
+					x: -extendedPoints[0].x, 
+					y: extendedPoints[0].z, 
+					z: extendedPoints[0].y
+				}
+				
+				line.geometry.__dirtyVertices = true;
+            },
+            function() {
+                //universe.unDraw(this.id);
+                //if(line != undefined) {
+                    universe.draw(this.id, line, false) ;
+                //}
+            }
+        );
+		lineGraphicsObject.sensor = sensor;
+        universe.addObject(lineGraphicsObject);
 	}
     
 	/**
@@ -583,8 +577,29 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			else {
 				objectMaterial = retrieved_material;
 			}
+			
+			var object1 = universe.getGraphicsObjectById(object1_id);
+			var object2 = universe.getGraphicsObjectById(object2_id);
+			
+			if(object1 == undefined || object2 == undefined) {
+				return;
+			}
+			
+			var object1Location = object1.currentLocation;
+			var object2Location = object2.currentLocation;
+			
+			if(object1Location == undefined || object2Location == undefined) {
+				return;
+			}
+            
+			objectGeometry = new THREE.Geometry();
+            objectGeometry.vertices.push(new THREE.Vertex(vector1));
+                
+            objectGeometry.vertices.push(new THREE.Vertex(vector2));
+            
+            var line = new THREE.Line(objectGeometry, objectMaterial);
 
-            var line = undefined;
+
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
 				object1_id + "_to_" + object2_id,
 				undefined,
@@ -601,28 +616,23 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					if(object1Location == undefined || object2Location == undefined) {
 						return;
 					}
-                    
-					objectGeometry = new THREE.Geometry();
-                    var vector1 = new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z);
-                    objectGeometry.vertices.push(new THREE.Vertex(vector1));
-                        
-                    var vector2 = new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z);
-                    objectGeometry.vertices.push(new THREE.Vertex(vector2));
-                    
-					line = new THREE.Line(objectGeometry, objectMaterial);
+                   
+                    objectGeometry.vertices[0].position = {
+						x: object1Location.x, 
+						y: object1Location.y, 
+						z: object1Location.z
+					};
+					
+					objectGeometry.vertices[1].position = {
+						x: object2Location.x, 
+						y: object2Location.y, 
+						z: object2Location.z
+					};
+					
+					objectGeometry.__dirtyVertices = true;
                 },
 				function() {
-                    universe.unDraw(this.id);
-                    if(line != undefined) {
-						universe.draw(this.id, line, false)	;
-						//TODO: this is not perfect.  It does not allow the vehicle to override the global setting as the other settings do
-						if(enableLinkLines != undefined) {
-							earthExtensions.showLineBetweenObjectsForId(enableLinkLines, object1_id);
-						}
-                      	else {
-                        	earthExtensions.showLineBetweenObjectsForId(universe.getGraphicsObjectById(object1_id).showControlLine, object1_id);                            
-						}   
-                    }
+					universe.draw(this.id, line, false)	;
                 }
 			);
 			universe.addObject(lineGraphicsObject);
@@ -782,6 +792,38 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         //console.log("show/hiding sensorProjection");
         universe.showObject(id + "_sensorProjection", isEnabled);
     }
+
+	/**
+		Enable or disable display of all sensor projections
+		@public
+		@param {boolean} isEnabled
+	*/
+    this.showAllSensorFootprintProjections = function(isEnabled) {
+        var graphicsObjects = universe.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf("_footprint") != -1){
+                universe.showObject(graphicsObjects[i].id, isEnabled);
+            }
+        }
+    }
+
+	/**
+		Enable or disable display of sensor projections for an object
+		@public
+		@param {string} id - identifier for the object
+		@param {boolean} isEnabled
+	*/
+    this.showSensorFootprintProjectionsForId = function(isEnabled, id) {
+        //console.log("show/hiding sensorProjection");
+        var graphicsObjects = universe.getGraphicsObjects();
+
+        for(var i in graphicsObjects) {
+            if(graphicsObjects[i].id.indexOf(id) != -1 && graphicsObjects[i].id.indexOf("_footprint") != -1 ){
+                universe.showObject(graphicsObjects[i].id, isEnabled);
+            }
+        }
+    }
     
 	/**
 		Enable or disable display of all lines between objects
@@ -789,7 +831,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {boolean} isEnabled
 	*/
     this.showAllLinesBetweenObjects = function(isEnabled) {
-        enableLinkLines = isEnabled;
         var graphicsObjects = universe.getGraphicsObjects();
 
         for(var i in graphicsObjects) {
@@ -866,4 +907,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             z : location.y
         };
     }
+
+	function get_random_color() {
+	    var letters = '0123456789ABCDEF'.split('');
+	    var color = '0x';
+	    for (var i = 0; i < 6; i++ ) {
+	        color += letters[Math.round(Math.random() * 15)];
+	    }
+	    return color;
+	}
 }
