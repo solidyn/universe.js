@@ -3,7 +3,7 @@ rem Set the tool path to a location of git
 set bin="C:\Program Files (x86)\Git\bin"
 set path=%bin%;%path%
 
-rm -rf docs
+rm -rf docs/*
 
 rem Write out the THREE.js files that we'll be including
 cat lib/Three/ThreeWebGL.js > build/universe.js
