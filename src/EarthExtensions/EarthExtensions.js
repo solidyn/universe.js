@@ -519,10 +519,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				line.geometry.__dirtyVertices = true;
             },
             function() {
-                //universe.unDraw(this.id);
-                //if(line != undefined) {
-                    universe.draw(this.id, line, false) ;
-                //}
+                universe.draw(this.id, line, false) ;
             }
         );
 		lineGraphicsObject.sensor = sensor;

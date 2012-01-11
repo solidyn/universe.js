@@ -258,14 +258,14 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
 
         //System.out.println("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
-		//console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
+		console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
 
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
         var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
         if (earthObscured)
         {
-			//console.log("earth obscured")
+			console.log("earth obscured")
             return false;
         }
         else
@@ -276,7 +276,7 @@ UNIVERSE.Sensor = function(name, shape) {
             }
             else
             {
-				//console.log("not in FOV");
+				console.log("not in FOV");
                 return false;
             }
         }
