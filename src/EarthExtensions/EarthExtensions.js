@@ -469,6 +469,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
 	}
 	
+	this.addSensorFootprintProjections = function(spaceObject) {
+		if(spaceObject.sensors.length > 0 ) {
+			for(var i = 0; i < spaceObject.sensors.length; i++) {
+            	this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject)
+			}
+        }
+	}
+	
 	this.addSensorFootprintProjection = function(sensor, spaceObject) {
 		var objectMaterial = new THREE.LineBasicMaterial({
             color : get_random_color(),
