@@ -3827,7 +3827,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 earthExtensions.addGroundTrackPointForObject(spaceObject);
                 earthExtensions.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
 
-                earthExtensions.addSensorProjection(spaceObject);
+                earthExtensions.addSensorProjections(spaceObject);
                 earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
 
 				earthExtensions.addSensorFootprintProjections(spaceObject);
@@ -3973,76 +3973,77 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {UNIVERSE.SpaceObject} object - A Space Object to add a Sensor Projection for
 	*/
-    this.addSensorProjection = function(object) {
+    this.addSensorProjection = function(sensor, spaceObject) {
+
 
         var objectGeometry, objectMaterial;
 
         // Determine the object's location in 3D space
-        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+        var objectLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, false));
         if(objectLocation != undefined) {
             // Create a SensorPattern
-            var sensor_size = 1;
-            objectGeometry = new SensorPatternGeometry(sensor_size);
 
-            // TODO: this code is pretty bad;  the beam size will stay the same based on initial distance
-            // from the earth.  so it's really wrong
-            var initial_pos = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-            var base_length = initial_pos.length() - earthSphereRadius;
-            var cone_width_scale = 0.15;
+			var sensorPointCount = 30;
+			// obtain the points of the sensor
+         var points = sensor.buildPointsToDefineSensorShapeInECI(sensorPointCount, spaceObject);
+         //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
+         var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
 
-            //17431
-            
-            // if the vehicle starts too close to the earth, make it a nominal length instead (i.e. a Molniya orbit)
+
+			var THREEPoints = new Array();
+       	for(var j = 0; j< extendedPoints.length; j++) {
+				var coord = eciTo3DCoordinates(extendedPoints[j]);
+				THREEPoints.push(coord);
+         }
+         objectGeometry = new SensorProjection(objectLocation, THREEPoints);
 
             universe.getObjectFromLibraryById("default_sensor_projection_material", function(retrieved_material) {
                 objectMaterial = retrieved_material;
-
+/*
+					 var r = (Math.random() * 255).toString(16);
+					 var g = (Math.random() * 255).toString(16);
+					 var b = (Math.random() * 255).toString(16);
+					 retrieved_material.color = "0x" + r + g + b;
+*/
                 var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
 
                 sensorProjection.doubleSided=true;
 
-				var sensorProjectionGraphicsObject = new UNIVERSE.GraphicsObject(
-					object.id + "_sensorProjection",
-                    object.objectName,
-					undefined,
-                    function(elapsedTime) {
+					var sensorProjectionGraphicsObject = new UNIVERSE.GraphicsObject(
+						spaceObject.id + "_sensorProjection_" + sensor.name,
+						spaceObject.objectName,
+						undefined,
+						function(elapsedTime) {
 
-                        var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+							var objectLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, false));
 
-                        if(objectLocation != undefined) {
-                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
+							if(objectLocation != undefined) {
 
-                            // Move the tip of the sensor projection to the vehicle's location
-                            sensorProjection.position.copy(vector);
+								var points = sensor.buildPointsToDefineSensorShapeInECI(sensorPointCount, spaceObject);
+								var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
 
-                            // the sensor projections are along the z axis and a length of 1, so scaling it
-                            // arbitarily along z will extend the length
-                            sensorProjection.scale.z = vector.length() - earthSphereRadius + 200;
-                            
-                            // sensor_size is the projection dimension at the earth's surface (or at least the end of the cone)
-                            // the projection length of the vector is 1
-                            //sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * (1 / base_length) ;
-                            sensorProjection.scale.x = sensorProjection.scale.y = sensorProjection.scale.z * cone_width_scale ;
+								THREEPoints = [];
+								for(var j = 0; j< extendedPoints.length; j++) {
+									var coord = eciTo3DCoordinates(extendedPoints[j]);
+									THREEPoints.push(coord);
+								}
 
-                            var sensor_boresite = new THREE.Vector3(0,0,0);
-                            sensorProjection.lookAt(sensor_boresite);
-
-
-                        }
-                    },
-					function() {
-                        universe.draw(this.id, sensorProjection, false);
-                    }
-				);
-				universe.addObject(sensorProjectionGraphicsObject);
-            });
+								sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
+							}
+						},
+						function() {
+							universe.draw(this.id, sensorProjection, false);
+						}
+						);
+					universe.addObject(sensorProjectionGraphicsObject);
+				});
         }
     }
 
-	this.addSensorFootprintProjections = function(spaceObject) {
+	this.addSensorProjections = function(spaceObject) {
 		if(spaceObject.sensors.length > 0 ) {
 			for(var i = 0; i < spaceObject.sensors.length; i++) {
-            	this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject)
+            	this.addSensorProjection(spaceObject.sensors[i], spaceObject)
 			}
         }
 	}
