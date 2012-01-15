@@ -4178,9 +4178,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			}
             
 			objectGeometry = new THREE.Geometry();
-            objectGeometry.vertices.push(new THREE.Vertex(vector1));
+            objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z)));
                 
-            objectGeometry.vertices.push(new THREE.Vertex(vector2));
+            objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
             
             var line = new THREE.Line(objectGeometry, objectMaterial);
 
