@@ -383,7 +383,10 @@ UNIVERSE.Sensor = function(name, shape) {
 			// d = ((I*c) +/- sqrt((I*c)^2 - c*c + r*r))
 			var I = shiftedBoundaryPoint;
 			var c = shiftedEarthCenter;
-			var r = Constants.radiusEarth + 20;
+
+			var aboveTheEarth = 200;
+			// r is the radius above the earth to project the points....this adds an arbitrary number above the earth to minimize drawing collisions
+			var r = Constants.radiusEarth + aboveTheEarth;
 			
 			var Idotc = MathTools.dotMultiplyVector(I, c);
 			
@@ -432,9 +435,9 @@ UNIVERSE.Sensor = function(name, shape) {
 					z: (extendedEndPoint.z)*scaleFromEndPointToTangentPoint + satellitePosition.z
 				}
 				
-				// scale down to the earth's surface
+				// scale down to the earth's surface, plus an arbitrary distance above the earth
 				var tangentPointMagnitude = MathTools.magnitudeVector(tangentPoint);
-				var scaleToEarthSurface = (Constants.radiusEarth + 20)/tangentPointMagnitude;
+				var scaleToEarthSurface = (Constants.radiusEarth + aboveTheEarth)/tangentPointMagnitude;
 				
 				var tangentPointOnSurface = MathTools.scalarMultiplyVector(tangentPoint, scaleToEarthSurface)
 

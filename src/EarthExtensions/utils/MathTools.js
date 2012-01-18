@@ -193,7 +193,8 @@ var MathTools = {
      */
     toRadians: function(valueInDegrees)
     {
-        return valueInDegrees * Math.PI / 180.0;
+        // return valueInDegrees * Math.PI / 180.0;
+  		  return valueInDegrees * Constants.piOverOneEighty;
     },
 
     /**
@@ -204,7 +205,8 @@ var MathTools = {
      */
     toDegrees: function(valueInRadians)
     {
-        return valueInRadians * 180 / Math.PI;
+        //return valueInRadians * 180 / Math.PI;
+		  return valueInRadians * Constants.oneEightyOverPi;
     },
 
     /**
