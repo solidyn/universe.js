@@ -439,10 +439,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
 
 
-			var THREEPoints = new Array();
-			for(var j = 0; j< extendedPoints.length; j++) {
+			var THREEPoints = new Array( extendedPoints.length );
+			var pointCount = extendedPoints.length;
+			for(var j = 0; j< pointCount; j++) {
 				var coord = eciTo3DCoordinates(extendedPoints[j]);
-				THREEPoints.push(coord);
+				THREEPoints[j] = coord;
 			}
 			objectGeometry = new SensorProjection(objectLocation, THREEPoints);
 
@@ -450,8 +451,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				color: sensorColors.nextColor(),
 				transparent: true,
 				blending: THREE.AdditiveBlending,
-				overdraw: true,
-				opacity: 0.15
+				opacity: 0.15,
+				overdraw: true
 			});
 
 			var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
@@ -472,11 +473,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 						var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
 
 						THREEPoints = [];
-						for(var j = 0; j< extendedPoints.length; j++) {
+						for(var j = 0; j< pointCount; j++) {
 							var coord = eciTo3DCoordinates(extendedPoints[j]);
-							THREEPoints.push(coord);
+							THREEPoints[j] = coord;
 						}
-
 						sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
 					}
 				},
@@ -492,7 +492,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 	this.addSensorProjections = function(spaceObject) {
 		if(spaceObject.sensors.length > 0 ) {
-			for(var i = 0; i < spaceObject.sensors.length; i++) {
+			for(var i = spaceObject.sensors.length-1; i >= 0; i--) {
 				this.addSensorProjection(spaceObject.sensors[i], spaceObject)
 			}
 		}

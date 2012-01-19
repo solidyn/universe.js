@@ -368,7 +368,8 @@ UNIVERSE.Sensor = function(name, shape) {
 		
 		var pointsOnEarth = new Array();
 		
-		for(var i = 0; i < endpoints.length; i++) {
+		var endPointLen = endpoints.length;
+		for(var i = 0; i < endPointLen; i++) {
 			// shift everything to the satellite position as the origin
 			var shiftedBoundaryPoint = {
 				x: endpoints[i][0] - satellitePosition.x,
@@ -452,7 +453,8 @@ UNIVERSE.Sensor = function(name, shape) {
 	this.extendSensorEndpointsInECIToConformToEarth = function(endpoints, satellite, distancePastEarthToDraw, maximumAcceptableMissDistance) {
 		var correctedEndpoints = new Array(endpoints.length);
 		
-		for(var i = 0; i < endpoints.length; i++) {
+		var endpointsLen = endpoints.length;
+		for(var i = 0; i < endpointsLen; i++) {
 			correctedEndpoints[i] = new Array(3);
 		}
 		
@@ -462,7 +464,7 @@ UNIVERSE.Sensor = function(name, shape) {
 		
 		var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
 		
-		for(var i = 0; i < endpoints.length; i++) {
+		for(var i = 0; i < endpointsLen; i++) {
 			var newX = x + (endpoints[i][0] - x)*depth;
 			var newY = y + (endpoints[i][1] - y)*depth;
 			var newZ = z + (endpoints[i][2] - z)*depth;
