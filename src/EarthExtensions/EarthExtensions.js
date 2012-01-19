@@ -33,14 +33,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 	var sensorColors = {
 		colorList: [
-		"0xffaa00",
 		"0xff0000",
 		"0x00cc00",
 		"0x0066ff",
 		"0x9900cc",
 		"0xffff00",
 		"0xff6666",
-		"0xebebeb"
+		"0xebebeb",
+		"0xffaa00"
 		],
 		iterator: -1,
 		// GRab the next color on the list and iterate to the next color
