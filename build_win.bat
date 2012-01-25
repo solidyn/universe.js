@@ -2,6 +2,9 @@
 rem Set the tool path to a location of git
 set bin="C:\Program Files (x86)\Git\bin"
 set path=%bin%;%path%
+rem Set your panda path here if you want to copy the build into a solidpanda folder
+set panda=%USERPROFILE%\Documents\Work\Solidyn\SolidPanda\solidpanda\vendor\assets\javascripts
+
 
 rm -rf docs/*
 
@@ -33,5 +36,12 @@ java -jar ./utils/yuicompressor-2.4.7.jar -o build/UniverseEarthExtensions-min.j
 echo Creating docs...
 rem Create the docs
 java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/universe_web --suppress -d=docs
+
+rem UNCOMMENT below to copy into solidpanda
+rem echo Copying to Solidpanda
+rem copy build\UniverseEarthExtensions.js %panda%
+rem copy build\universe.js %panda%
+
+
 
 echo DONE
