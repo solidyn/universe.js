@@ -42,8 +42,39 @@
 			
 			earthExtensions.addSun();
 			
+			var initialPosition = new UNIVERSE.ECICoordinates(
+				-14213.99162,
+				-39987.86471,
+				-1115.314875,
+				2.865601523,
+				-1.007157587,
+				-0.410247122
+			);
+			
 			var date = new Date();
-			universe.play(date, 5000, undefined);
+			var epoch = new Date(date);
+			
+			universe.addJsonGeometryModel("dsp", "models/DSP.js", function() {
+						
+						earthExtensions.addSpaceObject(new UNIVERSE.SpaceObject(
+							"space_object_id",
+							"space_object_name",
+							"dsp",
+							function(time, updateState) {
+								time = new Date(universe.getCurrentUniverseTime());
+								var elapsedTime = time - epoch;
+								dt = 100;
+								var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
+								//console.log(JSON.stringify(location));
+								return location;
+							},
+							true,
+							true,
+							new Array()
+						))
+			});
+			
+			universe.play(date, 500, undefined);
 
 		</script>
 

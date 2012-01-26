@@ -20,7 +20,6 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
         lastUpdateMs = nowMs;
         // causes terrible performance... only enable if needed for debugging!
         // logger.debug("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
-
         // update and draw all graphics objects
         for(var i in graphicsObjects) {
             graphicsObjects[i].update(elapsedTime);
