@@ -239,7 +239,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			universe.getObjectFromLibraryById("default_material", function(retrieved_material) {
 				material = retrieved_material;
 
-				//objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( 0, 0, 0 ) ));
+				objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( -Math.PI/2, 0, 0 ) ));
 				var objectModel = new THREE.Mesh(objectGeometry, material);
 
 				var spaceGraphicsObject = new UNIVERSE.GraphicsObject(
