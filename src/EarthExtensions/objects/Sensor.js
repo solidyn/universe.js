@@ -1,13 +1,4 @@
-// package SensorPackage;
-// 
-// import SatelliteFlyer.Constants;
-// import SatelliteFlyer.CoordinateConversionTools;
-// import SatelliteFlyer.ECIcoordinates;
-// import SatelliteFlyer.MathTools;
-// import SatelliteFlyer.Quaternion;
-// import SatelliteFlyer.QuaternionMath;
-// import SatelliteFlyer.RSWcoordinates;
-// import SatelliteFlyer.SimulationObject;
+// Sensor.js
 
 /**
  *
@@ -128,6 +119,8 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = new Array();
 
         //define the target position as a vectors
+        console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
+                    "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         var targetline = new Array();
         targetline[0] = targetPosition.getX() - satellite.getEci().getX();
@@ -263,9 +256,9 @@ UNIVERSE.Sensor = function(name, shape) {
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
         var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
+	    console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
         if (earthObscured)
         {
-			console.log("earth obscured")
             return false;
         }
         else
@@ -276,7 +269,6 @@ UNIVERSE.Sensor = function(name, shape) {
             }
             else
             {
-				console.log("not in FOV");
                 return false;
             }
         }

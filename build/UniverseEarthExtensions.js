@@ -2749,7 +2749,8 @@ var OrbitPropagator = {
             return newEci;
         }
     }
-};/**
+};// EllipseSensorShape.js
+/**
  *
  * @author Justin
  */
@@ -2798,12 +2799,13 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
         var canSee = false;
         
-        var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-		console.log("radius sensor: " + radiusSensor);
-		console.log("relative radius: " + relativeRadius);
-        if(radiusSensor > relativeRadius){
-            canSee = true;
-        }
+			var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+			console.log('ellipseSensor canSensorSee:  '+
+				"radius sensor: " + radiusSensor+
+				"    relative radius: " + relativeRadius);
+			if(radiusSensor > relativeRadius){
+				canSee = true;
+			}
         return canSee;
     }
 };var UNIVERSE = UNIVERSE || {};
@@ -2841,7 +2843,7 @@ UNIVERSE.GroundObject.prototype = {
 		return this;
 	}
 };/**
- *
+ * RectangleSensorShape.js
  * @author Justin
  */
 
@@ -2921,24 +2923,16 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
         
         var radiusSensor=this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
 
-		console.log("radius sensor: " + radiusSensor);
-		console.log("relative radius: " + relativeRadius);
+		console.log('rectSensor canSensorSee:  '+
+				"radius sensor: " + radiusSensor+
+				"    relative radius: " + relativeRadius);
         if(radiusSensor>relativeRadius){
             canSee=true;
         }
         return canSee;
     }
 };
-// package SensorPackage;
-// 
-// import SatelliteFlyer.Constants;
-// import SatelliteFlyer.CoordinateConversionTools;
-// import SatelliteFlyer.ECIcoordinates;
-// import SatelliteFlyer.MathTools;
-// import SatelliteFlyer.Quaternion;
-// import SatelliteFlyer.QuaternionMath;
-// import SatelliteFlyer.RSWcoordinates;
-// import SatelliteFlyer.SimulationObject;
+// Sensor.js
 
 /**
  *
@@ -3059,6 +3053,8 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = new Array();
 
         //define the target position as a vectors
+        console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
+                    "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         var targetline = new Array();
         targetline[0] = targetPosition.getX() - satellite.getEci().getX();
@@ -3194,9 +3190,9 @@ UNIVERSE.Sensor = function(name, shape) {
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
         var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
+	    console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
         if (earthObscured)
         {
-			console.log("earth obscured")
             return false;
         }
         else
@@ -3207,7 +3203,6 @@ UNIVERSE.Sensor = function(name, shape) {
             }
             else
             {
-				console.log("not in FOV");
                 return false;
             }
         }
@@ -3585,7 +3580,9 @@ UNIVERSE.SpaceObject.prototype = {
 		
 		return new UNIVERSE.ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
 	}
-};var UNIVERSE = UNIVERSE || {};
+};// EarthExtensions.js
+
+var UNIVERSE = UNIVERSE || {};
 
 /** 
 	Extensions for doing Earth-based 3D modeling with Universe.js
@@ -4065,6 +4062,37 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 							THREEPoints[j] = coord;
 						}
 						sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
+
+
+/*
+//  BJD TEST CODE For TARGET VISIBILITY
+		console.log("Iterating over points for " + spaceObject.objectName + ": " + sensor.name);
+		var graphicsObjects = universe.getGraphicsObjects();
+		for(var i in graphicsObjects) {
+			// If this object has a position, log it
+			var obj = graphicsObjects[i];
+			if ( obj.currentLocation != undefined )
+			{
+				// Now we're looking at a point 
+				//console.log(obj);
+				console.log('VISIBILITY CHECK [' + spaceObject.objectName + ":" + sensor.name + ']  to '+ obj.modelName);
+				var targetPosition = new UNIVERSE.ECICoordinates(obj.currentLocation.x, obj.currentLocation.y, obj.currentLocation.z, 0,0,0,0,0,0);	
+				var inView = sensor.checkSensorVisibilityOfTargetPoint(spaceObject, targetPosition );
+			}
+		}
+
+// END BRIAN HACK
+*/
+
+
+
+
+
+
+
+
+
+
 					}
 				},
 				function() {
@@ -4542,4 +4570,5 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		}
 		return color;
 	}
-}
+};
+

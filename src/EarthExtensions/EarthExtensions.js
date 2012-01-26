@@ -1,3 +1,5 @@
+// EarthExtensions.js
+
 var UNIVERSE = UNIVERSE || {};
 
 /** 
@@ -478,6 +480,37 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 							THREEPoints[j] = coord;
 						}
 						sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
+
+
+/*
+//  BJD TEST CODE For TARGET VISIBILITY
+		console.log("Iterating over points for " + spaceObject.objectName + ": " + sensor.name);
+		var graphicsObjects = universe.getGraphicsObjects();
+		for(var i in graphicsObjects) {
+			// If this object has a position, log it
+			var obj = graphicsObjects[i];
+			if ( obj.currentLocation != undefined )
+			{
+				// Now we're looking at a point 
+				//console.log(obj);
+				console.log('VISIBILITY CHECK [' + spaceObject.objectName + ":" + sensor.name + ']  to '+ obj.modelName);
+				var targetPosition = new UNIVERSE.ECICoordinates(obj.currentLocation.x, obj.currentLocation.y, obj.currentLocation.z, 0,0,0,0,0,0);	
+				var inView = sensor.checkSensorVisibilityOfTargetPoint(spaceObject, targetPosition );
+			}
+		}
+
+// END BRIAN HACK
+*/
+
+
+
+
+
+
+
+
+
+
 					}
 				},
 				function() {
@@ -955,4 +988,5 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		}
 		return color;
 	}
-}
+};
+
