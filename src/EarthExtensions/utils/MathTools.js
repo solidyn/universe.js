@@ -87,6 +87,22 @@ var MathTools = {
 
         return angle; //deg
     },
+	
+	/**
+	* @param x - vector in {x, y, z}
+	* @param y - vector in {x, y, z}
+	* @return distance betewen points
+	*/
+	distanceBetweenTwoPoints: function(x, y)
+	{
+		var vectorBetweenPoints = {
+			x: x.x - y.x, 
+			y: x.y - y.y, 
+			z: x.z - y.z
+		};
+		
+		return MathTools.magnitudeVector(vectorBetweenPoints);
+	},
 
     /**
      *

@@ -79,9 +79,9 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
         
         var radiusSensor=this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
 
-		console.log('rectSensor canSensorSee:  '+
-				"radius sensor: " + radiusSensor+
-				"    relative radius: " + relativeRadius);
+		//console.log('rectSensor canSensorSee:  '+
+		//		"radius sensor: " + radiusSensor+
+		//		"    relative radius: " + relativeRadius);
         if(radiusSensor>relativeRadius){
             canSee=true;
         }

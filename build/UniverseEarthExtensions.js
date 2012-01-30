@@ -1317,6 +1317,22 @@ var MathTools = {
 
         return angle; //deg
     },
+	
+	/**
+	* @param x - vector in {x, y, z}
+	* @param y - vector in {x, y, z}
+	* @return distance betewen points
+	*/
+	distanceBetweenTwoPoints: function(x, y)
+	{
+		var vectorBetweenPoints = {
+			x: x.x - y.x, 
+			y: x.y - y.y, 
+			z: x.z - y.z
+		};
+		
+		return MathTools.magnitudeVector(vectorBetweenPoints);
+	},
 
     /**
      *
@@ -2231,10 +2247,15 @@ function Quaternion(wVal, xVal, yVal, zVal) {
         var m32 = m[2][1]; //double
         var m33 = m[2][2]; //double
 
-        q.setW(0.5 * Math.sqrt(m11+m22+m33+1));
-        q.setX((m23 - m32) / (4 * q.getW()));
-        q.setY((m31 - m13) / (4 * q.getW()));
-        q.setZ((m12 - m21) / (4 * q.getW()));
+        // q.setW(0.5 * Math.sqrt(m11+m22+m33+1));
+        //         q.setX((m23 - m32) / (4 * q.getW()));
+        //         q.setY((m31 - m13) / (4 * q.getW()));
+        //         q.setZ((m12 - m21) / (4 * q.getW()));
+
+        q.setW(0.5*Math.sqrt(1+m11-m22-m33));
+        q.setX((m12+m21)/(4*q.getW()));
+        q.setY((m13+m31)/(4*q.getW()));
+        q.setZ((m32-m23)/(4*q.getW()));
 
         return q;
     }
@@ -2800,9 +2821,9 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         var canSee = false;
         
 			var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-			console.log('ellipseSensor canSensorSee:  '+
-				"radius sensor: " + radiusSensor+
-				"    relative radius: " + relativeRadius);
+			//console.log('ellipseSensor canSensorSee:  '+
+			//	"radius sensor: " + radiusSensor+
+			//	"    relative radius: " + relativeRadius);
 			if(radiusSensor > relativeRadius){
 				canSee = true;
 			}
@@ -2923,9 +2944,9 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
         
         var radiusSensor=this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
 
-		console.log('rectSensor canSensorSee:  '+
-				"radius sensor: " + radiusSensor+
-				"    relative radius: " + relativeRadius);
+		//console.log('rectSensor canSensorSee:  '+
+		//		"radius sensor: " + radiusSensor+
+		//		"    relative radius: " + relativeRadius);
         if(radiusSensor>relativeRadius){
             canSee=true;
         }
@@ -3053,52 +3074,50 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = new Array();
 
         //define the target position as a vectors
-        console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
-                    "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
+        //console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
+        //            "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
-        var targetline = new Array();
-        targetline[0] = targetPosition.getX() - satellite.getEci().getX();
-        targetline[1] = targetPosition.getY() - satellite.getEci().getY();
-        targetline[2] = targetPosition.getZ() - satellite.getEci().getZ();
-        //console.log("delta ECI: " + targetline[0] + ", " + targetline[1] + ", " + targetline[2]);
-
+        var deltaECI = new Array(3);
+		var satelliteEci = satellite.getEci();
+        deltaECI[0] = targetPosition.x - satelliteEci.getX();
+        deltaECI[1] = targetPosition.y - satelliteEci.getY();
+        deltaECI[2] = targetPosition.z - satelliteEci.getZ();
+        //console.log("delta ECI: " + deltaECI[0] + ", " + deltaECI[1] + ", " + deltaECI[2]);
+		
+		var r= [satelliteEci.getX(),satelliteEci.getY(),satelliteEci.getZ()];
+        var v=[satelliteEci.getVX(),satelliteEci.getVY(),satelliteEci.getVZ()];
+        var rmag=MathTools.magnitude(r);
+        var rcrossv=MathTools.cross(r, v);
+        var rvec=MathTools.scalarMultiply(r, 1/rmag);
+        var w=MathTools.scalarMultiply(rcrossv, 1/MathTools.magnitude(rcrossv));
+        var s=MathTools.cross(w, r);
+        var deltaECIdotR=MathTools.dotMultiply(deltaECI, rvec);
+        var deltaECIdotS=MathTools.dotMultiply(deltaECI, s);
+        var deltaECIdotW=MathTools.dotMultiply(deltaECI, w);
+        var targetInRSWCoordinates=[deltaECIdotR/MathTools.magnitude(rvec),deltaECIdotS/MathTools.magnitude(s),deltaECIdotW/MathTools.magnitude(w)];
+		
 
         //get the quaternion to convert the ECI coordinate of the target into an RSW coordinate triplet
-        var eciToRSWquaternion = QuaternionMath.convertRotationMatrixToQuaternion(CoordinateConversionTools.buildRotationMatrixToConvertECItoRSW(satellite));
-		//console.log("eciToRSWquaternion: " + JSON.stringify(eciToRSWquaternion));
-		
-        var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(QuaternionMath.multiplyQuaternions(eciToRSWquaternion, this.quaternionFromRSWToSensor), targetline);
+		var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
 		//console.log("targetInSensorCoordinates: " + JSON.stringify(targetInSensorCoordinates));
 
-        //convert the RSW coordinates of the target into the sensor coordinate system
-        //Double[] targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(quaternionFromRSWToSensor, targetInRSWCoordinates);
-
-        //System.out.println("quaternion: " + quaternionFromRSWToSensor.toString());
-        targetline[0] = targetInSensorCoordinates[0];
-        targetline[1] = targetInSensorCoordinates[1];
-        targetline[2] = targetInSensorCoordinates[2];
-        //console.log("targetline in sensor coords: " + targetline[0] + ", " + targetline[1] + ", " + targetline[2]);
-
         //---determine the three vectors that define the extent of the sensor shape in the sensor coordinate system
+		//these are the non-rotated vectors
         //vector along the centerline of the sensor (RSW)
         var centerline = new Array();
-        centerline[0] = 1.0;//center
+        centerline[0] = 1.0;//center (radial)
         centerline[1] = 0.0;//left
         centerline[2] = 0.0;//top
-        //System.out.println("centerline: " + centerline[0] + ", " + centerline[1] + ", " + centerline[2]);
 
         var rightline = new Array();
-        rightline[0] = 1.0;//center
+		rightline[0] = 1.0;//center
         rightline[1] = -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0)));//left
         rightline[2] = 0.0;//top
-        //console.log("rightline: " + rightline[0] + ", " + rightline[1] + ", " + rightline[2]);
-
 
         var topline = new Array();
         topline[0] = 1.0;//center
         topline[1] = 0.0;//left
         topline[2] = Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
-        //console.log("topline: " + topline[0] + ", " + topline[1] + ", " + topline[2]);
 
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
         //assume it's an oblique spherical triangle
@@ -3106,16 +3125,16 @@ UNIVERSE.Sensor = function(name, shape) {
         //a is the angle between the centerline and the right hand side
         var a = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, rightline));//radians
         //b is the angle between the centerline and the target
-        var b = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, targetline));//radians
+        var b = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, targetInSensorCoordinates));//radians
         //c is the angle between the right hand side and the target
-        var c = MathTools.toRadians(MathTools.angleBetweenTwoVectors(rightline, targetline));//radians
+        var c = MathTools.toRadians(MathTools.angleBetweenTwoVectors(rightline, targetInSensorCoordinates));//radians
         //d is the angle between the top side and the target
-        var d = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, targetline));//radians
+        var d = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, targetInSensorCoordinates));//radians
         //e is the angle between the top side and the target
         var e = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, centerline));//radians
 
-        var s = 0.5 * (a + b + c);
-        var C = 2 * Math.asin(Math.sqrt((Math.sin(s - a) * Math.sin(s - b) / (Math.sin(a) * Math.sin(b)))));
+        var S = 0.5 * (a + b + c);
+        var C = 2 * Math.asin(Math.sqrt((Math.sin(Math.abs(S - a)) * Math.sin(Math.abs(S - b)) / (Math.sin(a) * Math.sin(b)))));
 
         //double C=Math.acos(Math.cos(c)-Math.cos(a)*Math.cos(b))/(Math.sin(a)*Math.sin(b));//radians
         var az = MathTools.toDegrees(C);
@@ -3135,7 +3154,7 @@ UNIVERSE.Sensor = function(name, shape) {
         return azel;
     }
 
-    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget = function(satellite, targetPosition)
+    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetSphericalEarth = function(satellite, targetPosition)
     {
 
         //sight algorithm Vallado 295
@@ -3143,9 +3162,10 @@ UNIVERSE.Sensor = function(name, shape) {
         var r1 = new Array();
         var r2 = new Array();
         var radEarth = Constants.radiusEarth;
-        r1[0] = satellite.getEci().getX() / radEarth;
-        r1[1] = satellite.getEci().getY() / radEarth;
-        r1[2] = satellite.getEci().getZ() / radEarth;
+		var satelliteEci = satellite.getEci();
+        r1[0] = satelliteEci.getX() / radEarth;
+        r1[1] = satelliteEci.getY() / radEarth;
+        r1[2] = satelliteEci.getZ() / radEarth;
         r2[0] = targetPosition.getX() / radEarth;
         r2[1] = targetPosition.getY() / radEarth;
         r2[2] = targetPosition.getZ() / radEarth;
@@ -3177,6 +3197,52 @@ UNIVERSE.Sensor = function(name, shape) {
         return !haveSight;
     }
 
+	this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth = function(satellite, targetPosition)
+    {
+
+        //sight algorithm Vallado 295
+        var haveSight = false;
+        var r1 = new Array(3);
+        var r2 = new Array(3);
+        var radEarth = Constants.radiusEarth;
+		var satelliteEci = satellite.getEci();
+        r1[0] = satelliteEci.getX() / radEarth;
+        r1[1] = satelliteEci.getY() / radEarth;
+        r1[2] = satelliteEci.getZ() / radEarth;
+        r2[0] = targetPosition.getX() / radEarth;
+        r2[1] = targetPosition.getY() / radEarth;
+        r2[2] = targetPosition.getZ() / radEarth;
+        var r1mag = MathTools.magnitude(r1);
+        var r2mag = MathTools.magnitude(r2);
+        var tmin = 0.5;
+        var ctmin = 0.0;
+
+        //disable the radius magnitude check because it doesn't account for the oblateness of the earth which the LLAcoordinates do account for
+        //this can cause points on the surface of the earth to appear inside of a non-oblate earth, causing this check to fail
+        //if (r1mag < 1 || r2mag < 1)
+        //{ //one of the points is inside the earth
+        //    haveSight = false;
+        //}
+        //else
+        //{
+        tmin = (r1mag * r1mag - MathTools.dotMultiply(r1, r2)) / (r1mag * r1mag + r2mag * r2mag - 2 * MathTools.dotMultiply(r1, r2));
+        if (tmin < 0 || tmin > 1)
+        {
+            haveSight = true;
+        }
+        else
+        {
+            ctmin = (1 - tmin) * r1mag * r1mag + MathTools.dotMultiply(r1, r2) * tmin;
+            if (ctmin >= 1.0)
+            {
+                haveSight = true;
+            }
+        }
+
+        //}
+        return !haveSight;
+    }
+
     this.checkSensorVisibilityOfTargetPoint = function(satellite, targetPosition)
     {
 		//console.log("targetPosition: " + JSON.stringify(targetPosition));
@@ -3185,12 +3251,13 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
 
         //System.out.println("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
-		console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
+		//console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
 
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
-        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
-	    console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
+        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth(satellite, targetPosition);
+
+	    //console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
         if (earthObscured)
         {
             return false;
@@ -3249,23 +3316,14 @@ UNIVERSE.Sensor = function(name, shape) {
 
 			//console.log("FOVboundary2: " + JSON.stringify(FOVboundary));
 
-            /*
-            //rotate about along track
-            FOVboundary = MathTools.applyRot2(this.alongtrackRotationAngle, FOVboundary);
-            //rotate about cross track
-            FOVboundary = MathTools.applyRot3(this.crosstrackRotationAngle, FOVboundary);
-            //rotate about radial
-            FOVboundary = MathTools.applyRot1(this.radialRotationAngle, FOVboundary);
-             */
-            //var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 			var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 			
 			//console.log("rswPoint: " + JSON.stringify(rswPoint));
 
-			
-	        var satXpos = satellite.getEci().getX();
-	        var satYpos = satellite.getEci().getY();
-	        var satZpos = satellite.getEci().getZ();
+			var satelliteEci = satellite.getEci();
+	        var satXpos = satelliteEci.getX();
+	        var satYpos = satelliteEci.getY();
+	        var satZpos = satelliteEci.getZ();
 	
             //convert the RSW to ECI
             var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
@@ -3280,11 +3338,7 @@ UNIVERSE.Sensor = function(name, shape) {
     }
 
 	this.findProjectionPoints = function(endpoints, satellite, distancePastEarthToDraw) {
-		var satellitePosition = {
-			x: satellite.getEci().getX(),
-			y: satellite.getEci().getY(),
-			z: satellite.getEci().getZ()
-		};
+		var satellitePosition = satellite.getEci();
 		
 		var shiftedEarthCenter = {
 			x: - satellitePosition.x,
@@ -3311,7 +3365,7 @@ UNIVERSE.Sensor = function(name, shape) {
 			var I = shiftedBoundaryPoint;
 			var c = shiftedEarthCenter;
 
-			var aboveTheEarth = 200;
+			var aboveTheEarth = 100;
 			// r is the radius above the earth to project the points....this adds an arbitrary number above the earth to minimize drawing collisions
 			var r = Constants.radiusEarth + aboveTheEarth;
 			
@@ -3384,9 +3438,10 @@ UNIVERSE.Sensor = function(name, shape) {
 			correctedEndpoints[i] = new Array(3);
 		}
 		
-		var x = satellite.getEci().getX();
-		var y = satellite.getEci().getY();
-		var z = satellite.getEci().getZ();
+		var satelliteEci = satellite.getEci();
+		var x = satelliteEci.getX();
+		var y = satelliteEci.getY();
+		var z = satelliteEci.getZ();
 		
 		var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
 		
@@ -3471,9 +3526,10 @@ UNIVERSE.Sensor = function(name, shape) {
 
         //determine the quaternion from the reference vector to the satellite position vector
         var satelliteVec = new Array(3);
-        var x=satellite.getEci().getX();
-        var y=satellite.getEci().getY();
-        var z=satellite.getEci().getZ();
+		var satelliteEci = satellite.getEci();
+        var x=satelliteEci.getX();
+        var y=satelliteEci.getY();
+        var z=satelliteEci.getZ();
         var satelliteMagnitude=Math.sqrt(x*x+y*y+z*z);
         satelliteVec[0] = x / satelliteMagnitude;
         satelliteVec[1] = y / satelliteMagnitude;
@@ -3861,9 +3917,83 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 				earthExtensions.addSensorFootprintProjections(spaceObject);
 				earthExtensions.showSensorFootprintProjectionsForId(spaceObject.showSensorFootprintProjections, spaceObject.id);
+				
+				earthExtensions.addSensorVisibilityLines(spaceObject);
+				earthExtensions.showSensorVisibilityLinesForId(spaceObject.showSensorVisibilityLines, spaceObject.id);
 			});
 		});
 	};
+	
+	this.addSensorVisibilityLines = function(object) {
+		if(object.sensors && object.sensors.length > 0) {
+			var visibilityLinesController = new UNIVERSE.GraphicsObject(
+				object.id + "_visibilityLines",
+				object.objectName,
+				undefined,
+				function(elapsedTime) {
+					var graphicsObjects = universe.getGraphicsObjects();
+					var objectsToDrawLinesTo = new Array();
+					
+					var sensorLength = object.sensors.length;
+					for(var i = 0; i < sensorLength; i++) {
+						var sensor = object.sensors[i];
+						
+						for(var j in graphicsObjects) {
+							var obj = graphicsObjects[j];
+							//console.log("obj.id: " + obj.id + " object.id: " + object.id);
+							if ( obj.currentLocation != undefined && 
+								obj.modelName != "earth" && 
+								obj.modelName != "moon" && 
+								obj.modelName != "sun" && 
+								obj.id != object.id && 
+								obj.id.indexOf("_groundPoint") == -1 && 
+								obj.id.indexOf("_propagation") == -1 &&
+								obj.id.indexOf("_to_") == -1 && 
+								obj.id.indexOf("_visibility_") == -1)
+							{
+								// Now we're looking at a point 
+								//console.log(obj.id);
+								var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
+								var inView = sensor.checkSensorVisibilityOfTargetPoint(object, targetPosition );
+								//console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
+								if(!objectsToDrawLinesTo[obj.id]) {
+									objectsToDrawLinesTo[obj.id] = inView;
+								}
+							}
+						}
+					}
+					
+					for(var k in objectsToDrawLinesTo) {
+						if(objectsToDrawLinesTo[k] ) {
+							if(universe.getGraphicsObjectById(object.id + "_visibility_" + k) == undefined)
+							{
+								//console.log("adding line for object: " + object.id + " and " + k);
+								earthExtensions.addLineBetweenObjects(object.id, k, undefined, "_visibility_");	
+							}
+							else {
+								//console.log("line already there for: " + k);
+							}
+						}
+						else {
+							earthExtensions.removeLineBetweenObjects(object.id, k, "_visibility_");
+						}
+						//console.log("finished: " + k);
+					}
+					
+					// for(var m in objectsToRemoveLinesFrom) {
+					// 	if(universe.getGraphicsObjectById(object.id + "_visibility_" + objectsToRemoveLinesFrom[m])) 
+					// 	{
+					// 		earthExtensions.removeLineBetweenObjects(object.id, objectsToRemoveLinesFrom[m], "_visibility_");
+					// 	}
+					// }
+				},
+				function() {
+					// nothing to draw, this is a controller
+				}
+			)
+			universe.addObject(visibilityLinesController);
+		}
+	}
 
 	/**
 		Add a Ground Object to the Earth
@@ -4214,19 +4344,22 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object1_id - starting object of the line
 		@param {string} object2_id - end object of the line
 	*/
-	this.addLineBetweenObjects = function(object1_id, object2_id, color) {
+	this.addLineBetweenObjects = function(object1_id, object2_id, color, customIdentifier) {
+		console.log("adding line");
 		var objectGeometry, objectMaterial;
         
-		universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
-			if(color) {
-				objectMaterial = new THREE.LineBasicMaterial({
-					color : color,
-					opacity : 1
-				});
+		//universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
+			if(!color) {
+				color = 0x009900;
 			}
 			else {
 				objectMaterial = retrieved_material;
 			}
+			
+			objectMaterial = new THREE.LineBasicMaterial({
+				color : color,
+				opacity : 1
+			});
 			
 			var object1 = universe.getGraphicsObjectById(object1_id);
 			var object2 = universe.getGraphicsObjectById(object2_id);
@@ -4249,9 +4382,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             
 			var line = new THREE.Line(objectGeometry, objectMaterial);
 
-
+			var identifier = "_to_"
+			if(customIdentifier)
+			{
+				identifier = customIdentifier;
+			}
+			
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-				object1_id + "_to_" + object2_id,
+				object1_id + identifier + object2_id,
 				undefined,
 				undefined,
 				function(elapsedTime) {
@@ -4286,7 +4424,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				}
 				);
 			universe.addObject(lineGraphicsObject);
-		});
+		//});
 	}
 
 	/**
@@ -4295,8 +4433,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object1_id - starting object of the line
 		@param {string} object2_id - end object of the line
 	*/
-	this.removeLineBetweenObjects = function(object1_id, object2_id) {
-		universe.removeObject(object1_id + "_to_" + object2_id);
+	this.removeLineBetweenObjects = function(object1_id, object2_id, customIdentifier) {
+		var identifier = "_to_";
+		if(customIdentifier) {
+			identifier = customIdentifier;
+		}
+		universe.removeObject(object1_id + identifier + object2_id);
 	}
 	
 	/**
@@ -4444,7 +4586,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
 	this.showSensorProjectionForId = function(isEnabled, id) {
 		//console.log("show/hiding sensorProjection");
-		universe.showObject(id + "_sensorProjection", isEnabled);
+		// have to do this because there are multiple sensors per space object
+		var objects = universe.getGraphicsObjects();
+		for(var i in objects) {
+			if(i.indexOf(id + "_sensorProjection") > -1) {
+				universe.showObject(i, isEnabled);
+			}
+		}
 	}
 
 	/**
@@ -4474,6 +4622,38 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 		for(var i in graphicsObjects) {
 			if(graphicsObjects[i].id.indexOf(id) != -1 && graphicsObjects[i].id.indexOf("_footprint") != -1 ){
+				universe.showObject(graphicsObjects[i].id, isEnabled);
+			}
+		}
+	}
+	
+	/**
+		Enable or disable display of sensor projections for an object
+		@public
+		@param {string} id - identifier for the object
+		@param {boolean} isEnabled
+	*/
+	this.showSensorVisibilityLinesForId = function(isEnabled, id) {
+		//console.log("show/hiding sensorProjection");
+		var graphicsObjects = universe.getGraphicsObjects();
+
+		for(var i in graphicsObjects) {
+			if(graphicsObjects[i].id.indexOf(id + "_visibility_") != -1){
+				universe.showObject(graphicsObjects[i].id, isEnabled);
+			}
+		}
+	}
+	
+	/**
+		Enable or disable display of all lines between objects
+		@public
+		@param {boolean} isEnabled
+	*/
+	this.showAllSensorVisibilityLines = function(isEnabled) {
+		var graphicsObjects = universe.getGraphicsObjects();
+
+		for(var i in graphicsObjects) {
+			if(graphicsObjects[i].id.indexOf("_visibility_") != -1){
 				universe.showObject(graphicsObjects[i].id, isEnabled);
 			}
 		}

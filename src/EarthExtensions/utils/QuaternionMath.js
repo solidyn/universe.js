@@ -128,10 +128,15 @@ var QuaternionMath = {
         var m32 = m[2][1]; //double
         var m33 = m[2][2]; //double
 
-        q.setW(0.5 * Math.sqrt(m11+m22+m33+1));
-        q.setX((m23 - m32) / (4 * q.getW()));
-        q.setY((m31 - m13) / (4 * q.getW()));
-        q.setZ((m12 - m21) / (4 * q.getW()));
+        // q.setW(0.5 * Math.sqrt(m11+m22+m33+1));
+        //         q.setX((m23 - m32) / (4 * q.getW()));
+        //         q.setY((m31 - m13) / (4 * q.getW()));
+        //         q.setZ((m12 - m21) / (4 * q.getW()));
+
+        q.setW(0.5*Math.sqrt(1+m11-m22-m33));
+        q.setX((m12+m21)/(4*q.getW()));
+        q.setY((m13+m31)/(4*q.getW()));
+        q.setZ((m32-m23)/(4*q.getW()));
 
         return q;
     }

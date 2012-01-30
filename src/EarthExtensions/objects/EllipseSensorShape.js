@@ -49,9 +49,9 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         var canSee = false;
         
 			var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-			console.log('ellipseSensor canSensorSee:  '+
-				"radius sensor: " + radiusSensor+
-				"    relative radius: " + relativeRadius);
+			//console.log('ellipseSensor canSensorSee:  '+
+			//	"radius sensor: " + radiusSensor+
+			//	"    relative radius: " + relativeRadius);
 			if(radiusSensor > relativeRadius){
 				canSee = true;
 			}

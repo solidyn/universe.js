@@ -119,52 +119,50 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = new Array();
 
         //define the target position as a vectors
-        console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
-                    "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
+        //console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
+        //            "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
-        var targetline = new Array();
-        targetline[0] = targetPosition.getX() - satellite.getEci().getX();
-        targetline[1] = targetPosition.getY() - satellite.getEci().getY();
-        targetline[2] = targetPosition.getZ() - satellite.getEci().getZ();
-        //console.log("delta ECI: " + targetline[0] + ", " + targetline[1] + ", " + targetline[2]);
-
+        var deltaECI = new Array(3);
+		var satelliteEci = satellite.getEci();
+        deltaECI[0] = targetPosition.x - satelliteEci.getX();
+        deltaECI[1] = targetPosition.y - satelliteEci.getY();
+        deltaECI[2] = targetPosition.z - satelliteEci.getZ();
+        //console.log("delta ECI: " + deltaECI[0] + ", " + deltaECI[1] + ", " + deltaECI[2]);
+		
+		var r= [satelliteEci.getX(),satelliteEci.getY(),satelliteEci.getZ()];
+        var v=[satelliteEci.getVX(),satelliteEci.getVY(),satelliteEci.getVZ()];
+        var rmag=MathTools.magnitude(r);
+        var rcrossv=MathTools.cross(r, v);
+        var rvec=MathTools.scalarMultiply(r, 1/rmag);
+        var w=MathTools.scalarMultiply(rcrossv, 1/MathTools.magnitude(rcrossv));
+        var s=MathTools.cross(w, r);
+        var deltaECIdotR=MathTools.dotMultiply(deltaECI, rvec);
+        var deltaECIdotS=MathTools.dotMultiply(deltaECI, s);
+        var deltaECIdotW=MathTools.dotMultiply(deltaECI, w);
+        var targetInRSWCoordinates=[deltaECIdotR/MathTools.magnitude(rvec),deltaECIdotS/MathTools.magnitude(s),deltaECIdotW/MathTools.magnitude(w)];
+		
 
         //get the quaternion to convert the ECI coordinate of the target into an RSW coordinate triplet
-        var eciToRSWquaternion = QuaternionMath.convertRotationMatrixToQuaternion(CoordinateConversionTools.buildRotationMatrixToConvertECItoRSW(satellite));
-		//console.log("eciToRSWquaternion: " + JSON.stringify(eciToRSWquaternion));
-		
-        var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(QuaternionMath.multiplyQuaternions(eciToRSWquaternion, this.quaternionFromRSWToSensor), targetline);
+		var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
 		//console.log("targetInSensorCoordinates: " + JSON.stringify(targetInSensorCoordinates));
 
-        //convert the RSW coordinates of the target into the sensor coordinate system
-        //Double[] targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(quaternionFromRSWToSensor, targetInRSWCoordinates);
-
-        //System.out.println("quaternion: " + quaternionFromRSWToSensor.toString());
-        targetline[0] = targetInSensorCoordinates[0];
-        targetline[1] = targetInSensorCoordinates[1];
-        targetline[2] = targetInSensorCoordinates[2];
-        //console.log("targetline in sensor coords: " + targetline[0] + ", " + targetline[1] + ", " + targetline[2]);
-
         //---determine the three vectors that define the extent of the sensor shape in the sensor coordinate system
+		//these are the non-rotated vectors
         //vector along the centerline of the sensor (RSW)
         var centerline = new Array();
-        centerline[0] = 1.0;//center
+        centerline[0] = 1.0;//center (radial)
         centerline[1] = 0.0;//left
         centerline[2] = 0.0;//top
-        //System.out.println("centerline: " + centerline[0] + ", " + centerline[1] + ", " + centerline[2]);
 
         var rightline = new Array();
-        rightline[0] = 1.0;//center
+		rightline[0] = 1.0;//center
         rightline[1] = -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0)));//left
         rightline[2] = 0.0;//top
-        //console.log("rightline: " + rightline[0] + ", " + rightline[1] + ", " + rightline[2]);
-
 
         var topline = new Array();
         topline[0] = 1.0;//center
         topline[1] = 0.0;//left
         topline[2] = Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)));//top
-        //console.log("topline: " + topline[0] + ", " + topline[1] + ", " + topline[2]);
 
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
         //assume it's an oblique spherical triangle
@@ -172,16 +170,16 @@ UNIVERSE.Sensor = function(name, shape) {
         //a is the angle between the centerline and the right hand side
         var a = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, rightline));//radians
         //b is the angle between the centerline and the target
-        var b = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, targetline));//radians
+        var b = MathTools.toRadians(MathTools.angleBetweenTwoVectors(centerline, targetInSensorCoordinates));//radians
         //c is the angle between the right hand side and the target
-        var c = MathTools.toRadians(MathTools.angleBetweenTwoVectors(rightline, targetline));//radians
+        var c = MathTools.toRadians(MathTools.angleBetweenTwoVectors(rightline, targetInSensorCoordinates));//radians
         //d is the angle between the top side and the target
-        var d = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, targetline));//radians
+        var d = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, targetInSensorCoordinates));//radians
         //e is the angle between the top side and the target
         var e = MathTools.toRadians(MathTools.angleBetweenTwoVectors(topline, centerline));//radians
 
-        var s = 0.5 * (a + b + c);
-        var C = 2 * Math.asin(Math.sqrt((Math.sin(s - a) * Math.sin(s - b) / (Math.sin(a) * Math.sin(b)))));
+        var S = 0.5 * (a + b + c);
+        var C = 2 * Math.asin(Math.sqrt((Math.sin(Math.abs(S - a)) * Math.sin(Math.abs(S - b)) / (Math.sin(a) * Math.sin(b)))));
 
         //double C=Math.acos(Math.cos(c)-Math.cos(a)*Math.cos(b))/(Math.sin(a)*Math.sin(b));//radians
         var az = MathTools.toDegrees(C);
@@ -201,7 +199,7 @@ UNIVERSE.Sensor = function(name, shape) {
         return azel;
     }
 
-    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget = function(satellite, targetPosition)
+    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetSphericalEarth = function(satellite, targetPosition)
     {
 
         //sight algorithm Vallado 295
@@ -209,9 +207,10 @@ UNIVERSE.Sensor = function(name, shape) {
         var r1 = new Array();
         var r2 = new Array();
         var radEarth = Constants.radiusEarth;
-        r1[0] = satellite.getEci().getX() / radEarth;
-        r1[1] = satellite.getEci().getY() / radEarth;
-        r1[2] = satellite.getEci().getZ() / radEarth;
+		var satelliteEci = satellite.getEci();
+        r1[0] = satelliteEci.getX() / radEarth;
+        r1[1] = satelliteEci.getY() / radEarth;
+        r1[2] = satelliteEci.getZ() / radEarth;
         r2[0] = targetPosition.getX() / radEarth;
         r2[1] = targetPosition.getY() / radEarth;
         r2[2] = targetPosition.getZ() / radEarth;
@@ -243,6 +242,52 @@ UNIVERSE.Sensor = function(name, shape) {
         return !haveSight;
     }
 
+	this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth = function(satellite, targetPosition)
+    {
+
+        //sight algorithm Vallado 295
+        var haveSight = false;
+        var r1 = new Array(3);
+        var r2 = new Array(3);
+        var radEarth = Constants.radiusEarth;
+		var satelliteEci = satellite.getEci();
+        r1[0] = satelliteEci.getX() / radEarth;
+        r1[1] = satelliteEci.getY() / radEarth;
+        r1[2] = satelliteEci.getZ() / radEarth;
+        r2[0] = targetPosition.getX() / radEarth;
+        r2[1] = targetPosition.getY() / radEarth;
+        r2[2] = targetPosition.getZ() / radEarth;
+        var r1mag = MathTools.magnitude(r1);
+        var r2mag = MathTools.magnitude(r2);
+        var tmin = 0.5;
+        var ctmin = 0.0;
+
+        //disable the radius magnitude check because it doesn't account for the oblateness of the earth which the LLAcoordinates do account for
+        //this can cause points on the surface of the earth to appear inside of a non-oblate earth, causing this check to fail
+        //if (r1mag < 1 || r2mag < 1)
+        //{ //one of the points is inside the earth
+        //    haveSight = false;
+        //}
+        //else
+        //{
+        tmin = (r1mag * r1mag - MathTools.dotMultiply(r1, r2)) / (r1mag * r1mag + r2mag * r2mag - 2 * MathTools.dotMultiply(r1, r2));
+        if (tmin < 0 || tmin > 1)
+        {
+            haveSight = true;
+        }
+        else
+        {
+            ctmin = (1 - tmin) * r1mag * r1mag + MathTools.dotMultiply(r1, r2) * tmin;
+            if (ctmin >= 1.0)
+            {
+                haveSight = true;
+            }
+        }
+
+        //}
+        return !haveSight;
+    }
+
     this.checkSensorVisibilityOfTargetPoint = function(satellite, targetPosition)
     {
 		//console.log("targetPosition: " + JSON.stringify(targetPosition));
@@ -251,12 +296,13 @@ UNIVERSE.Sensor = function(name, shape) {
         var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
 
         //System.out.println("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
-		console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
+		//console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
 
         //then check to see if this point is in the field of view of the sensor
         var inFOV = this.shape.canSensorSeePointAtAzEl(azel[0], azel[1]);
-        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, targetPosition);
-	    console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
+        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth(satellite, targetPosition);
+
+	    //console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
         if (earthObscured)
         {
             return false;
@@ -315,23 +361,14 @@ UNIVERSE.Sensor = function(name, shape) {
 
 			//console.log("FOVboundary2: " + JSON.stringify(FOVboundary));
 
-            /*
-            //rotate about along track
-            FOVboundary = MathTools.applyRot2(this.alongtrackRotationAngle, FOVboundary);
-            //rotate about cross track
-            FOVboundary = MathTools.applyRot3(this.crosstrackRotationAngle, FOVboundary);
-            //rotate about radial
-            FOVboundary = MathTools.applyRot1(this.radialRotationAngle, FOVboundary);
-             */
-            //var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 			var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
 			
 			//console.log("rswPoint: " + JSON.stringify(rswPoint));
 
-			
-	        var satXpos = satellite.getEci().getX();
-	        var satYpos = satellite.getEci().getY();
-	        var satZpos = satellite.getEci().getZ();
+			var satelliteEci = satellite.getEci();
+	        var satXpos = satelliteEci.getX();
+	        var satYpos = satelliteEci.getY();
+	        var satZpos = satelliteEci.getZ();
 	
             //convert the RSW to ECI
             var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
@@ -346,11 +383,7 @@ UNIVERSE.Sensor = function(name, shape) {
     }
 
 	this.findProjectionPoints = function(endpoints, satellite, distancePastEarthToDraw) {
-		var satellitePosition = {
-			x: satellite.getEci().getX(),
-			y: satellite.getEci().getY(),
-			z: satellite.getEci().getZ()
-		};
+		var satellitePosition = satellite.getEci();
 		
 		var shiftedEarthCenter = {
 			x: - satellitePosition.x,
@@ -377,7 +410,7 @@ UNIVERSE.Sensor = function(name, shape) {
 			var I = shiftedBoundaryPoint;
 			var c = shiftedEarthCenter;
 
-			var aboveTheEarth = 200;
+			var aboveTheEarth = 100;
 			// r is the radius above the earth to project the points....this adds an arbitrary number above the earth to minimize drawing collisions
 			var r = Constants.radiusEarth + aboveTheEarth;
 			
@@ -442,90 +475,91 @@ UNIVERSE.Sensor = function(name, shape) {
 		return pointsOnEarth;
 	}
 
-	this.extendSensorEndpointsInECIToConformToEarth = function(endpoints, satellite, distancePastEarthToDraw, maximumAcceptableMissDistance) {
-		var correctedEndpoints = new Array(endpoints.length);
-		
-		var endpointsLen = endpoints.length;
-		for(var i = 0; i < endpointsLen; i++) {
-			correctedEndpoints[i] = new Array(3);
-		}
-		
-		var x = satellite.getEci().getX();
-		var y = satellite.getEci().getY();
-		var z = satellite.getEci().getZ();
-		
-		var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
-		
-		for(var i = 0; i < endpointsLen; i++) {
-			var newX = x + (endpoints[i][0] - x)*depth;
-			var newY = y + (endpoints[i][1] - y)*depth;
-			var newZ = z + (endpoints[i][2] - z)*depth;
-			var testPoint = new UNIVERSE.ECICoordinates(newX, newY, newZ, 0,0,0,0,0,0);
-			
-	            var earthObscuring = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, testPoint);
-	            if (earthObscuring == false)
-	            {
-	                correctedEndpoints[i][0] = newX;
-	                correctedEndpoints[i][1] = newY;
-	                correctedEndpoints[i][2] = newZ;
-	            }
-	            else  //need to shorten the line to where it intersects the earth (or close to that point)
-	            {
-	                //console.log("recursively searching for intersection point");
-	                var rEarth = Constants.radiusEarth;//(km)
-	                var earthSurfaceMissDistance = 1000000;
-	                var trateofchange = depth ;  //for any incremental change in T, how much does the line's length change? (km)
-	                var tguess = 0.5;
-	                var count = 0;
-	                while (Math.abs(earthSurfaceMissDistance) > maximumAcceptableMissDistance)
-	                {
-	                    var xguess = x + (newX - x) * tguess;  //km
-	                    var yguess = y + (newZ - y) * tguess;  //km
-	                    var zguess = z + (newZ - z) * tguess;  //km
-	                    var rguess = Math.sqrt(xguess * xguess + yguess * yguess + zguess * zguess);
-	                    earthSurfaceMissDistance = rEarth - rguess;  //if positive, it's inside earth, negative is short of the earth
-	                    //System.out.println("count: "+count+" miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
-	                    count++;
-	                    if (count > 50)
-	                    {
-	                        break;
-	                    }
-
-	                    //adjust tguess based upon how much you missed
-	                    if (earthSurfaceMissDistance > 0)//overshot, now inside the earth
-	                    {
-	                        tguess = tguess - 0.95 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                    }
-	                    else if (earthSurfaceMissDistance < 0)//undershot, need to go further
-	                    {
-	                        tguess = tguess + 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                    }
-	                    else
-	                    {
-	                        break;
-	                    }
-	                }
-	                //adjust the point so that it is definitely outside of the Earth
-	                if(earthSurfaceMissDistance>0){
-	                    tguess = tguess - 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                }
-	                var xintersect = x + (newX - x) * tguess;  //km
-	                var yintersect = y + (newZ - y) * tguess;  //km
-	                var zintersect = z + (newZ - z) * tguess;  //km
-	                correctedEndpoints[i][0]=xintersect;
-	                correctedEndpoints[i][1]=yintersect;
-	                correctedEndpoints[i][2]=zintersect;
-	                var rintersect = Math.sqrt(xintersect * xintersect + yintersect * yintersect + zintersect * zintersect);
-	                earthSurfaceMissDistance = rEarth - rintersect;  //if positive, it's inside earth, negative is short of the earth
-
-	                //console.log("final--- miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
-
-	            }
-	        }
-
-
-	        return correctedEndpoints;
-	    }
+	// this.extendSensorEndpointsInECIToConformToEarth = function(endpoints, satellite, distancePastEarthToDraw, maximumAcceptableMissDistance) {
+	// 	var correctedEndpoints = new Array(endpoints.length);
+	// 	
+	// 	var endpointsLen = endpoints.length;
+	// 	for(var i = 0; i < endpointsLen; i++) {
+	// 		correctedEndpoints[i] = new Array(3);
+	// 	}
+	// 	
+	// 	var satelliteEci = satellite.getEci();
+	// 	var x = satelliteEci.getX();
+	// 	var y = satelliteEci.getY();
+	// 	var z = satelliteEci.getZ();
+	// 	
+	// 	var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
+	// 	
+	// 	for(var i = 0; i < endpointsLen; i++) {
+	// 		var newX = x + (endpoints[i][0] - x)*depth;
+	// 		var newY = y + (endpoints[i][1] - y)*depth;
+	// 		var newZ = z + (endpoints[i][2] - z)*depth;
+	// 		var testPoint = new UNIVERSE.ECICoordinates(newX, newY, newZ, 0,0,0,0,0,0);
+	// 		
+	//             var earthObscuring = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, testPoint);
+	//             if (earthObscuring == false)
+	//             {
+	//                 correctedEndpoints[i][0] = newX;
+	//                 correctedEndpoints[i][1] = newY;
+	//                 correctedEndpoints[i][2] = newZ;
+	//             }
+	//             else  //need to shorten the line to where it intersects the earth (or close to that point)
+	//             {
+	//                 //console.log("recursively searching for intersection point");
+	//                 var rEarth = Constants.radiusEarth;//(km)
+	//                 var earthSurfaceMissDistance = 1000000;
+	//                 var trateofchange = depth ;  //for any incremental change in T, how much does the line's length change? (km)
+	//                 var tguess = 0.5;
+	//                 var count = 0;
+	//                 while (Math.abs(earthSurfaceMissDistance) > maximumAcceptableMissDistance)
+	//                 {
+	//                     var xguess = x + (newX - x) * tguess;  //km
+	//                     var yguess = y + (newZ - y) * tguess;  //km
+	//                     var zguess = z + (newZ - z) * tguess;  //km
+	//                     var rguess = Math.sqrt(xguess * xguess + yguess * yguess + zguess * zguess);
+	//                     earthSurfaceMissDistance = rEarth - rguess;  //if positive, it's inside earth, negative is short of the earth
+	//                     //System.out.println("count: "+count+" miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
+	//                     count++;
+	//                     if (count > 50)
+	//                     {
+	//                         break;
+	//                     }
+	// 
+	//                     //adjust tguess based upon how much you missed
+	//                     if (earthSurfaceMissDistance > 0)//overshot, now inside the earth
+	//                     {
+	//                         tguess = tguess - 0.95 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                     }
+	//                     else if (earthSurfaceMissDistance < 0)//undershot, need to go further
+	//                     {
+	//                         tguess = tguess + 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                     }
+	//                     else
+	//                     {
+	//                         break;
+	//                     }
+	//                 }
+	//                 //adjust the point so that it is definitely outside of the Earth
+	//                 if(earthSurfaceMissDistance>0){
+	//                     tguess = tguess - 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                 }
+	//                 var xintersect = x + (newX - x) * tguess;  //km
+	//                 var yintersect = y + (newZ - y) * tguess;  //km
+	//                 var zintersect = z + (newZ - z) * tguess;  //km
+	//                 correctedEndpoints[i][0]=xintersect;
+	//                 correctedEndpoints[i][1]=yintersect;
+	//                 correctedEndpoints[i][2]=zintersect;
+	//                 var rintersect = Math.sqrt(xintersect * xintersect + yintersect * yintersect + zintersect * zintersect);
+	//                 earthSurfaceMissDistance = rEarth - rintersect;  //if positive, it's inside earth, negative is short of the earth
+	// 
+	//                 //console.log("final--- miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
+	// 
+	//             }
+	//         }
+	// 
+	// 
+	//         return correctedEndpoints;
+	//     }
 
     this.getQuaternionFromECIToSensor = function(eciXYZvector, satellite)
     {
@@ -537,9 +571,10 @@ UNIVERSE.Sensor = function(name, shape) {
 
         //determine the quaternion from the reference vector to the satellite position vector
         var satelliteVec = new Array(3);
-        var x=satellite.getEci().getX();
-        var y=satellite.getEci().getY();
-        var z=satellite.getEci().getZ();
+		var satelliteEci = satellite.getEci();
+        var x=satelliteEci.getX();
+        var y=satelliteEci.getY();
+        var z=satelliteEci.getZ();
         var satelliteMagnitude=Math.sqrt(x*x+y*y+z*z);
         satelliteVec[0] = x / satelliteMagnitude;
         satelliteVec[1] = y / satelliteMagnitude;

@@ -279,9 +279,83 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 				earthExtensions.addSensorFootprintProjections(spaceObject);
 				earthExtensions.showSensorFootprintProjectionsForId(spaceObject.showSensorFootprintProjections, spaceObject.id);
+				
+				earthExtensions.addSensorVisibilityLines(spaceObject);
+				earthExtensions.showSensorVisibilityLinesForId(spaceObject.showSensorVisibilityLines, spaceObject.id);
 			});
 		});
 	};
+	
+	this.addSensorVisibilityLines = function(object) {
+		if(object.sensors && object.sensors.length > 0) {
+			var visibilityLinesController = new UNIVERSE.GraphicsObject(
+				object.id + "_visibilityLines",
+				object.objectName,
+				undefined,
+				function(elapsedTime) {
+					var graphicsObjects = universe.getGraphicsObjects();
+					var objectsToDrawLinesTo = new Array();
+					
+					var sensorLength = object.sensors.length;
+					for(var i = 0; i < sensorLength; i++) {
+						var sensor = object.sensors[i];
+						
+						for(var j in graphicsObjects) {
+							var obj = graphicsObjects[j];
+							//console.log("obj.id: " + obj.id + " object.id: " + object.id);
+							if ( obj.currentLocation != undefined && 
+								obj.modelName != "earth" && 
+								obj.modelName != "moon" && 
+								obj.modelName != "sun" && 
+								obj.id != object.id && 
+								obj.id.indexOf("_groundPoint") == -1 && 
+								obj.id.indexOf("_propagation") == -1 &&
+								obj.id.indexOf("_to_") == -1 && 
+								obj.id.indexOf("_visibility_") == -1)
+							{
+								// Now we're looking at a point 
+								//console.log(obj.id);
+								var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
+								var inView = sensor.checkSensorVisibilityOfTargetPoint(object, targetPosition );
+								//console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
+								if(!objectsToDrawLinesTo[obj.id]) {
+									objectsToDrawLinesTo[obj.id] = inView;
+								}
+							}
+						}
+					}
+					
+					for(var k in objectsToDrawLinesTo) {
+						if(objectsToDrawLinesTo[k] ) {
+							if(universe.getGraphicsObjectById(object.id + "_visibility_" + k) == undefined)
+							{
+								//console.log("adding line for object: " + object.id + " and " + k);
+								earthExtensions.addLineBetweenObjects(object.id, k, undefined, "_visibility_");	
+							}
+							else {
+								//console.log("line already there for: " + k);
+							}
+						}
+						else {
+							earthExtensions.removeLineBetweenObjects(object.id, k, "_visibility_");
+						}
+						//console.log("finished: " + k);
+					}
+					
+					// for(var m in objectsToRemoveLinesFrom) {
+					// 	if(universe.getGraphicsObjectById(object.id + "_visibility_" + objectsToRemoveLinesFrom[m])) 
+					// 	{
+					// 		earthExtensions.removeLineBetweenObjects(object.id, objectsToRemoveLinesFrom[m], "_visibility_");
+					// 	}
+					// }
+				},
+				function() {
+					// nothing to draw, this is a controller
+				}
+			)
+			universe.addObject(visibilityLinesController);
+		}
+	}
 
 	/**
 		Add a Ground Object to the Earth
@@ -632,19 +706,22 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object1_id - starting object of the line
 		@param {string} object2_id - end object of the line
 	*/
-	this.addLineBetweenObjects = function(object1_id, object2_id, color) {
+	this.addLineBetweenObjects = function(object1_id, object2_id, color, customIdentifier) {
+		console.log("adding line");
 		var objectGeometry, objectMaterial;
         
-		universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
-			if(color) {
-				objectMaterial = new THREE.LineBasicMaterial({
-					color : color,
-					opacity : 1
-				});
+		//universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
+			if(!color) {
+				color = 0x009900;
 			}
 			else {
 				objectMaterial = retrieved_material;
 			}
+			
+			objectMaterial = new THREE.LineBasicMaterial({
+				color : color,
+				opacity : 1
+			});
 			
 			var object1 = universe.getGraphicsObjectById(object1_id);
 			var object2 = universe.getGraphicsObjectById(object2_id);
@@ -667,9 +744,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             
 			var line = new THREE.Line(objectGeometry, objectMaterial);
 
-
+			var identifier = "_to_"
+			if(customIdentifier)
+			{
+				identifier = customIdentifier;
+			}
+			
 			var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-				object1_id + "_to_" + object2_id,
+				object1_id + identifier + object2_id,
 				undefined,
 				undefined,
 				function(elapsedTime) {
@@ -704,7 +786,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				}
 				);
 			universe.addObject(lineGraphicsObject);
-		});
+		//});
 	}
 
 	/**
@@ -713,8 +795,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object1_id - starting object of the line
 		@param {string} object2_id - end object of the line
 	*/
-	this.removeLineBetweenObjects = function(object1_id, object2_id) {
-		universe.removeObject(object1_id + "_to_" + object2_id);
+	this.removeLineBetweenObjects = function(object1_id, object2_id, customIdentifier) {
+		var identifier = "_to_";
+		if(customIdentifier) {
+			identifier = customIdentifier;
+		}
+		universe.removeObject(object1_id + identifier + object2_id);
 	}
 	
 	/**
@@ -862,7 +948,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
 	this.showSensorProjectionForId = function(isEnabled, id) {
 		//console.log("show/hiding sensorProjection");
-		universe.showObject(id + "_sensorProjection", isEnabled);
+		// have to do this because there are multiple sensors per space object
+		var objects = universe.getGraphicsObjects();
+		for(var i in objects) {
+			if(i.indexOf(id + "_sensorProjection") > -1) {
+				universe.showObject(i, isEnabled);
+			}
+		}
 	}
 
 	/**
@@ -892,6 +984,38 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 		for(var i in graphicsObjects) {
 			if(graphicsObjects[i].id.indexOf(id) != -1 && graphicsObjects[i].id.indexOf("_footprint") != -1 ){
+				universe.showObject(graphicsObjects[i].id, isEnabled);
+			}
+		}
+	}
+	
+	/**
+		Enable or disable display of sensor projections for an object
+		@public
+		@param {string} id - identifier for the object
+		@param {boolean} isEnabled
+	*/
+	this.showSensorVisibilityLinesForId = function(isEnabled, id) {
+		//console.log("show/hiding sensorProjection");
+		var graphicsObjects = universe.getGraphicsObjects();
+
+		for(var i in graphicsObjects) {
+			if(graphicsObjects[i].id.indexOf(id + "_visibility_") != -1){
+				universe.showObject(graphicsObjects[i].id, isEnabled);
+			}
+		}
+	}
+	
+	/**
+		Enable or disable display of all lines between objects
+		@public
+		@param {boolean} isEnabled
+	*/
+	this.showAllSensorVisibilityLines = function(isEnabled) {
+		var graphicsObjects = universe.getGraphicsObjects();
+
+		for(var i in graphicsObjects) {
+			if(graphicsObjects[i].id.indexOf("_visibility_") != -1){
 				universe.showObject(graphicsObjects[i].id, isEnabled);
 			}
 		}
