@@ -3430,91 +3430,91 @@ UNIVERSE.Sensor = function(name, shape) {
 		return pointsOnEarth;
 	}
 
-	this.extendSensorEndpointsInECIToConformToEarth = function(endpoints, satellite, distancePastEarthToDraw, maximumAcceptableMissDistance) {
-		var correctedEndpoints = new Array(endpoints.length);
-		
-		var endpointsLen = endpoints.length;
-		for(var i = 0; i < endpointsLen; i++) {
-			correctedEndpoints[i] = new Array(3);
-		}
-		
-		var satelliteEci = satellite.getEci();
-		var x = satelliteEci.getX();
-		var y = satelliteEci.getY();
-		var z = satelliteEci.getZ();
-		
-		var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
-		
-		for(var i = 0; i < endpointsLen; i++) {
-			var newX = x + (endpoints[i][0] - x)*depth;
-			var newY = y + (endpoints[i][1] - y)*depth;
-			var newZ = z + (endpoints[i][2] - z)*depth;
-			var testPoint = new UNIVERSE.ECICoordinates(newX, newY, newZ, 0,0,0,0,0,0);
-			
-	            var earthObscuring = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, testPoint);
-	            if (earthObscuring == false)
-	            {
-	                correctedEndpoints[i][0] = newX;
-	                correctedEndpoints[i][1] = newY;
-	                correctedEndpoints[i][2] = newZ;
-	            }
-	            else  //need to shorten the line to where it intersects the earth (or close to that point)
-	            {
-	                //console.log("recursively searching for intersection point");
-	                var rEarth = Constants.radiusEarth;//(km)
-	                var earthSurfaceMissDistance = 1000000;
-	                var trateofchange = depth ;  //for any incremental change in T, how much does the line's length change? (km)
-	                var tguess = 0.5;
-	                var count = 0;
-	                while (Math.abs(earthSurfaceMissDistance) > maximumAcceptableMissDistance)
-	                {
-	                    var xguess = x + (newX - x) * tguess;  //km
-	                    var yguess = y + (newZ - y) * tguess;  //km
-	                    var zguess = z + (newZ - z) * tguess;  //km
-	                    var rguess = Math.sqrt(xguess * xguess + yguess * yguess + zguess * zguess);
-	                    earthSurfaceMissDistance = rEarth - rguess;  //if positive, it's inside earth, negative is short of the earth
-	                    //System.out.println("count: "+count+" miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
-	                    count++;
-	                    if (count > 50)
-	                    {
-	                        break;
-	                    }
-
-	                    //adjust tguess based upon how much you missed
-	                    if (earthSurfaceMissDistance > 0)//overshot, now inside the earth
-	                    {
-	                        tguess = tguess - 0.95 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                    }
-	                    else if (earthSurfaceMissDistance < 0)//undershot, need to go further
-	                    {
-	                        tguess = tguess + 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                    }
-	                    else
-	                    {
-	                        break;
-	                    }
-	                }
-	                //adjust the point so that it is definitely outside of the Earth
-	                if(earthSurfaceMissDistance>0){
-	                    tguess = tguess - 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
-	                }
-	                var xintersect = x + (newX - x) * tguess;  //km
-	                var yintersect = y + (newZ - y) * tguess;  //km
-	                var zintersect = z + (newZ - z) * tguess;  //km
-	                correctedEndpoints[i][0]=xintersect;
-	                correctedEndpoints[i][1]=yintersect;
-	                correctedEndpoints[i][2]=zintersect;
-	                var rintersect = Math.sqrt(xintersect * xintersect + yintersect * yintersect + zintersect * zintersect);
-	                earthSurfaceMissDistance = rEarth - rintersect;  //if positive, it's inside earth, negative is short of the earth
-
-	                //console.log("final--- miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
-
-	            }
-	        }
-
-
-	        return correctedEndpoints;
-	    }
+	// this.extendSensorEndpointsInECIToConformToEarth = function(endpoints, satellite, distancePastEarthToDraw, maximumAcceptableMissDistance) {
+	// 	var correctedEndpoints = new Array(endpoints.length);
+	// 	
+	// 	var endpointsLen = endpoints.length;
+	// 	for(var i = 0; i < endpointsLen; i++) {
+	// 		correctedEndpoints[i] = new Array(3);
+	// 	}
+	// 	
+	// 	var satelliteEci = satellite.getEci();
+	// 	var x = satelliteEci.getX();
+	// 	var y = satelliteEci.getY();
+	// 	var z = satelliteEci.getZ();
+	// 	
+	// 	var depth = Math.sqrt(x*x + y*y + z*z) + distancePastEarthToDraw;
+	// 	
+	// 	for(var i = 0; i < endpointsLen; i++) {
+	// 		var newX = x + (endpoints[i][0] - x)*depth;
+	// 		var newY = y + (endpoints[i][1] - y)*depth;
+	// 		var newZ = z + (endpoints[i][2] - z)*depth;
+	// 		var testPoint = new UNIVERSE.ECICoordinates(newX, newY, newZ, 0,0,0,0,0,0);
+	// 		
+	//             var earthObscuring = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTarget(satellite, testPoint);
+	//             if (earthObscuring == false)
+	//             {
+	//                 correctedEndpoints[i][0] = newX;
+	//                 correctedEndpoints[i][1] = newY;
+	//                 correctedEndpoints[i][2] = newZ;
+	//             }
+	//             else  //need to shorten the line to where it intersects the earth (or close to that point)
+	//             {
+	//                 //console.log("recursively searching for intersection point");
+	//                 var rEarth = Constants.radiusEarth;//(km)
+	//                 var earthSurfaceMissDistance = 1000000;
+	//                 var trateofchange = depth ;  //for any incremental change in T, how much does the line's length change? (km)
+	//                 var tguess = 0.5;
+	//                 var count = 0;
+	//                 while (Math.abs(earthSurfaceMissDistance) > maximumAcceptableMissDistance)
+	//                 {
+	//                     var xguess = x + (newX - x) * tguess;  //km
+	//                     var yguess = y + (newZ - y) * tguess;  //km
+	//                     var zguess = z + (newZ - z) * tguess;  //km
+	//                     var rguess = Math.sqrt(xguess * xguess + yguess * yguess + zguess * zguess);
+	//                     earthSurfaceMissDistance = rEarth - rguess;  //if positive, it's inside earth, negative is short of the earth
+	//                     //System.out.println("count: "+count+" miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
+	//                     count++;
+	//                     if (count > 50)
+	//                     {
+	//                         break;
+	//                     }
+	// 
+	//                     //adjust tguess based upon how much you missed
+	//                     if (earthSurfaceMissDistance > 0)//overshot, now inside the earth
+	//                     {
+	//                         tguess = tguess - 0.95 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                     }
+	//                     else if (earthSurfaceMissDistance < 0)//undershot, need to go further
+	//                     {
+	//                         tguess = tguess + 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                     }
+	//                     else
+	//                     {
+	//                         break;
+	//                     }
+	//                 }
+	//                 //adjust the point so that it is definitely outside of the Earth
+	//                 if(earthSurfaceMissDistance>0){
+	//                     tguess = tguess - 1.05 * Math.abs(earthSurfaceMissDistance) / trateofchange;
+	//                 }
+	//                 var xintersect = x + (newX - x) * tguess;  //km
+	//                 var yintersect = y + (newZ - y) * tguess;  //km
+	//                 var zintersect = z + (newZ - z) * tguess;  //km
+	//                 correctedEndpoints[i][0]=xintersect;
+	//                 correctedEndpoints[i][1]=yintersect;
+	//                 correctedEndpoints[i][2]=zintersect;
+	//                 var rintersect = Math.sqrt(xintersect * xintersect + yintersect * yintersect + zintersect * zintersect);
+	//                 earthSurfaceMissDistance = rEarth - rintersect;  //if positive, it's inside earth, negative is short of the earth
+	// 
+	//                 //console.log("final--- miss distance: "+earthSurfaceMissDistance+" tguess: "+tguess+" trateofchange(0-1): "+trateofchange);
+	// 
+	//             }
+	//         }
+	// 
+	// 
+	//         return correctedEndpoints;
+	//     }
 
     this.getQuaternionFromECIToSensor = function(eciXYZvector, satellite)
     {
@@ -3655,7 +3655,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var centerPoint = new THREE.Vector3(0,0,0);
 	
 	// have to do this this way since the decision of whether to show or hide it has to be made at draw time
-	var enableLinkLines = undefined;
+	var enableVisibilityLines = false;
 
 	// Is the sun-lighting on the Earth enabled or disabled
 	var useSunLighting = isSunLighting ? isSunLighting : true;
@@ -3986,6 +3986,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					// 		earthExtensions.removeLineBetweenObjects(object.id, objectsToRemoveLinesFrom[m], "_visibility_");
 					// 	}
 					// }
+					
+					earthExtensions.showAllSensorVisibilityLines(enableVisibilityLines);
 				},
 				function() {
 					// nothing to draw, this is a controller
@@ -4192,37 +4194,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 							THREEPoints[j] = coord;
 						}
 						sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
-
-
-/*
-//  BJD TEST CODE For TARGET VISIBILITY
-		console.log("Iterating over points for " + spaceObject.objectName + ": " + sensor.name);
-		var graphicsObjects = universe.getGraphicsObjects();
-		for(var i in graphicsObjects) {
-			// If this object has a position, log it
-			var obj = graphicsObjects[i];
-			if ( obj.currentLocation != undefined )
-			{
-				// Now we're looking at a point 
-				//console.log(obj);
-				console.log('VISIBILITY CHECK [' + spaceObject.objectName + ":" + sensor.name + ']  to '+ obj.modelName);
-				var targetPosition = new UNIVERSE.ECICoordinates(obj.currentLocation.x, obj.currentLocation.y, obj.currentLocation.z, 0,0,0,0,0,0);	
-				var inView = sensor.checkSensorVisibilityOfTargetPoint(spaceObject, targetPosition );
-			}
-		}
-
-// END BRIAN HACK
-*/
-
-
-
-
-
-
-
-
-
-
 					}
 				},
 				function() {
@@ -4651,6 +4622,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
 	this.showAllSensorVisibilityLines = function(isEnabled) {
 		var graphicsObjects = universe.getGraphicsObjects();
+		enableVisibilityLines = isEnabled;
 
 		for(var i in graphicsObjects) {
 			if(graphicsObjects[i].id.indexOf("_visibility_") != -1){

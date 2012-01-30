@@ -17,7 +17,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var centerPoint = new THREE.Vector3(0,0,0);
 	
 	// have to do this this way since the decision of whether to show or hide it has to be made at draw time
-	var enableLinkLines = undefined;
+	var enableVisibilityLines = false;
 
 	// Is the sun-lighting on the Earth enabled or disabled
 	var useSunLighting = isSunLighting ? isSunLighting : true;
@@ -348,6 +348,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					// 		earthExtensions.removeLineBetweenObjects(object.id, objectsToRemoveLinesFrom[m], "_visibility_");
 					// 	}
 					// }
+					
+					earthExtensions.showAllSensorVisibilityLines(enableVisibilityLines);
 				},
 				function() {
 					// nothing to draw, this is a controller
@@ -554,37 +556,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 							THREEPoints[j] = coord;
 						}
 						sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
-
-
-/*
-//  BJD TEST CODE For TARGET VISIBILITY
-		console.log("Iterating over points for " + spaceObject.objectName + ": " + sensor.name);
-		var graphicsObjects = universe.getGraphicsObjects();
-		for(var i in graphicsObjects) {
-			// If this object has a position, log it
-			var obj = graphicsObjects[i];
-			if ( obj.currentLocation != undefined )
-			{
-				// Now we're looking at a point 
-				//console.log(obj);
-				console.log('VISIBILITY CHECK [' + spaceObject.objectName + ":" + sensor.name + ']  to '+ obj.modelName);
-				var targetPosition = new UNIVERSE.ECICoordinates(obj.currentLocation.x, obj.currentLocation.y, obj.currentLocation.z, 0,0,0,0,0,0);	
-				var inView = sensor.checkSensorVisibilityOfTargetPoint(spaceObject, targetPosition );
-			}
-		}
-
-// END BRIAN HACK
-*/
-
-
-
-
-
-
-
-
-
-
 					}
 				},
 				function() {
@@ -1013,6 +984,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
 	this.showAllSensorVisibilityLines = function(isEnabled) {
 		var graphicsObjects = universe.getGraphicsObjects();
+		enableVisibilityLines = isEnabled;
 
 		for(var i in graphicsObjects) {
 			if(graphicsObjects[i].id.indexOf("_visibility_") != -1){
