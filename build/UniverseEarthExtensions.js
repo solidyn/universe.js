@@ -3854,7 +3854,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z});
 				dayMoonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z}; 
 				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
-				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
+				this.currentLocation = propagatedValue;
 			},
 			function() {
 				universe.draw(this.id + "_day", dayMoonMesh, false);
@@ -3887,11 +3887,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				//sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
 				//console.log("sunLocation: " + JSON.stringify(sunLocation));
 				universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
-				this.currentLocation = {
-					x: convertedLocation.x, 
-					y: convertedLocation.y, 
-					z: convertedLocation.z
-					};
+				this.currentLocation = sunLocation;
 			},
 			function() {
 				//console.log("sun draw");
@@ -3923,13 +3919,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						// need to pass a time to the propagator
-						var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
+                                                var propagatedLocation = spaceObject.propagator();
+						var convertedLocation = eciTo3DCoordinates(propagatedLocation);
 						if(convertedLocation != undefined) {
 							objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 
 							//http://mrdoob.github.com/three.js/examples/misc_lookat.html
 							objectModel.lookAt(centerPoint);
-							this.currentLocation = convertedLocation;
+							this.currentLocation = propagatedLocation;
 						}
 					},
 					function() {
@@ -3989,8 +3986,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 									//console.log(obj.id);
                                                                         //var currentLocationInEci = threeDToEciCoordinates(obj.currentLocation);
 									//var targetPosition = new UNIVERSE.ECICoordinates(currentLocationInEci.x, currentLocationInEci.y, currentLocationInEci.z, 0,0,0,0,0,0);	
-                                                                        var targetPosition = new UNIVERSE.ECICoordinates(obj.currentLocation.x, obj.currentLocation.y, obj.currentLocation.z, 0,0,0,0,0,0);	
-									var inView = sensor.checkSensorVisibilityOfTargetPoint(object, targetPosition );
+                                                                        //var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
+									var inView = sensor.checkSensorVisibilityOfTargetPoint(object, obj.currentLocation );
 									//console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
 									if(!objectsToDrawLinesTo[obj.id]) {
 										objectsToDrawLinesTo[obj.id] = inView;
@@ -4058,13 +4055,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						// check earth rotation and update location
-						var position = eciTo3DCoordinates(groundObject.propagator());
+                                                var propagatedPosition = groundObject.propagator();
+						var position = eciTo3DCoordinates(propagatedPosition);
 						groundObjectMesh.position.set(position.x, position.y, position.z);
-						this.currentLocation = {
-							x: position.x, 
-							y: position.y, 
-							z: position.z
-							};
+						this.currentLocation = propagatedPosition;
 
 						//http://mrdoob.github.com/three.js/examples/misc_lookat.html
 						var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
@@ -4105,7 +4099,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						//if(enableSubSatellitePoints) {
-							var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                                                        var propagatedLocation = object.propagator(undefined, false);
+							var objectLocation = eciTo3DCoordinates(propagatedLocation);
 							if(objectLocation != undefined) {
 								var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
 
@@ -4114,7 +4109,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 								groundObjectMesh.position.copy(vector);
 							}
-							this.currentLocation = objectLocation;
+							this.currentLocation = propagatedLocation;
 						//}
 					},
 					function() {
@@ -4139,13 +4134,17 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			objectMaterial = retrieved_material;
 			var timeToPropogate = new Date(universe.getCurrentUniverseTime());
 			var loopCount = 1440;
+                        
+                        var eciLocations = new Array();
 
 			// draw a vertex for each minute in a 24 hour period
 			// dropped this to a vertex for every 5 minutes.  This seems to be about the max that you can use for a LEO
 			// and still look decent.  HEOs and GEOs look fine with much greater spans.  For performance reasons, may want
 			// to make this a param that can be set per vehicle
 			for(var j = 0; j < loopCount; j += 5) {
-				var convertedLocation = eciTo3DCoordinates(object.propagator(timeToPropogate, false));
+                                var location = object.propagator(timeToPropogate, false);
+                                eciLocations.push(location);
+				var convertedLocation = eciTo3DCoordinates(location);
 				if(convertedLocation != undefined) {
 					var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 					objectGeometry.vertices.push(new THREE.Vertex(vector));
@@ -4162,6 +4161,18 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				undefined,
 				function(elapsedTime) {
 				// add points onto the end of the track?
+                                    var length = eciLocations.length;
+                                    for(var i = 0; i < length; i++) {
+                                        var convertedLocation = eciTo3DCoordinates(eciLocations[i]);
+                                        if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
+                                            lineS.geometry.vertices[i].position = {
+                                                x: convertedLocation.x, 
+                                                y: convertedLocation.y, 
+                                                z: convertedLocation.z
+                                            }
+                                        }
+                                    }
+                                    lineS.geometry.__dirtyVertices = true;
 				},
 				function() {
 					universe.draw(this.id, lineS, false);
@@ -4385,8 +4396,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				return;
 			}
 			
-			var object1Location = object1.currentLocation;
-			var object2Location = object2.currentLocation;
+			var object1Location = eciTo3DCoordinates(object1.currentLocation);
+			var object2Location = eciTo3DCoordinates(object2.currentLocation);
 			
 			if(object1Location == undefined || object2Location == undefined) {
 				return;
@@ -4415,8 +4426,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					if(object1 == undefined || object2 == undefined) {
 						return;
 					}
-					var object1Location = object1.currentLocation;
-					var object2Location = object2.currentLocation;
+					var object1Location = eciTo3DCoordinates(object1.currentLocation);
+					var object2Location = eciTo3DCoordinates(object2.currentLocation);
 					
 					if(object1Location == undefined || object2Location == undefined) {
 						return;
