@@ -209,7 +209,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z});
 				dayMoonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z}; 
 				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
-				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
+				this.currentLocation = propagatedValue;
 			},
 			function() {
 				universe.draw(this.id + "_day", dayMoonMesh, false);
@@ -242,11 +242,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				//sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
 				//console.log("sunLocation: " + JSON.stringify(sunLocation));
 				universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
-				this.currentLocation = {
-					x: convertedLocation.x, 
-					y: convertedLocation.y, 
-					z: convertedLocation.z
-					};
+				this.currentLocation = sunLocation;
 			},
 			function() {
 				//console.log("sun draw");
@@ -278,13 +274,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						// need to pass a time to the propagator
-						var convertedLocation = eciTo3DCoordinates(spaceObject.propagator());
+                                                var propagatedLocation = spaceObject.propagator();
+						var convertedLocation = eciTo3DCoordinates(propagatedLocation);
 						if(convertedLocation != undefined) {
 							objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 
 							//http://mrdoob.github.com/three.js/examples/misc_lookat.html
 							objectModel.lookAt(centerPoint);
-							this.currentLocation = convertedLocation;
+							this.currentLocation = propagatedLocation;
 						}
 					},
 					function() {
@@ -413,13 +410,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						// check earth rotation and update location
-						var position = eciTo3DCoordinates(groundObject.propagator());
+                                                var propagatedPosition = groundObject.propagator();
+						var position = eciTo3DCoordinates(propagatedPosition);
 						groundObjectMesh.position.set(position.x, position.y, position.z);
-						this.currentLocation = {
-							x: position.x, 
-							y: position.y, 
-							z: position.z
-							};
+						this.currentLocation = propagatedPosition;
 
 						//http://mrdoob.github.com/three.js/examples/misc_lookat.html
 						var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
@@ -460,7 +454,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					undefined,
 					function(elapsedTime) {
 						//if(enableSubSatellitePoints) {
-							var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                                                        var propagatedLocation = object.propagator(undefined, false);
+							var objectLocation = eciTo3DCoordinates(propagatedLocation);
 							if(objectLocation != undefined) {
 								var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
 
@@ -469,7 +464,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 								groundObjectMesh.position.copy(vector);
 							}
-							this.currentLocation = objectLocation;
+							this.currentLocation = propagatedLocation;
 						//}
 					},
 					function() {
