@@ -13,147 +13,151 @@ UNIVERSE.ECICoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal,
     this.ax = axVal ? axVal : 0.0, //km
     this.ay = ayVal ? ayVal : 0.0, //km
     this.az = azVal ? azVal : 0.0 //km
-    
+}
+
+UNIVERSE.ECICoordinates.prototype = {
+	constructor: UNIVERSE.ECICoordinates,
+	
     /**
      * Get the X value.
      */
-    this.getX = function()
+    getX: function()
     {
         return this.x;
-    }
+    },
 
     /**
      * Set the X value.
      */
-    this.setX = function(newX)
+    setX : function(newX)
     {
         this.x = newX;
-    }
+    },
 
     /**
      * Get the Y value.
      */
-    this.getY = function()
+    getY : function()
     {
         return this.y;
-    }
+    },
 
     /**
      * Set the Y value.
      */
-    this.setY = function(newY)
+    setY : function(newY)
     {
         this.y = newY;
-    }
+    },
 
     /**
      * Get the Z value.
      */
-    this.getZ = function()
+    getZ : function()
     {
         return this.z;
-    }
+    },
 
     /**
      * Set the Z value.
      */
-    this.setZ = function(newZ)
+    setZ : function(newZ)
     {
         this.z = newZ;
-    }
+    },
 
    /**
      * Get the VX value.
      */
-    this.getVX = function()
+    getVX : function()
     {
         return this.vx;
-    }
+    },
 
     /**
      * Set the VX value.
      */
-    this.setVX = function(newVX)
+    setVX : function(newVX)
     {
         this.vx = newVX;
-    }
+    },
 
     /**
      * Get the VY value.
      */
-    this.getVY = function()
+    getVY : function()
     {
         return this.vy;
-    }
+    },
 
     /**
      * Set the VY value.
      */
-    this.setVY = function(newVY)
+    setVY : function(newVY)
     {
         this.vy = newVY;
-    }
+    },
 
     /**
      * Get the VZ value.
      */
-    this.getVZ = function()
+    getVZ : function()
     {
         return this.vz;
-    }
+    },
 
     /**
      * Set the VZ value.
      */
-    this.setVZ = function(newVZ)
+    setVZ : function(newVZ)
     {
         this.vz = newVZ;
-    }
+    },
 
     /**
      * Get the AX value.
      */
-    this.getAX = function()
+    getAX : function()
     {
         return this.ax;
-    }
+    },
 
     /**
      * Set the AX value.
      */
-    this.setAX = function(newAX)
+    setAX : function(newAX)
     {
         this.ax = newAX;
-    }
+    },
 
     /**
      * Get the AY value.
      */
-    this.getAY = function()
+    getAY : function()
     {
         return this.ay;
-    }
+    },
 
     /**
      * Set the AY value.
      */
-    this.setAY = function(newAY)
+    setAY : function(newAY)
     {
         this.ay = newAY;
-    }
+    },
 
     /**
      * Get the AZ value.
      */
-    this.getAZ = function()
+    getAZ : function()
     {
         return this.az;
-    }
+    },
 
     /**
      * Set the AZ value.
      */
-    this.setAZ = function(newAZ)
+    setAZ : function(newAZ)
     {
         this.az = newAZ;
     }

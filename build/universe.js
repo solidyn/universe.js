@@ -1077,6 +1077,17 @@ UNIVERSE.Core3D = function(container) {
         target.x = isNaN(x) ? 0 : x;
 	    
     }
+    
+    
+    this.addRotationToCameraTarget = function(xRotation, yRotation) {
+        if(xRotation != undefined) {
+            target.x += xRotation;
+        }
+        
+        if(yRotation != undefined) {
+            target.y += yRotation;
+        }
+    }
 
 	this.updateLight = function(position, intensity) {
 		light.position = position;
@@ -1229,7 +1240,7 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     // updateFunction
     this.addGraphicsObject = function(graphicsObject) {
         graphicsObjects[graphicsObject.id] = graphicsObject;
-        this.updateOnce();
+        //this.updateOnce();
     }
     
     this.removeGraphicsObject = function(id) {
@@ -1513,6 +1524,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
 			// Object is not added to the core so not doing anything
         }
     }
+    
+    this.addRotationToCamera = function(xRotation, yRotation) {
+        core.addRotationToCameraTarget(xRotation, yRotation);
+    }
 
 	/**
 		Remove all objects from the Universe
@@ -1546,6 +1561,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.updateObject = function(id, propertyName, propertyValue) {
         // TODO: Implement or delete
     }
+
+	this.updateOnce = function() {
+		controller.updateOnce();
+	}
 
 	/**
 		Toggle whether an object is visible in the Universe

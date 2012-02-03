@@ -249,6 +249,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
 			// Object is not added to the core so not doing anything
         }
     }
+    
+    this.addRotationToCamera = function(xRotation, yRotation) {
+        core.addRotationToCameraTarget(xRotation, yRotation);
+    }
 
 	/**
 		Remove all objects from the Universe
@@ -282,6 +286,10 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.updateObject = function(id, propertyName, propertyValue) {
         // TODO: Implement or delete
     }
+
+	this.updateOnce = function() {
+		controller.updateOnce();
+	}
 
 	/**
 		Toggle whether an object is visible in the Universe

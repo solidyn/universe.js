@@ -12,7 +12,7 @@ var UNIVERSE = UNIVERSE || {};
 	@param {boolean} showGroundTrackPoint - should the ground track point be shown for the object
  */
 
-UNIVERSE.SpaceObject = function(id, objectName, modelId, propagator, showPropagationLine, showGroundTrackPoint, sensors) {
+UNIVERSE.SpaceObject = function(id, objectName, modelId, propagator, showPropagationLine, showGroundTrackPoint, sensors, currentLocation) {
 	if(id == undefined)
 	{ 
 		return undefined;
@@ -24,12 +24,14 @@ UNIVERSE.SpaceObject = function(id, objectName, modelId, propagator, showPropaga
 	this.showPropagationLine = showPropagationLine || false;
 	this.showGroundTrackPoint = showGroundTrackPoint || false;
 	this.sensors = sensors || undefined;
+	
+	this.currentLocation = currentLocation || undefined;
 }
 
 UNIVERSE.SpaceObject.prototype = {
 	constructor: UNIVERSE.SpaceObject,
 	
-	set: function ( id, objectName, propagator, modelId, showPropogationLine, showGroundTrackPoint, sensors) {
+	set: function ( id, objectName, propagator, modelId, showPropogationLine, showGroundTrackPoint, sensors, currentLocation) {
 
 		this.id = id;
 		this.objectName = objectName || id;
@@ -38,13 +40,14 @@ UNIVERSE.SpaceObject.prototype = {
 		this.showPropagationLine = showPropagationLine || false;
 		this.showGroundTrackPoint = showGroundTrackPoint || false;
 		this.sensors = sensors || undefined;
+		this.currentLocation = currentLocation || undefined;
 
 		return this;
 	},
 	
 	getEci: function () {
-		var location = this.propagator();
+		//var location = this.propagator();
 		
-		return new UNIVERSE.ECICoordinates(location.x, location.y, location.z, location.vx, location.vy, location.vz, location.ax, location.ay, location.az);
+		return this.currentLocation;
 	}
 };

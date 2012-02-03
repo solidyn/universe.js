@@ -336,6 +336,17 @@ UNIVERSE.Core3D = function(container) {
         target.x = isNaN(x) ? 0 : x;
 	    
     }
+    
+    
+    this.addRotationToCameraTarget = function(xRotation, yRotation) {
+        if(xRotation != undefined) {
+            target.x += xRotation;
+        }
+        
+        if(yRotation != undefined) {
+            target.y += yRotation;
+        }
+    }
 
 	this.updateLight = function(position, intensity) {
 		light.position = position;

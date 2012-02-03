@@ -44,7 +44,7 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     // updateFunction
     this.addGraphicsObject = function(graphicsObject) {
         graphicsObjects[graphicsObject.id] = graphicsObject;
-        this.updateOnce();
+        //this.updateOnce();
     }
     
     this.removeGraphicsObject = function(id) {
