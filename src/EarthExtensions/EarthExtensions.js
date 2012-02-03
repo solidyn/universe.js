@@ -23,12 +23,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var enableSubSatellitePoints = false;
 	var enablePropagationLines = false;
         var lockCameraToWithEarthRotation = false;
+        var rotationOffsetFromXAxis = 0;
 
 	// Is the sun-lighting on the Earth enabled or disabled
 	var useSunLighting = isSunLighting ? isSunLighting : true;
 
 	universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(200, 20, 10));
-	universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({ color : 0xCC0000 }));
+	universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({color : 0xCC0000}));
 
 	universe.setObjectInLibrary("default_ground_track_material", new THREE.MeshBasicMaterial({
 		color : 0xCC0000,
@@ -123,7 +124,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		var earthObject = new UNIVERSE.GraphicsObject(
 			"earth", 
 			"earth",
-			{ x:0, y:0, z:0 },
+			{x:0, y:0, z:0},
 			function(elapsedTime) {
 				var rotationAngle = MathTools.toRadians(CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime()));
 				
@@ -135,12 +136,17 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                                 // since it will be called A LOT
                                 if(lockCameraToWithEarthRotation) {
                                     // move camera along with Earth
-                                    universe.addRotationToCamera(rotationAngle - previousRotation);
+                                    //universe.addRotationToCamera(rotationAngle - previousRotation);
+                                    rotationOffsetFromXAxis += (rotationAngle - previousRotation);
+                                    if(rotationOffsetFromXAxis > (2 * Math.PI)) {
+                                        rotationOffsetFromXAxis -= (2 * Math.PI);
+                                    }
                                 }
-                                
-                                dayEarthMesh.rotation.y = rotationAngle;
-				nightEarthMesh.rotation.y = rotationAngle;
-				earthMesh.rotation.y = rotationAngle;
+                                else {
+                                    dayEarthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
+                                    nightEarthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
+                                    earthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
+                                }
                                 
                                 previousRotation = rotationAngle;
 			},
@@ -200,10 +206,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			function(elapsedTime) {
 				var time = new Date(universe.getCurrentUniverseTime());
 				var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
-				var convertedLocation = eciTo3DCoordinates({ x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z });
-				dayMoonMesh.position = { x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z }; 
-				moonMesh.position = { x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
-				this.currentLocation = { x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z };
+				var convertedLocation = eciTo3DCoordinates({x: propagatedValue.x, y: propagatedValue.y, z: propagatedValue.z});
+				dayMoonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z}; 
+				moonMesh.position = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
+				this.currentLocation = {x: convertedLocation.x, y: convertedLocation.y, z: convertedLocation.z};
 			},
 			function() {
 				universe.draw(this.id + "_day", dayMoonMesh, false);
@@ -336,7 +342,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 								{
 									// Now we're looking at a point 
 									//console.log(obj.id);
-									var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
+                                                                        //var currentLocationInEci = threeDToEciCoordinates(obj.currentLocation);
+									//var targetPosition = new UNIVERSE.ECICoordinates(currentLocationInEci.x, currentLocationInEci.y, currentLocationInEci.z, 0,0,0,0,0,0);	
+                                                                        var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
 									var inView = sensor.checkSensorVisibilityOfTargetPoint(object, targetPosition );
 									//console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
 									if(!objectsToDrawLinesTo[obj.id]) {
@@ -646,17 +654,19 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					//console.log("points: " + JSON.stringify(extendedPoints));
 
 					for(var k = 0; k < extendedPoints.length; k++) {
+                                                var convertedLocation = eciTo3DCoordinates(extendedPoints[k]);
 						line.geometry.vertices[k].position = {
-							x: -extendedPoints[k].x, 
-							y: extendedPoints[k].z, 
-							z: extendedPoints[k].y
+							x: convertedLocation.x, 
+							y: convertedLocation.y, 
+							z: convertedLocation.z
 						}
 					}
-
+                                        
+                                        var convertedLastPoint = eciTo3DCoordinates(extendedPoints[0]);
 					line.geometry.vertices[extendedPoints.length].position = {
-						x: -extendedPoints[0].x, 
-						y: extendedPoints[0].z, 
-						z: extendedPoints[0].y
+						x: convertedLastPoint.x, 
+						y: convertedLastPoint.y, 
+						z: convertedLastPoint.z
 					}
 
 					line.geometry.__dirtyVertices = true;
@@ -1109,15 +1119,47 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		if(location == undefined) {
 			return undefined;
 		}
+                
+                /*
+                 *  z' = z*cos q - x*sin q
+                 *  x' = z*sin q + x*cos q
+                 *  y' = y
+                 *  x = -location.x
+                 *  y = location.z
+                 *  z = location.y
+                 */
 		return {
-			x : -location.x,
+			x : (location.y) * Math.sin(-rotationOffsetFromXAxis) + (-location.x) * Math.cos(-rotationOffsetFromXAxis),
 			y : location.z,
-			z : location.y,
+			z : location.y * Math.cos(-rotationOffsetFromXAxis) - (-location.x) * Math.sin(-rotationOffsetFromXAxis),
 			vx : -location.vx,
 			vy : location.vz,
 			vz : location.vy
 		};
 	}
+        
+        function threeDToEciCoordinates(location) {
+                if(location == undefined) {
+			return undefined;
+		}
+                
+                /*
+                 *  z' = z*cos q - x*sin q
+                 *  x' = z*sin q + x*cos q
+                 *  y' = y
+                 *  x = -location.x
+                 *  y = location.z
+                 *  z = location.y
+                 */
+		return {
+			x : (location.y) * Math.sin(rotationOffsetFromXAxis) + (-location.x) * Math.cos(rotationOffsetFromXAxis),
+			y : location.z,
+			z : location.y * Math.cos(rotationOffsetFromXAxis) - (-location.x) * Math.sin(rotationOffsetFromXAxis),
+			vx : -location.vx,
+			vy : location.vz,
+			vz : location.vy
+		};
+        }
 
 	function get_random_color() {
 		var letters = '0123456789ABCDEF'.split('');
