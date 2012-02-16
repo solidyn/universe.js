@@ -743,7 +743,8 @@ var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.Core3D = function(container) {
     // Variables used to draw the 3D elements
-    var camera, scene, projector, renderer, w, h;
+    var camera, projector, renderer, w, h;
+	this.scene = null;
     var vector, animate;
 	var light;
 
@@ -1009,13 +1010,21 @@ UNIVERSE.Core3D = function(container) {
 		controls.screen.height = h;
     }
 
+	// Create a new THREE.TrackballControls function that can access the internal _zoomStart data members
+	THREE.TrackballControls.prototype.setZoom = function(delta)
+	{
+		_zoomStart.y = 0;
+		_zoomEnd.y = delta;
+	}
+
     function zoom(delta) {
 		// Extend the THREE.TrackballControls functionality by setting internal zoom variables
 		// Remember that this is called in the context of the window and not the UNIVERSE object, so 
 		// we have to provide the context to the controls object
 		console.log("In Zoom: "+delta);
-		UNIVERSE.controls._zoomStart.y = 0;
-		UNIVERSE.controls._zoomEnd.y = delta;
+		//controls._zoomStart.y = 0;
+		//controls._zoomEnd.y = delta;
+		controls.setZoom(delta);
     }
 
     // Priviledged Methods

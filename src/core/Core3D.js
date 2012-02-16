@@ -2,7 +2,8 @@ var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.Core3D = function(container) {
     // Variables used to draw the 3D elements
-    var camera, scene, projector, renderer, w, h;
+    var camera, projector, renderer, w, h;
+	this.scene = null;
     var vector, animate;
 	var light;
 
@@ -273,8 +274,9 @@ UNIVERSE.Core3D = function(container) {
 		// Remember that this is called in the context of the window and not the UNIVERSE object, so 
 		// we have to provide the context to the controls object
 		console.log("In Zoom: "+delta);
-		controls._zoomStart.y = 0;
-		controls._zoomEnd.y = delta;
+		//controls._zoomStart.y = 0;
+		//controls._zoomEnd.y = delta;
+		controls.setZoom(delta);
     }
 
     // Priviledged Methods
