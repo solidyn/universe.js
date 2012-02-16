@@ -1114,7 +1114,7 @@ UNIVERSE.Core3D = function(container) {
         camera.position.y = distance * Math.sin(rotation.y);
         camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
   */
- 		position_vector.multiplyScalar(0.3);
+ 		position_vector.multiplyScalar(1.3);
   		camera.position.copy(position_vector);
         camera.lookAt(scene.position);
 
