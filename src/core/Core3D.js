@@ -69,7 +69,7 @@ UNIVERSE.Core3D = function(container) {
 		// scene.add( ambientLight );
 
 		// Use the controller to control the camera, but only when over the container
-		controls = new THREE.TrackballControls( camera, container );
+		controls = new UniverseTrackballControls( camera, container );
 
 		controls.rotateSpeed = 1.0;
 		controls.zoomSpeed = 1.5;
@@ -110,14 +110,12 @@ UNIVERSE.Core3D = function(container) {
         // Add event listeners for rotating, zooming, etc.
 
         //container.addEventListener('mousedown', onMouseDown, false);
-
-        container.addEventListener('mousewheel', onMouseWheel, false);
-        container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
         
         //document.addEventListener('keydown', onDocumentKeyDown, false);
 
         window.addEventListener('resize', onWindowResize, false);
 		
+		/*
         container.addEventListener('mouseover', function() {
             overRenderer = true;
         }, false);
@@ -125,6 +123,7 @@ UNIVERSE.Core3D = function(container) {
         container.addEventListener('mouseout', function() {
             overRenderer = false;
         }, false);
+		*/
     }
 
     function animate() {
@@ -136,8 +135,11 @@ UNIVERSE.Core3D = function(container) {
 		
 		
         //zoom(curZoomSpeed);
-		/*
+		
+		// Handle any external zooming or snap-to events
         //console.log("target: " + JSON.stringify(target));
+		
+		/*
         rotation.x += (target.x - rotation.x) * 0.1;
         rotation.y += (target.y - rotation.y) * 0.1;
         distance += (distanceTarget - distance) * 0.3;
@@ -145,9 +147,7 @@ UNIVERSE.Core3D = function(container) {
         camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
         camera.position.y = distance * Math.sin(rotation.y);
         camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
-        camera.lookAt(scene.position);
-
-        vector.copy(camera.position);
+        //camera.lookAt(scene.position);
 */
         scaleDrawnObjects();
 		
@@ -215,24 +215,7 @@ UNIVERSE.Core3D = function(container) {
         container.removeEventListener('mouseout', onMouseOut, false);
     }
 
-    function onMouseWheel(event) {
-        event.preventDefault();
-		console.log("in onMouseWheel");
-        if(overRenderer) {
-            zoom(event.wheelDeltaY * (10));
-        }
-        return false;
-    }
-    
-    function onMouseWheelFF(event) {
-		console.log("in onMouseWheelFF");
-        event.preventDefault();
-        if(overRenderer) {
-            var delta = event.detail? event.detail*(-120) : event.wheelDelta
-            zoom(delta * (10));
-        }
-        return false;
-    }
+
 
     function onDocumentKeyDown(event) {
         switch (event.keyCode) {
@@ -274,9 +257,11 @@ UNIVERSE.Core3D = function(container) {
 		// Remember that this is called in the context of the window and not the UNIVERSE object, so 
 		// we have to provide the context to the controls object
 		console.log("In Zoom: "+delta);
-		//controls._zoomStart.y = 0;
-		//controls._zoomEnd.y = delta;
 		controls.setZoom(delta);
+
+        //distanceTarget -= delta;
+        //distanceTarget = distanceTarget > maxZoom ? maxZoom : distanceTarget;
+        //distanceTarget = distanceTarget < minZoom ? minZoom : distanceTarget;
     }
 
     // Priviledged Methods
@@ -333,9 +318,13 @@ UNIVERSE.Core3D = function(container) {
         // This method converts a position into the rotation coordinate system used to move the camera
         // The target.x parameter is the rotation angle from the positive Z axis
         // target.y is the rotation angle away from the z-x plane
-	    
+
         // sets the distance from the center of the scene the camera will end up
         distanceTarget = position_vector.length();
+
+/*
+
+	    
 	    
         // unit vectors along the z and y axis
         var zAxisVector = new THREE.Vector3(0,0,1);
@@ -369,6 +358,25 @@ UNIVERSE.Core3D = function(container) {
         // set it to zero if NaN
         target.y = isNaN(y) ? 0 : y;
         target.x = isNaN(x) ? 0 : x;
+
+*/
+/*
+		// Set the camera position to where it needs to go
+		// This may fight with the controller object....not sure
+        rotation.x += (target.x - rotation.x) * 0.1;
+        rotation.y += (target.y - rotation.y) * 0.1;
+*/
+        //var distance += (distanceTarget - distance) * 0.3;
+
+/*
+        camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
+        camera.position.y = distance * Math.sin(rotation.y);
+        camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
+  */
+ 		position_vector.multiplyScalar(0.3);
+  		camera.position.copy(position_vector);
+        camera.lookAt(scene.position);
+
 	    
     }
     

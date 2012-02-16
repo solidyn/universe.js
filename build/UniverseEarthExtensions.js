@@ -3902,8 +3902,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		Add a random star field to the universe - lifted from the webgl_trackballcamera_earth THREE.js example
 	*/
 	this.addStars = function() {
+		/*
 
-/*
 		var i,
 		vector,
 		starsGeometry = new THREE.Geometry();
@@ -3941,11 +3941,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				stars.matrixAutoUpdate = false;
 				stars.updateMatrix();
 
-				universe.addObject(stars);
-				universe.updateOnce();
-		//		scene.add( stars );
+				//universe.addObject(stars);
+				//universe.updateOnce();
+		//  This fails because this does not have a DRAW method associated with it.  Need to figure out a way
+		// To add it to the scene differently than the rest of the graphics objects
+
+				//universe.scene.add( stars );
 			}
-		*/
+				*/
 	}
 
 
