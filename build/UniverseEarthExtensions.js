@@ -3903,7 +3903,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
 	*/
-	this.addSpaceObject = function(spaceObject) {
+	this.addSpaceObject = function(spaceObject, callback) {
 		var objectGeometry, material;
 		universe.getObjectFromLibraryById(spaceObject.modelId, function(retrieved_geometry) {
 			objectGeometry = retrieved_geometry;
@@ -3936,26 +3936,27 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				)
 				universe.addObject(spaceGraphicsObject);
 				universe.updateOnce();
+                                callback();
 
-				earthExtensions.addPropogationLineForObject(spaceObject);
+				earthExtensions.addPropogationLineForObject(spaceObject, callback);
 				earthExtensions.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
 
-				earthExtensions.addGroundTrackPointForObject(spaceObject);
+				earthExtensions.addGroundTrackPointForObject(spaceObject, callback);
 				earthExtensions.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
 
-				earthExtensions.addSensorProjections(spaceObject);
+				earthExtensions.addSensorProjections(spaceObject, callback);
 				earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
 
-				earthExtensions.addSensorFootprintProjections(spaceObject);
+				earthExtensions.addSensorFootprintProjections(spaceObject, callback);
 				earthExtensions.showSensorFootprintProjectionsForId(spaceObject.showSensorFootprintProjections, spaceObject.id);
 				
-				earthExtensions.addSensorVisibilityLines(spaceObject);
+				earthExtensions.addSensorVisibilityLines(spaceObject, callback);
 				earthExtensions.showSensorVisibilityLinesForId(spaceObject.showSensorVisibilityLines, spaceObject.id);
 			});
 		});
 	};
 	
-	this.addSensorVisibilityLines = function(object) {
+	this.addSensorVisibilityLines = function(object, callback) {
 		if(object.sensors && object.sensors.length > 0) {
 			var visibilityLinesController = new UNIVERSE.GraphicsObject(
 				object.id + "_visibilityLines",
@@ -4025,6 +4026,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			)
 			universe.addObject(visibilityLinesController);
 			universe.updateOnce();
+                        callback();
 		}
 	}
 
@@ -4033,7 +4035,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {UNIVERSE.GroundObject} groundObject - an object to display on the Earth
 	*/
-	this.addGroundObject = function(groundObject) {
+	this.addGroundObject = function(groundObject, callback) {
 		var objectGeometry, objectMaterial, material;
 		if(!groundObject.modelId) {
 			groundObject.modelId = "default_ground_object_geometry";
@@ -4074,6 +4076,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					);
 				universe.addObject(groundGraphicsObject);
 				universe.updateOnce();
+                                callback();
 			});
 		});
 	};
@@ -4083,7 +4086,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {UNIVERSE.SpaceObject} object - The Space Object to add a ground track point for
 	*/
-	this.addGroundTrackPointForObject = function(object) {
+	this.addGroundTrackPointForObject = function(object, callback) {
 		var objectGeometry, objectMaterial;
 		universe.getObjectFromLibraryById("default_ground_object_geometry", function(retrieved_geometry) {
 			objectGeometry = retrieved_geometry;
@@ -4118,6 +4121,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 					);
 				universe.addObject(groundGraphicsObject);
 				universe.updateOnce();
+                                callback();
 			});
 		});
 	}
@@ -4127,7 +4131,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {UNIVERSE.SpaceObject} object - A Space Object to add a propagation line for
 	*/
-	this.addPropogationLineForObject = function(object) {
+	this.addPropogationLineForObject = function(object, callback) {
 		var objectGeometry, objectMaterial;
 		objectGeometry = new THREE.Geometry();
 		universe.getObjectFromLibraryById("default_orbit_line_material", function(retrieved_material) {
@@ -4180,6 +4184,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 				);
 			universe.addObject(lineGraphicsObject);
 			universe.updateOnce();
+                        callback();
 		});
 	}
 
@@ -4258,19 +4263,21 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
 
 
-	this.addSensorProjections = function(spaceObject) {
+	this.addSensorProjections = function(spaceObject, callback) {
 		if(spaceObject.sensors.length > 0 ) {
 			for(var i = spaceObject.sensors.length-1; i >= 0; i--) {
 				this.addSensorProjection(spaceObject.sensors[i], spaceObject)
 			}
+                        callback();
 		}
 	}
 	
-	this.addSensorFootprintProjections = function(spaceObject) {
+	this.addSensorFootprintProjections = function(spaceObject, callback) {
 		if(spaceObject.sensors.length > 0 ) {
 			for(var i = 0; i < spaceObject.sensors.length; i++) {
 				this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject)
 			}
+                        callback();
 		}
 	}
 	
