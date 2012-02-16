@@ -254,6 +254,58 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	}
 
 	/**
+		Add a random star field to the universe - lifted from the webgl_trackballcamera_earth THREE.js example
+	*/
+	this.addStars = function() {
+
+/*
+		var i,
+		vector,
+		starsGeometry = new THREE.Geometry();
+
+		for ( i = 0; i < 1500; i ++ ) {
+
+			vector = new THREE.Vector3( Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1 );
+			vector.multiplyScalar( earthSphereRadius );
+
+			starsGeometry.vertices.push( new THREE.Vertex( vector ) );
+
+		}
+
+		var stars,
+			starsMaterials = [
+				new THREE.ParticleBasicMaterial( { color: 0x555555, size: 2, sizeAttenuation: false } ),
+				new THREE.ParticleBasicMaterial( { color: 0x555555, size: 1, sizeAttenuation: false } ),
+				new THREE.ParticleBasicMaterial( { color: 0x333333, size: 2, sizeAttenuation: false } ),
+				new THREE.ParticleBasicMaterial( { color: 0x3a3a3a, size: 1, sizeAttenuation: false } ),
+				new THREE.ParticleBasicMaterial( { color: 0x1a1a1a, size: 2, sizeAttenuation: false } ),
+				new THREE.ParticleBasicMaterial( { color: 0x1a1a1a, size: 1, sizeAttenuation: false } )
+			];
+
+			for ( i = 10; i < 30; i ++ ) {
+
+				stars = new THREE.ParticleSystem( starsGeometry, starsMaterials[ i % 6 ] );
+
+				stars.rotation.x = Math.random() * 6;
+				stars.rotation.y = Math.random() * 6;
+				stars.rotation.z = Math.random() * 6;
+
+				var s = i * 10;
+				stars.scale.set( s, s, s );
+
+				stars.matrixAutoUpdate = false;
+				stars.updateMatrix();
+
+				universe.addObject(stars);
+				universe.updateOnce();
+		//		scene.add( stars );
+			}
+		*/
+	}
+
+
+
+	/**
 		Add a Space Object to the Universe
 		@public
 		@param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe

@@ -780,6 +780,7 @@ UNIVERSE.Core3D = function(container) {
     var drawnObjects = new Array();
 
     var resizeTimeout = null;
+	var controls;
 
     function init() {
         w = container.offsetWidth || window.innerWidth;
@@ -806,6 +807,27 @@ UNIVERSE.Core3D = function(container) {
 		// 
 		// var ambientLight = new THREE.AmbientLight( 0x000000 );
 		// scene.add( ambientLight );
+
+		// Use the controller to control the camera, but only when over the container
+		controls = new THREE.TrackballControls( camera, container );
+
+		controls.rotateSpeed = 1.0;
+		controls.zoomSpeed = 1.5;
+		controls.panSpeed = 0.2;
+
+		controls.noZoom = false;
+		controls.noPan = false;
+
+		// This controls how much inertia the movement has.  Set Damping to higher to
+		// stop the movement sooner.  Setting staticMoving to TRUE turns off all inertia
+		controls.staticMoving = false;
+		controls.dynamicDampingFactor = 0.10;
+
+		controls.minDistance = minZoom;
+		controls.maxDistance = maxZoom;
+
+		controls.keys = [ 65, 83, 68 ];
+
 		
         animate();
     }
@@ -827,15 +849,15 @@ UNIVERSE.Core3D = function(container) {
     function addEventListeners() {
         // Add event listeners for rotating, zooming, etc.
 
-        container.addEventListener('mousedown', onMouseDown, false);
+        //container.addEventListener('mousedown', onMouseDown, false);
 
         container.addEventListener('mousewheel', onMouseWheel, false);
         container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
         
-        document.addEventListener('keydown', onDocumentKeyDown, false);
+        //document.addEventListener('keydown', onDocumentKeyDown, false);
 
         window.addEventListener('resize', onWindowResize, false);
-
+		
         container.addEventListener('mouseover', function() {
             overRenderer = true;
         }, false);
@@ -851,8 +873,10 @@ UNIVERSE.Core3D = function(container) {
     }
 
     function render() {
-        zoom(curZoomSpeed);
-
+		
+		
+        //zoom(curZoomSpeed);
+		/*
         //console.log("target: " + JSON.stringify(target));
         rotation.x += (target.x - rotation.x) * 0.1;
         rotation.y += (target.y - rotation.y) * 0.1;
@@ -864,9 +888,10 @@ UNIVERSE.Core3D = function(container) {
         camera.lookAt(scene.position);
 
         vector.copy(camera.position);
-
+*/
         scaleDrawnObjects();
-
+		
+		controls.update();
         renderer.clear();
         renderer.render(scene, camera);
     }
@@ -932,6 +957,7 @@ UNIVERSE.Core3D = function(container) {
 
     function onMouseWheel(event) {
         event.preventDefault();
+		console.log("in onMouseWheel");
         if(overRenderer) {
             zoom(event.wheelDeltaY * (10));
         }
@@ -939,6 +965,7 @@ UNIVERSE.Core3D = function(container) {
     }
     
     function onMouseWheelFF(event) {
+		console.log("in onMouseWheelFF");
         event.preventDefault();
         if(overRenderer) {
             var delta = event.detail? event.detail*(-120) : event.wheelDelta
@@ -969,6 +996,7 @@ UNIVERSE.Core3D = function(container) {
         resizeTimeout = setTimeout(function() {
             resize();
         }, 250);
+
     }
 
     function resize() {
@@ -977,12 +1005,17 @@ UNIVERSE.Core3D = function(container) {
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
+		controls.screen.width = w;
+		controls.screen.height = h;
     }
 
     function zoom(delta) {
-        distanceTarget -= delta;
-        distanceTarget = distanceTarget > maxZoom ? maxZoom : distanceTarget;
-        distanceTarget = distanceTarget < minZoom ? minZoom : distanceTarget;
+		// Extend the THREE.TrackballControls functionality by setting internal zoom variables
+		// Remember that this is called in the context of the window and not the UNIVERSE object, so 
+		// we have to provide the context to the controls object
+		console.log("In Zoom: "+delta);
+		UNIVERSE.controls._zoomStart.y = 0;
+		UNIVERSE.controls._zoomEnd.y = delta;
     }
 
     // Priviledged Methods
