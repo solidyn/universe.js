@@ -1,5 +1,5 @@
 rm -rf docs/*
-rm build/*
+rm -rf build/*
 
 # Write out the THREE.js files that we'll be including
 cat lib/Three/ThreeWebGL.js > build/universe.js
@@ -27,3 +27,10 @@ java -jar ./utils/yuicompressor-2.4.7.jar -o build/UniverseEarthExtensions-min.j
 
 # Create the docs
 java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js src/EarthExtensions/EarthExtensions.js -t=utils/jsdoc/templates/universe_web --suppress -d=docs
+
+# Instrument with jscoverage
+
+./utils/jscoverage -v --no-instrument=lib --no-instrument=test --exclude=nbproject --exclude=.git --exclude=build --exclude=docs --exclude=examples --exclude=utils --exclude=build.sh --exclude=build_win.bat . /tmp/instrumented
+mv /tmp/instrumented build/instrumented
+
+echo "Test and coverage can be viewed at /build/instrumented/test"
