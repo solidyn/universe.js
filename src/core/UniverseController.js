@@ -73,7 +73,3 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
 		return graphicsObjects[id];
 	}
 };
-
-UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
-    this.refreshRate = rateInMilliseconds;
-}

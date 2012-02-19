@@ -1111,10 +1111,6 @@ var UNIVERSE = UNIVERSE || {};
  */
 
 UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunction, drawFunction) {
-	if(id == undefined)
-	{ 
-		return undefined;
-	}
 	this.id = id;
 	this.modelName = modelName || id;
 	this.currentLocation = currentLocation;
@@ -1123,18 +1119,7 @@ UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunctio
 }
 
 UNIVERSE.GraphicsObject.prototype = {
-	constructor: UNIVERSE.GraphicsObject,
-	
-	set: function ( id, modelName, currentLocation, updateFunction, drawFunction ) {
-
-		this.id = id;
-		this.modelName = modelName;
-		this.currentLocation = currentLocation;
-		this.update = updateFunction;
-		this.draw = drawFunction;
-
-		return this;
-	},
+	constructor: UNIVERSE.GraphicsObject
 }
 var UNIVERSE = UNIVERSE || {};
 
@@ -1268,12 +1253,7 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
 	this.getGraphicsObjectById = function(id) {
 		return graphicsObjects[id];
 	}
-};
-
-UNIVERSE.UniverseController.prototype.changeRefreshRate = function(rateInMilliseconds) {
-    this.refreshRate = rateInMilliseconds;
-}
-/**
+};/**
 	Universe.js Classes
 */
 var UNIVERSE = UNIVERSE || {};
