@@ -569,9 +569,9 @@ var CoordinateConversionTools = {
         var raan = satelliteKepler.getRaan();
 
         var rswVec = new Array();        //Double[3];
-        rswVec[0] = rsw.getRadial();
-        rswVec[1] = rsw.getAlongTrack();
-        rswVec[2] = rsw.getCrossTrack();
+        rswVec[0] = rsw.radial;
+        rswVec[1] = rsw.alongTrack;
+        rswVec[2] = rsw.crossTrack;
 
         var rijk = new Array();              //Double[3];
         rijk = MathTools.rot3(-nu, rswVec);  //to PQW format

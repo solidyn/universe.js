@@ -383,7 +383,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			universe.updateOnce();
                         callback();
 		}
-	}
+	};
 
 	/**
 		Add a Ground Object to the Earth

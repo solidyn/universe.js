@@ -261,6 +261,7 @@ UNIVERSE.Core3D = function(container) {
         // if object exists in drawnObjects then add back to scene
         if (drawnObjects[id] != undefined) {
             if(isShown) {
+                //TODO: Fix so that multiple calls with true don't add the same object over and over'
                 scene.add(drawnObjects[id].shape);
             }
             else {
@@ -280,7 +281,7 @@ UNIVERSE.Core3D = function(container) {
     
     this.removeAllObjects = function() {
         for(var i in drawnObjects) {
-			if(drawnObject[id].shape != undefined) {
+			if(drawnObjects[i].shape != undefined) {
 				scene.remove(drawnObjects[i].shape);
 			}
         }
@@ -291,6 +292,9 @@ UNIVERSE.Core3D = function(container) {
         if(drawnObjects[id] == undefined) {
             return undefined;
         }
+        else if(drawnObjects[id].shape == undefined) {
+            return undefined;
+        }
         return drawnObjects[id].shape.position;
     }
 	
@@ -298,9 +302,13 @@ UNIVERSE.Core3D = function(container) {
         // This method converts a position into the rotation coordinate system used to move the camera
         // The target.x parameter is the rotation angle from the positive Z axis
         // target.y is the rotation angle away from the z-x plane
-	    
+	
+        // copy so we don't stomp on the original
+        var cameraVector = new THREE.Vector3();
+        cameraVector.copy(position_vector);
+        
         // sets the distance from the center of the scene the camera will end up
-        distanceTarget = position_vector.length();
+        distanceTarget = cameraVector.length();
 	    
         // unit vectors along the z and y axis
         var zAxisVector = new THREE.Vector3(0,0,1);
@@ -309,18 +317,18 @@ UNIVERSE.Core3D = function(container) {
         // vector that removes the y component of the target vector for purpose of calculating the angle
         // between it the input position_vector and the y-z plane
         var positionY0Vector = new THREE.Vector3();
-        positionY0Vector.copy(position_vector);
+        positionY0Vector.copy(cameraVector);
         
         // set the y to zero and normalize to unit length
         positionY0Vector.y = 0;
         positionY0Vector.normalize();
         
         //normalize the position_vector to unit length
-        position_vector.normalize();
+        cameraVector.normalize();
 	    
         // calculates the angle between the positive y axis and the input position vector
         // then subtract this from 90 degrees to shift it to be from the z-x plane
-        var y = (Math.PI/2) - Math.acos(yAxisVector.dot(position_vector));
+        var y = (Math.PI/2) - Math.acos(yAxisVector.dot(cameraVector));
 	    
         // calculate the angle between the input vector projected on the z-x plane and the z-axis
         var x = Math.acos(zAxisVector.dot(positionY0Vector));
@@ -335,6 +343,10 @@ UNIVERSE.Core3D = function(container) {
         target.y = isNaN(y) ? 0 : y;
         target.x = isNaN(x) ? 0 : x;
 	    
+    }
+    
+    this.getCameraPosition = function() {
+        return camera.position;
     }
     
     

@@ -578,9 +578,9 @@ var Constants = {
         var raan = satelliteKepler.getRaan();
 
         var rswVec = new Array();        //Double[3];
-        rswVec[0] = rsw.getRadial();
-        rswVec[1] = rsw.getAlongTrack();
-        rswVec[2] = rsw.getCrossTrack();
+        rswVec[0] = rsw.radial;
+        rswVec[1] = rsw.alongTrack;
+        rswVec[2] = rsw.crossTrack;
 
         var rijk = new Array();              //Double[3];
         rijk = MathTools.rot3(-nu, rswVec);  //to PQW format
@@ -2272,67 +2272,6 @@ UNIVERSE.RSWCoordinates = function(radial, alongTrack, crossTrack) {
     this.radial = radial ? radial : 0.0; //radial vector (km)
     this.alongTrack = alongTrack ? alongTrack : 0.0; //along track vector (km)
     this.crossTrack = crossTrack ? crossTrack : 0.0; //cross track vector (km)
-
-    /**
-     * Get the radial value.
-     */
-    this.getRadial = function()
-    {
-        return this.radial;
-    }
-
-    /**
-     * Set the radial value.
-     */
-    this.setRadial = function(radial)
-    {
-        this.radial = radial;
-    }
-
-    /**
-     * Get the alongTrack value.
-     */
-    this.getAlongTrack = function()
-    {
-        return this.alongTrack;
-    }
-
-    /**
-     * Set the alongTrack value.
-     */
-    this.setAlongTrack = function(alongTrack)
-    {
-        this.alongTrack = alongTrack;
-    }
-
-    /**
-     * Get the crossTrack value.
-     */
-    this.getCrossTrack = function()
-    {
-        return this.crossTrack;
-    }
-
-    /**
-     * Set the crossTrack value.
-     */
-    this.setCrossTrack = function(crossTrack)
-    {
-        this.crossTrack = crossTrack;
-    }
-};var HarmonicTerms = {
-
-    /**
-     *
-     * @param state double[]
-     * @param GST   double
-     *
-     * @returns Array of double
-     */
-    calculatePerturbationTerms: function(state, GST)
-    {
-
-    }
 }; 
 var OrbitPropagator = {
 
@@ -3899,7 +3838,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 			universe.updateOnce();
                         callback();
 		}
-	}
+	};
 
 	/**
 		Add a Ground Object to the Earth
