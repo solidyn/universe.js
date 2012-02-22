@@ -2,7 +2,7 @@
  * Unit tests for the EarthExtensions/utils coordinate objects
  */
 
-module("EarthExtensions/utils Coordinate Objects Tests");
+module("EarthExtensions/utils Coordinate Conversion Tests");
 
 test("Instantiate RSW Coordates", 4, function(){
   
