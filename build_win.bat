@@ -42,6 +42,11 @@ rem echo Copying to Solidpanda
 rem copy build\UniverseEarthExtensions.js %panda%
 rem copy build\universe.js %panda%
 
+# Instrument with jscoverage
 
+./utils/jscoverage.exe -v --no-instrument=lib --no-instrument=test --exclude=nbproject --exclude=.git --exclude=build --exclude=docs --exclude=examples --exclude=utils --exclude=build.sh --exclude=build_win.bat . /tmp/instrumented
+move /tmp/instrumented build/instrumented
+
+echo "Test and coverage can be viewed at /build/instrumented/test
 
 echo DONE
