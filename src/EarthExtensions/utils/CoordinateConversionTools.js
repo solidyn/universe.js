@@ -11,7 +11,7 @@ var CoordinateConversionTools = {
         //convert a date to the Julian Date
         //this is the time since January 1, 4713 BC (12:00)
         //unit of measure = days
-		//console.log("convertCurrentEpochToJulianDate:currentEpoch: " + currentEpoch);
+	//console.log("convertCurrentEpochToJulianDate:currentEpoch: " + currentEpoch);
         var JD = 0;                               //double
         var year = currentEpoch.getUTCFullYear();  //int
         var month = currentEpoch.getUTCMonth() + 1;      //int
@@ -666,40 +666,49 @@ var CoordinateConversionTools = {
         //reference Vallado 3rd ed page 291
         var Ttdb = CoordinateConversionTools.convertCurrentEpochToBarycentricTime(currentEpoch);
 		//console.log("Ttdb: " + Ttdb);
-        var lambda = 218.32 + 481267.883 * Ttdb;
+        var lambda = 218.32 + 481267.8813 * Ttdb;
         lambda += 6.29 * Math.sin(MathTools.toRadians(134.9 + 477198.85 * Ttdb));
         lambda += -1.27 * Math.sin(MathTools.toRadians(259.2 - 413335.38 * Ttdb));
         lambda += 0.66 * Math.sin(MathTools.toRadians(235.7 + 890534.23 * Ttdb));
         lambda += 0.21 * Math.sin(MathTools.toRadians(269.9 + 954397.70 * Ttdb));
         lambda += -0.19 * Math.sin(MathTools.toRadians(357.5 + 35999.05 * Ttdb));
-        lambda += -0.11 * Math.sin(MathTools.toRadians(186.6 + 96640.05 * Ttdb));  //degrees
-        if (Math.abs(lambda)>360){
-            lambda=(lambda%360);
+        lambda += -0.11 * Math.sin(MathTools.toRadians(186.6 + 966404.05 * Ttdb));  //degrees
+        if (Math.abs(lambda) > 360)
+        {
+            lambda = (lambda % 360);
         }
-        if(lambda<0){
-            lambda+=360;
-        }
-
-        var phi=5.13*Math.sin(MathTools.toRadians(93.3+483202.03*Ttdb));
-        phi+=0.28*Math.sin(MathTools.toRadians(228.2+960400.87*Ttdb));
-        phi+=-0.28*Math.sin(MathTools.toRadians(318.3+6003.18*Ttdb));
-        phi+=-0.17*Math.sin(MathTools.toRadians(217.6-407332.20*Ttdb));
-        if (Math.abs(phi)>360){
-            phi=(phi%360);
-        }
-        if(phi<0){
-            phi+=360;
+        if (lambda < 0)
+        {
+            lambda += 360;
         }
 
-        var parallax=0.9508+0.0518*Math.cos(MathTools.toRadians(134.9+477198.85*Ttdb));
-        parallax+=+0.0095*Math.cos(MathTools.toRadians(259.2-413335.38*Ttdb));
-        parallax+=+0.0078*Math.cos(MathTools.toRadians(235.7+890534.23*Ttdb));
-        parallax+=+0.0028*Math.cos(MathTools.toRadians(269.9+954397.70*Ttdb));
-        if (Math.abs(parallax)>360){
-            parallax=(parallax%360);
+        
+        var phi = 5.13 * Math.sin(MathTools.toRadians(93.3 + 483202.03 * Ttdb));
+        phi += 0.28 * Math.sin(MathTools.toRadians(228.2 + 960400.87 * Ttdb));
+        phi += -0.28 * Math.sin(MathTools.toRadians(318.3 + 6003.18 * Ttdb));
+        phi += -0.17 * Math.sin(MathTools.toRadians(217.6 - 407332.20 * Ttdb));
+        if (Math.abs(phi) > 360)
+        {
+            phi = (phi % 360);
         }
-        if(parallax<0){
-            parallax+=360;
+        if (phi < 0)
+        {
+            phi += 360;
+        }
+        
+        
+
+        var parallax = 0.9508 + 0.0518 * Math.cos(MathTools.toRadians(134.9 + 477198.85 * Ttdb));
+        parallax += +0.0095 * Math.cos(MathTools.toRadians(259.2 - 413335.38 * Ttdb));
+        parallax += +0.0078 * Math.cos(MathTools.toRadians(235.7 + 890534.23 * Ttdb));
+        parallax += +0.0028 * Math.cos(MathTools.toRadians(269.9 + 954397.70 * Ttdb));
+        if (Math.abs(parallax) > 360)
+        {
+            parallax = (parallax % 360);
+        }
+        if (parallax < 0)
+        {
+            parallax += 360;
         }
 
         var e=23.439291-0.0130042*Ttdb;//obliquity of the ecliptic
