@@ -89,7 +89,7 @@ asyncTest("Move camera to position", function() {
     setTimeout(function() {
         var cameraPosition = core.getCameraPosition();
         console.log("Camera Position: " + JSON.stringify(cameraPosition));
-        close(cameraPosition, positionVector, 0.1, "Camera moved to position");
+        QUnit.close(cameraPosition, positionVector, 0.1, "Camera moved to position");
         start();
     }, 2000);
     

@@ -22,8 +22,8 @@ function KeplerianCoordinates(theSemimajorAxis, theMeanAnomaly, theEccentricAnom
        var nu=MathTools.toRadians(this.trueAnomaly);
        var sinEA=Math.sin(nu)*Math.sqrt(1-this.eccentricity*this.eccentricity)/(1+this.eccentricity*Math.cos(nu));
        var cosEA=(this.eccentricity+Math.cos(nu))/(1+this.eccentricity*Math.cos(nu));
-       this.EccentricAnomaly=Math.toDegrees(Math.atan2(sinEA,cosEA));
-       this.MeanAnomaly = Math.toDegrees(Math.toRadians(this.EccentricAnomaly) - this.eccentricity * sinEA);
+       this.EccentricAnomaly=MathTools.toDegrees(Math.atan2(sinEA,cosEA));
+       this.MeanAnomaly = MathTools.toDegrees(MathTools.toRadians(this.EccentricAnomaly) - this.eccentricity * sinEA);
     }
     
     this.updateAnglesUsingMeanAnomaly= function()
@@ -67,8 +67,8 @@ function KeplerianCoordinates(theSemimajorAxis, theMeanAnomaly, theEccentricAnom
             }
             Eprevious=Enew;
         }
-        this.EccentricAnomaly=Math.toDegrees(Enew);
-        this.TrueAnomaly=Math.toDegrees(2*Math.atan(Math.sqrt((1+this.eccentricity)/(1-this.eccentricity))*Math.tan(Enew/2)));
+        this.EccentricAnomaly=MathTools.toDegrees(Enew);
+        this.TrueAnomaly=MathTools.toDegrees(2*Math.atan(Math.sqrt((1+this.eccentricity)/(1-this.eccentricity))*Math.tan(Enew/2)));
         
     }
     
