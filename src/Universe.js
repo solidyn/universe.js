@@ -116,6 +116,22 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         controller.play();
     };
 
+    this.getMinZoomDistance = function() {
+        return core.minZoom;
+    }
+
+    this.getMaxZoomDistance = function() {
+        return core.maxZoom;
+    }
+
+    this.setCurrentZoomDistance = function(newDistanceTarget) {
+        core.distanceTarget = newDistanceTarget;
+    }
+
+    this.getCurrentZoomDistance = function() {
+        return core.distanceTarget;
+    }
+    
     /**
 		Pause playback for the universe
 		@public

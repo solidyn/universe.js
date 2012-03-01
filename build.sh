@@ -30,7 +30,7 @@ java -jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js -a src/Universe.js sr
 
 # Instrument with jscoverage
 
-./utils/jscoverage -v --no-instrument=lib --no-instrument=test --exclude=nbproject --exclude=.git --exclude=build --exclude=docs --exclude=examples --exclude=utils --exclude=build.sh --exclude=build_win.bat . /tmp/instrumented
-mv /tmp/instrumented build/instrumented
+#./utils/jscoverage -v --no-instrument=lib --no-instrument=test --exclude=nbproject --exclude=.git --exclude=build --exclude=docs --exclude=examples --exclude=utils --exclude=build.sh --exclude=build_win.bat . /tmp/instrumented
+#mv /tmp/instrumented build/instrumented
 
-echo "Test and coverage can be viewed at /build/instrumented/test"
+#echo "Test and coverage can be viewed at /build/instrumented/test"

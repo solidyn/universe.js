@@ -1,6 +1,8 @@
 var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.Core3D = function(container) {
+    var self = this;
+
     // Variables used to draw the 3D elements
     var camera, scene, projector, renderer, w, h;
     var vector, animate;
@@ -30,11 +32,15 @@ UNIVERSE.Core3D = function(container) {
     };
 
     // set initial distance
-    var distance = 50000, distanceTarget = 50000;
+    var distance = 50000;
     var PI_HALF = Math.PI / 2;
 
-    var maxZoom = 500000;
-    var minZoom = 10000;
+
+    self.distanceTarget = 50000;
+    
+    this.maxZoom = 500000;
+    this.minZoom = 10000;
+
 
     var drawnObjects = new Array();
 
@@ -115,7 +121,7 @@ UNIVERSE.Core3D = function(container) {
         //console.log("target: " + JSON.stringify(target));
         rotation.x += (target.x - rotation.x) * 0.1;
         rotation.y += (target.y - rotation.y) * 0.1;
-        distance += (distanceTarget - distance) * 0.3;
+        distance += (self.distanceTarget - distance) * 0.3;
 
         camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
         camera.position.y = distance * Math.sin(rotation.y);
@@ -237,11 +243,11 @@ UNIVERSE.Core3D = function(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
     }
-
+    
     function zoom(delta) {
-        distanceTarget -= delta;
-        distanceTarget = distanceTarget > maxZoom ? maxZoom : distanceTarget;
-        distanceTarget = distanceTarget < minZoom ? minZoom : distanceTarget;
+        self.distanceTarget -= delta;
+        self.distanceTarget = self.distanceTarget > self.maxZoom ? self.maxZoom : self.distanceTarget;
+        self.distanceTarget = self.distanceTarget < self.minZoom ? self.minZoom : self.distanceTarget;
     }
 
     // Priviledged Methods
