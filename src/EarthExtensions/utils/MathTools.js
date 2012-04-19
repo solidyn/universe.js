@@ -21,14 +21,14 @@ var MathTools = {
         return xTimesA;
     },
 
-	scalarMultiplyVector: function(x, a) 
-	{
-		return {
-			x: x.x * a,
-			y: x.y * a,
-			z: x.z * a
-		}
-	},
+    scalarMultiplyVector: function(x, a)
+    {
+        return {
+            x: x.x * a,
+            y: x.y * a,
+            z: x.z * a
+        }
+    },
 
     /**
      *
@@ -57,12 +57,12 @@ var MathTools = {
         }
     },
 
-	dotMultiplyVector: function(x, y)
-	{
+    dotMultiplyVector: function(x, y)
+    {
         var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
 
         return xDotY;
-	},
+    },
 
     /**
      *
@@ -80,29 +80,46 @@ var MathTools = {
 
         angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
-		if (angle > 90)
+        if (angle > 90)
         {
             angle = 180 - angle;
         }
 
         return angle; //deg
     },
-	
-	/**
-	* @param x - vector in {x, y, z}
-	* @param y - vector in {x, y, z}
-	* @return distance betewen points
-	*/
-	distanceBetweenTwoPoints: function(x, y)
-	{
-		var vectorBetweenPoints = {
-			x: x.x - y.x, 
-			y: x.y - y.y, 
-			z: x.z - y.z
-		};
-		
-		return MathTools.magnitudeVector(vectorBetweenPoints);
-	},
+
+    /**
+    * @param x - vector in {x, y, z}
+    * @param y - vector in {x, y, z}
+    * @return distance betewen points
+    */
+    distanceBetweenTwoPoints: function(x, y)
+    {
+        var vectorBetweenPoints = {
+            x: x.x - y.x,
+            y: x.y - y.y,
+            z: x.z - y.z
+        };
+
+        return MathTools.magnitudeVector(vectorBetweenPoints);
+    },
+
+    /**
+    * @param x1 object 1's x coordinate
+    * @param x1 object 2's x coordinate
+    * @param x2 object 1's y coordinate
+    * @param x2 object 2's y coordinate
+    * @param x3 object 1's z coordinate
+    * @param x3 object 2's z coordinate
+    * @return distance betewen points
+    */
+    distanceBetweenTwoPoints2: function(x1, y1, z1, x2, y2, z2)
+    {
+        var xdiff = x1 - x2;
+        var ydiff = y1 - y2;
+        var zdiff = z1 - z2;
+        return Math.sqrt(xdiff*xdiff + ydiff*ydiff + zdiff*zdiff);
+    },
 
     /**
      *
@@ -118,10 +135,10 @@ var MathTools = {
         return vectorMagnitude;
     },
 
-	magnitudeVector: function(x)
-	{
-		return Math.sqrt(x.x*x.x + x.y * x.y + x.z * x.z);
-	},
+    magnitudeVector: function(x)
+    {
+        return Math.sqrt(x.x*x.x + x.y * x.y + x.z * x.z);
+    },
 
     /**
      *
@@ -210,7 +227,7 @@ var MathTools = {
     toRadians: function(valueInDegrees)
     {
         // return valueInDegrees * Math.PI / 180.0;
-  		  return valueInDegrees * Constants.piOverOneEighty;
+            return valueInDegrees * Constants.piOverOneEighty;
     },
 
     /**
@@ -222,7 +239,7 @@ var MathTools = {
     toDegrees: function(valueInRadians)
     {
         //return valueInRadians * 180 / Math.PI;
-		  return valueInRadians * Constants.oneEightyOverPi;
+          return valueInRadians * Constants.oneEightyOverPi;
     },
 
     /**

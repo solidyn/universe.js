@@ -1,11 +1,14 @@
 rm -rf docs/*
+mkdir docs
 rm -rf build/*
+mkdir build
 
 # Write out the THREE.js files that we'll be including
 cat lib/Three/ThreeWebGL.js > build/universe.js
 cat lib/Three/Detector.js >> build/universe.js
 cat lib/Three/ThreeExtras.js >> build/universe.js
 cat lib/Three/RequestAnimationFrame.js >> build/universe.js
+cat lib/Input/input.js >> build/universe.js
 
 # add everything in core
 find src/core -name "*.js" |xargs cat  >> build/universe.js
