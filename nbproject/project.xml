@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
-    <type>org.netbeans.modules.ruby.rubyproject</type>
+    <type>org.netbeans.modules.php.project</type>
     <configuration>
-        <data xmlns="http://www.netbeans.org/ns/ruby-project/1">
-            <name>Universe</name>
-            <source-roots>
-                <root id="src.dir"/>
-                <root id="lib.dir"/>
-                <root id="Universe2.dir"/>
-                <root id="utils.dir"/>
-            </source-roots>
-            <test-roots>
-                <root id="test.src.dir"/>
-            </test-roots>
+        <data xmlns="http://www.netbeans.org/ns/php-project/1">
+            <name>Universe.js</name>
         </data>
     </configuration>
 </project>
