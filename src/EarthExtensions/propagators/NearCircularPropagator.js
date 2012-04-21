@@ -2,12 +2,12 @@ var NearCircularPropagator = {
     
     propagateOrbit: function(kep, elapsedTime, dt, timeAtStartOfPropagation) {
         //console.log('keping it up');
-        var MA = kep.getMeanAnomaly()+kep.getMeanMotion()*elapsedTime; //update the mean anomaly (deg)
+        var MA = kep.getMeanAnomaly() + kep.getMeanMotion() * elapsedTime; //update the mean anomaly (deg)
         var w = MathTools.toRadians(kep.getArgOfPerigee());
         var ra = MathTools.toRadians(kep.getRaan());
         var inc = MathTools.toRadians(kep.getInclination());
-        var ecc=kep.getEccentricity();
-        var mu=Constants.muEarth;
+        var ecc = kep.getEccentricity();
+        var mu = Constants.muEarth;
         //System.out.println("elapsed time: "+elapsedTime+" dt: "+dt+" ecc: "+kep.getEccentricity());
         //console.log("MA: "+kep.getMeanAnomaly()+" meanMotion: "+kep.getMeanMotion()+" new MA: "+MA + " elapsedTime: " + elapsedTime);
         MA = MathTools.toRadians(MA);  //convert the mean anomaly to radians
@@ -39,9 +39,9 @@ var NearCircularPropagator = {
         }
 
         var f = 2 * Math.atan(Math.sqrt((1 + ecc) / (1 - ecc)) * Math.tan(EA / 2));
-        var p = kep.getSemimajorAxis() * (1 -ecc * ecc);
-        var r = kep.getSemimajorAxis() * (1 -ecc* Math.cos(EA)); //radius
-        var h = Math.sqrt(mu * kep.getSemimajorAxis() * (1 - ecc* ecc));
+        var p = kep.getSemimajorAxis() * (1 - ecc * ecc);
+        var r = kep.getSemimajorAxis() * (1 - ecc* Math.cos(EA)); //radius
+        var h = Math.sqrt(mu * kep.getSemimajorAxis() * (1 - ecc * ecc));
         var x = r * (Math.cos(ra) * Math.cos(w + f) - Math.sin(ra) * Math.sin(w + f) * Math.cos(inc));
         var y = r * (Math.sin(ra) * Math.cos(w + f) + Math.cos(ra) * Math.sin(w + f) * Math.cos(inc));
         var z = r * Math.sin(inc) * Math.sin(w + f);

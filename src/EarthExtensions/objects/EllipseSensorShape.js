@@ -7,7 +7,7 @@ var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle)
 {
-	this.shapeName = shapeName;
+    this.shapeName = shapeName;
     this.semiMajorAngle = semiMajorAngle;
     this.semiMinorAngle = semiMinorAngle;
     
@@ -16,7 +16,7 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
         return this.semiMajorAngle;
     }
 
-	this.setSemiMajorAngle = function(semiMajorAngle)
+    this.setSemiMajorAngle = function(semiMajorAngle)
     {
         this.semiMajorAngle = semiMajorAngle;
     }

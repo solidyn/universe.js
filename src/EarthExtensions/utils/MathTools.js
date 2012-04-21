@@ -3,24 +3,11 @@ var MathTools = {
 
     /**
      *
-     * @param x double[]
-     * @param a double
+     * @param x vector
+     * @param a vector
      *
      * @returns Array of double
      */
-    scalarMultiply: function(x, a)
-    {
-        var N = x.length;          //int
-        var xTimesA = new Array(); //Double[N];
-
-        for (var i = 0; i < N; i++)
-        {
-            xTimesA[i] = x[i] * a;
-        }
-
-        return xTimesA;
-    },
-
     scalarMultiplyVector: function(x, a)
     {
         return {
@@ -63,20 +50,20 @@ var MathTools = {
 
         return xDotY;
     },
-
+    
     /**
      *
-     * @param x Double[]
-     * @param y Double[]
+     * @param x vector
+     * @param y vector
      *
      * @returns double
      */
-    angleBetweenTwoVectors: function(x, y)
+    angleBetweenTwoVectorsVector: function(x, y)
     {
         var angle = 0;                 //double
-        var magX = MathTools.magnitude(x);       //double
-        var magY = MathTools.magnitude(y);       //double
-        var xDotY = MathTools.dotMultiply(x, y); //double
+        var magX = MathTools.magnitudeVector(x);       //double
+        var magY = MathTools.magnitudeVector(y);       //double
+        var xDotY = MathTools.dotMultiplyVector(x, y); //double
 
         angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
@@ -113,7 +100,7 @@ var MathTools = {
     * @param x3 object 2's z coordinate
     * @return distance betewen points
     */
-    distanceBetweenTwoPoints2: function(x1, y1, z1, x2, y2, z2)
+    distanceBetweenTwoPoints: function(x1, y1, z1, x2, y2, z2)
     {
         var xdiff = x1 - x2;
         var ydiff = y1 - y2;
@@ -156,6 +143,17 @@ var MathTools = {
         result[1] = -(x[0] * y[2] - y[0] * x[2]); //j
         result[2] = x[0] * y[1] - y[0] * x[1];    //k
 
+        return result;
+    },
+    
+    crossVector: function(x, y)
+    {
+        var result = {
+            x: x.y * y.z - y.y * x.z,
+            y: -(x.x * y.z - y.x * x.z),
+            z: x.x * y.y - y.x * x.y
+        }
+        
         return result;
     },
 

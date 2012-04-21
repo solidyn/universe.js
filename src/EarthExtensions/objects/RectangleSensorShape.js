@@ -7,7 +7,7 @@ var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
 {
-	this.shapeName = shapeName;
+    this.shapeName = shapeName;
     this.width = width;
     this.height = height;
 
