@@ -12,7 +12,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     var earthExtensions = this;
 	
     // constants
-    var earthSphereRadius = 6371;
+    var earthSphereRadius = Constants.radiusEarth;
 
     var centerPoint = new THREE.Vector3(0,0,0);
 	
@@ -22,220 +22,35 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     var enableSensorFootprintProjections = false;
     var enableSubSatellitePoints = false;
     var enablePropagationLines = false;
-    var lockCameraToWithEarthRotation = false;
-    var rotationOffsetFromXAxis = 0;
+    this.lockCameraToWithEarthRotation = false;
+    
+    this.rotationOffsetFromXAxis = 0;
 
     // Is the sun-lighting on the Earth enabled or disabled
-    var useSunLighting = isSunLighting ? isSunLighting : true;
-
-    universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(200, 20, 10));
-    universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({
-        color : 0xCC0000
-    }));
-
-    universe.setObjectInLibrary("default_ground_track_material", new THREE.MeshBasicMaterial({
-        color : 0xCC0000,
-        transparent:true,
-        opacity: 0.4,
-        blending: THREE.AdditiveBlending
-    }));
-
-
-    var sensorColors = {
-        colorList: [
-        "0xff0000",
-        "0x00cc00",
-        "0x0066ff",
-        "0x9900cc",
-        "0xffff00",
-        "0xff6666",
-        "0xebebeb",
-        "0xffaa00"
-        ],
-        iterator: -1,
-        // GRab the next color on the list and iterate to the next color
-        nextColor: function() {
-            this.iterator = (this.iterator + 1) % this.colorList.length;
-            return this.colorList[this.iterator];	 
-        }
-    };
-
-    universe.setObjectInLibrary("default_orbit_line_material", new THREE.LineBasicMaterial({
-        color : 0x990000,
-        opacity : 1
-    }));
-            
-    universe.setObjectInLibrary("default_ground_object_tracing_line_material", new THREE.LineBasicMaterial({
-        color : 0x009900,
-        opacity : 1
-    }));
+    this.useSunLighting = isSunLighting ? isSunLighting : true;
+    
+    var defaultObjects = new UNIVERSE.DefaultObjects(universe);
 
     /**
-		Add the Earth at the center of the Universe
-		@public
-		@param {string} dayImageURL - URL of the image to be used for the sun-facing side of the Earth
-		@param {string} nightImageURL - URL of the image to be used for the dark side of the Earth
-	*/
+        Add the Earth at the center of the Universe
+        @public
+        @param {string} dayImageURL - URL of the image to be used for the sun-facing side of the Earth
+        @param {string} nightImageURL - URL of the image to be used for the dark side of the Earth
+    */
     this.addEarth = function(dayImageURL, nightImageURL) {
-        var earthSphereSegments = 40, earthSphereRings = 30;
-
-        // Create the sphere
-        var geometry = new THREE.SphereGeometry(earthSphereRadius, earthSphereSegments, earthSphereRings);
-        var dayImageTexture   = THREE.ImageUtils.loadTexture( dayImageURL );
-        var earthAtNightTexture = THREE.ImageUtils.loadTexture( nightImageURL );
-        var nightMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            overdraw: true,
-            map: earthAtNightTexture,
-            blending: THREE.AdditiveBlending
-        });
-        
-        var nightEarthMesh = new THREE.Mesh(geometry, nightMaterial);
-
-        //var normalTexture   = THREE.ImageUtils.loadTexture( "/assets/universe/earth_normal_2048.jpg" );
-        //var specularTexture = THREE.ImageUtils.loadTexture( "/assets/universe/earth_specular_2048.jpg" );
-
-        // planet
-        //geometry.computeTangents();
-
-        var dayMaterial = new THREE.MeshPhongMaterial({
-            map: dayImageTexture,
-            color: 0xffffff,
-            // specular: 0xffffff,
-            //ambient: 0xffffff,
-            // shininess: 15,
-            //opacity: 0.5,
-            transparent: true,
-            // reflectivity: 1
-            blending: THREE.AdditiveBlending
-        })
-
-        var dayEarthMesh = new THREE.Mesh(geometry, dayMaterial);
-		
-        var earthMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            overdraw: true,
-            map: dayImageTexture,
-            blending: THREE.AdditiveBlending
-        });
-		
-        var earthMesh = new THREE.Mesh(geometry, earthMaterial);
-                
-        var previousRotation = CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime());
-
-        var earthObject = new UNIVERSE.GraphicsObject(
-            "earth", 
-            "earth",
-            {
-                x:0, 
-                y:0, 
-                z:0
-            },
-            function(elapsedTime) {
-                var rotationAngle = MathTools.toRadians(CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime()));
-				
-                // TODO: This works ok with low-speed and low number of objects, not good with high speed or large number of objects
-                // Idea to fix it:
-                // Leave the camera where it is and turn on/off rotating the earth
-                // This will require that each will have to be converted from ECI to a rotated ECI location
-                // This can be buryied in the eciTo3DCoordinates method and should work so long as the math isn't overly intensive
-                // since it will be called A LOT
-                if(lockCameraToWithEarthRotation) {
-                    // move camera along with Earth
-                    //universe.addRotationToCamera(rotationAngle - previousRotation);
-                    rotationOffsetFromXAxis += (rotationAngle - previousRotation);
-                    if(rotationOffsetFromXAxis > (2 * Math.PI)) {
-                        rotationOffsetFromXAxis -= (2 * Math.PI);
-                    }
-                }
-                else {
-                    dayEarthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
-                    nightEarthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
-                    earthMesh.rotation.y = rotationAngle - rotationOffsetFromXAxis;
-                }
-                                
-                previousRotation = rotationAngle;
-            },
-            function() {
-                // for some reason these lines have to go in this order for night to be under day...
-                universe.draw(this.id + "_day", dayEarthMesh, false);
-                universe.draw(this.id + "_night", nightEarthMesh, false);
-                universe.draw(this.id, earthMesh, false);
-                earthExtensions.useSunLighting(useSunLighting);
-                			
-            });
-        universe.addObject(earthObject);
+        var earth = new UNIVERSE.Earth(universe, earthExtensions, dayImageURL, nightImageURL);
+        universe.addObject(earth);
         universe.updateOnce();
     };
     
     /**
-		Add the Moon to the Universe
-		@public
-		@param {string} moonImageURL - the URL of the Moon image to use
-	*/
+	Add the Moon to the Universe
+	@public
+	@param {string} moonImageURL - the URL of the Moon image to use
+    */
     this.addMoon = function(moonImageURL) {
-        var moonSphereSegments = 40, moonSphereRings = 30;
-        var moonSphereRadius = 1737.1;
-
-        // Create the sphere
-        var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
-
-        var moonTexture = THREE.ImageUtils.loadTexture(moonImageURL);
-		
-        var dayMaterial = new THREE.MeshPhongMaterial({
-            map: moonTexture,
-            color: 0xffffff,
-            // specular: 0xffffff,
-            //ambient: 0xffffff,
-            // shininess: 15,
-            //opacity: 0.5,
-            transparent: true,
-            // reflectivity: 1
-            blending: THREE.AdditiveBlending
-        })
-
-        var dayMoonMesh = new THREE.Mesh(geometry, dayMaterial);
-		
-        var moonMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            overdraw: true,
-            map: moonTexture,
-            blending: THREE.AdditiveBlending
-        });
-		
-        var moonMesh = new THREE.Mesh(geometry, moonMaterial);
-
-        var moonObject = new UNIVERSE.GraphicsObject(
-            "moon", 
-            "moon",
-            undefined,
-            function(elapsedTime) {
-                var time = new Date(universe.getCurrentUniverseTime());
-                var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
-                var convertedLocation = eciTo3DCoordinates({
-                    x: propagatedValue.x, 
-                    y: propagatedValue.y, 
-                    z: propagatedValue.z
-                    });
-                dayMoonMesh.position = {
-                    x: convertedLocation.x, 
-                    y: convertedLocation.y, 
-                    z: convertedLocation.z
-                    }; 
-                moonMesh.position = {
-                    x: convertedLocation.x, 
-                    y: convertedLocation.y, 
-                    z: convertedLocation.z
-                    };
-                this.currentLocation = propagatedValue;
-            },
-            function() {
-                universe.draw(this.id + "_day", dayMoonMesh, false);
-                universe.draw(this.id, moonMesh, false);
-                earthExtensions.useSunLighting(useSunLighting);
-            }
-            )
-        universe.addObject(moonObject);
+        var moon = new UNIVERSE.Moon(universe, earthExtensions, moonImageURL);
+        universe.addObject(moon);
         universe.updateOnce();
     }
 
@@ -244,38 +59,16 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.addSun = function() {
         //var sunLight = new THREE.PointLight( 0xffffff, 1.5);
-		
-        var sunGraphicsObject = new UNIVERSE.GraphicsObject(
-            "sun",
-            "sun",
-            undefined,
-            function(elapsedTime) {
-                //console.log("sun update");
-                var sunLocation = CoordinateConversionTools.getSunPositionECIAtCurrentTime(universe.getCurrentUniverseTime());
-                var convertedLocation = eciTo3DCoordinates({
-                    x: sunLocation.x, 
-                    y: sunLocation.y, 
-                    z: sunLocation.z
-                });
-                //sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
-                //console.log("sunLocation: " + JSON.stringify(sunLocation));
-                universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);
-                this.currentLocation = sunLocation;
-            },
-            function() {
-                //console.log("sun draw");
-                universe.draw(this.id, undefined, false);
-            }
-            )
-        universe.addObject(sunGraphicsObject);
+	var sun = new UNIVERSE.Sun(universe, earthExtensions);
+        universe.addObject(sun);
         universe.updateOnce();
     }
 
     /**
-		Add a Space Object to the Universe
-		@public
-		@param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
-	*/
+        Add a Space Object to the Universe
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
+    */
     this.addSpaceObject = function(spaceObject, callback) {
         var objectGeometry, material;
         universe.getObjectFromLibraryById(spaceObject.modelId, function(retrieved_geometry) {
@@ -293,7 +86,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     function(elapsedTime) {
                         // need to pass a time to the propagator
                         var propagatedLocation = spaceObject.propagator();
-                        var convertedLocation = eciTo3DCoordinates(propagatedLocation);
+                        var convertedLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
                         if(convertedLocation != undefined) {
                             objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 
@@ -431,7 +224,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     function(elapsedTime) {
                         // check earth rotation and update location
                         var propagatedPosition = groundObject.propagator();
-                        var position = eciTo3DCoordinates(propagatedPosition);
+                        var position = earthExtensions.eciTo3DCoordinates(propagatedPosition);
                         groundObjectMesh.position.set(position.x, position.y, position.z);
                         this.currentLocation = propagatedPosition;
 
@@ -476,7 +269,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     function(elapsedTime) {
                         //if(enableSubSatellitePoints) {
                         var propagatedLocation = object.propagator(undefined, false);
-                        var objectLocation = eciTo3DCoordinates(propagatedLocation);
+                        var objectLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
                         if(objectLocation != undefined) {
                             var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
 
@@ -521,7 +314,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             for(var j = 0; j < loopCount; j += 5) {
                 var location = object.propagator(timeToPropogate, false);
                 eciLocations.push(location);
-                var convertedLocation = eciTo3DCoordinates(location);
+                var convertedLocation = earthExtensions.eciTo3DCoordinates(location);
                 if(convertedLocation != undefined) {
                     var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
                     objectGeometry.vertices.push(new THREE.Vertex(vector));
@@ -540,7 +333,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     // add points onto the end of the track?
                     var length = eciLocations.length;
                     for(var i = 0; i < length; i++) {
-                        var convertedLocation = eciTo3DCoordinates(eciLocations[i]);
+                        var convertedLocation = earthExtensions.eciTo3DCoordinates(eciLocations[i]);
                         if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
                             lineS.geometry.vertices[i].position = {
                                 x: convertedLocation.x, 
@@ -572,7 +365,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         var objectGeometry, objectMaterial;
 
         // Determine the object's location in 3D space
-        var objectLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, false));
+        var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
         if(objectLocation != undefined) {
             // Create a SensorPattern
 
@@ -586,13 +379,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             var THREEPoints = new Array( extendedPoints.length );
             var pointCount = extendedPoints.length;
             for(var j = 0; j< pointCount; j++) {
-                var coord = eciTo3DCoordinates(extendedPoints[j]);
+                var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
                 THREEPoints[j] = coord;
             }
             objectGeometry = new SensorProjection(objectLocation, THREEPoints);
 
             var objectMaterial = new THREE.MeshBasicMaterial({
-                color: sensorColors.nextColor(),
+                color: defaultObjects.sensorColors.nextColor(),
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 opacity: 0.15,
@@ -609,7 +402,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 undefined,
                 function(elapsedTime) {
                     if(enableSensorProjections) {
-                        var objectLocation = eciTo3DCoordinates(spaceObject.propagator(undefined, false));
+                        var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
 
                         if(objectLocation != undefined) {
 
@@ -618,7 +411,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                             THREEPoints = [];
                             for(var j = 0; j< pointCount; j++) {
-                                var coord = eciTo3DCoordinates(extendedPoints[j]);
+                                var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
                                 THREEPoints[j] = coord;
                             }
                             sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
@@ -690,7 +483,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     //console.log("points: " + JSON.stringify(extendedPoints));
 
                     for(var k = 0; k < extendedPoints.length; k++) {
-                        var convertedLocation = eciTo3DCoordinates(extendedPoints[k]);
+                        var convertedLocation = earthExtensions.eciTo3DCoordinates(extendedPoints[k]);
                         line.geometry.vertices[k].position = {
                             x: convertedLocation.x, 
                             y: convertedLocation.y, 
@@ -698,7 +491,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                         }
                     }
                                         
-                    var convertedLastPoint = eciTo3DCoordinates(extendedPoints[0]);
+                    var convertedLastPoint = earthExtensions.eciTo3DCoordinates(extendedPoints[0]);
                     line.geometry.vertices[extendedPoints.length].position = {
                         x: convertedLastPoint.x, 
                         y: convertedLastPoint.y, 
@@ -729,7 +522,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             object.objectName,
             undefined,
             function(elapsedTime) {
-                var objectLocation = eciTo3DCoordinates(object.propagator(undefined, false));
+                var objectLocation = earthExtensions.eciTo3DCoordinates(object.propagator(undefined, false));
 
                 var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
 
@@ -776,8 +569,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             return;
         }
 			
-        var object1Location = eciTo3DCoordinates(object1.currentLocation);
-        var object2Location = eciTo3DCoordinates(object2.currentLocation);
+        var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
+        var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
 			
         if(object1Location == undefined || object2Location == undefined) {
             return;
@@ -806,8 +599,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 if(object1 == undefined || object2 == undefined) {
                     return;
                 }
-                var object1Location = eciTo3DCoordinates(object1.currentLocation);
-                var object2Location = eciTo3DCoordinates(object2.currentLocation);
+                var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
+                var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
 					
                 if(object1Location == undefined || object2Location == undefined) {
                     return;
@@ -1107,7 +900,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     }
         
     this.lockCameraPositionRelativeToEarth = function(isLocked) {
-        lockCameraToWithEarthRotation = isLocked;
+        this.lockCameraToWithEarthRotation = isLocked;
     }
 
     /**
@@ -1115,8 +908,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@public
 		@param {boolean} isSunLighting
 	*/
-    this.useSunLighting = function(isSunLighting) {
-        useSunLighting = isSunLighting;
+    this.setSunLighting = function(isSunLighting) {
+        earthExtensions.useSunLighting = isSunLighting;
         universe.showObject("earth", !isSunLighting);
         universe.showObject("earth_day", isSunLighting);
         universe.showObject("earth_night", isSunLighting);
@@ -1151,7 +944,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     	http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
 		@private
 	*/
-    function eciTo3DCoordinates(location) {
+    this.eciTo3DCoordinates = function(location) {
         if(location == undefined) {
             return undefined;
         }
@@ -1165,9 +958,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                  *  z = location.y
                  */
         return {
-            x : (location.y) * Math.sin(-rotationOffsetFromXAxis) + (-location.x) * Math.cos(-rotationOffsetFromXAxis),
+            x : (location.y) * Math.sin(-earthExtensions.rotationOffsetFromXAxis) + (-location.x) * Math.cos(-earthExtensions.rotationOffsetFromXAxis),
             y : location.z,
-            z : location.y * Math.cos(-rotationOffsetFromXAxis) - (-location.x) * Math.sin(-rotationOffsetFromXAxis),
+            z : location.y * Math.cos(-earthExtensions.rotationOffsetFromXAxis) - (-location.x) * Math.sin(-earthExtensions.rotationOffsetFromXAxis),
             vx : -location.vx,
             vy : location.vz,
             vz : location.vy
@@ -1188,9 +981,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                  *  z = location.y
                  */
         return {
-            x : (location.y) * Math.sin(rotationOffsetFromXAxis) + (-location.x) * Math.cos(rotationOffsetFromXAxis),
+            x : (location.y) * Math.sin(earthExtensions.rotationOffsetFromXAxis) + (-location.x) * Math.cos(earthExtensions.rotationOffsetFromXAxis),
             y : location.z,
-            z : location.y * Math.cos(rotationOffsetFromXAxis) - (-location.x) * Math.sin(rotationOffsetFromXAxis),
+            z : location.y * Math.cos(earthExtensions.rotationOffsetFromXAxis) - (-location.x) * Math.sin(earthExtensions.rotationOffsetFromXAxis),
             vx : -location.vx,
             vy : location.vz,
             vz : location.vy
