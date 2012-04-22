@@ -330,19 +330,21 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 object.objectName,
                 undefined,
                 function(elapsedTime) {
-                    // add points onto the end of the track?
-                    var length = eciLocations.length;
-                    for(var i = 0; i < length; i++) {
-                        var convertedLocation = earthExtensions.eciTo3DCoordinates(eciLocations[i]);
-                        if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
-                            lineS.geometry.vertices[i].position = {
-                                x: convertedLocation.x, 
-                                y: convertedLocation.y, 
-                                z: convertedLocation.z
+                    if(earthExtensions.lockCameraToWithEarthRotation) {
+                        var length = eciLocations.length;
+                        for(var i = 0; i < length; i++) {
+                            var convertedLocation = earthExtensions.eciTo3DCoordinates(eciLocations[i]);
+                            if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
+                                lineS.geometry.vertices[i].position = {
+                                    x: convertedLocation.x, 
+                                    y: convertedLocation.y, 
+                                    z: convertedLocation.z
+                                }
                             }
                         }
+                        lineS.geometry.__dirtyVertices = true;
                     }
-                    lineS.geometry.__dirtyVertices = true;
+                    
                 },
                 function() {
                     universe.draw(this.id, lineS, false);
