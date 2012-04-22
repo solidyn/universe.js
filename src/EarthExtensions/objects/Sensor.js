@@ -16,15 +16,16 @@ UNIVERSE.Sensor = function(name, shape) {
     this.rotationRadians = MathTools.toRadians(180.0);
 
     // http://www.cprogramming.com/tutorial/3d/quaternions.html
-    this.rotationAxis = new Array();
-    this.rotationAxis[0] = 0.0;
-    this.rotationAxis[1] = 0.0;
-    this.rotationAxis[2] = 1.0;
+    this.rotationAxis = {
+        x: 0.0,
+        y: 0.0,
+        z: 1.0
+    }
 
     this.quaternionFromRSWToSensor.setW(Math.cos(this.rotationRadians / 2.0));
-    this.quaternionFromRSWToSensor.setX(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[0]);
-    this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[1]);
-    this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis[2]);
+    this.quaternionFromRSWToSensor.setX(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.x);
+    this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.y);
+    this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.z);
 
 	
     this.rotateSensorAboutRadialVector = function(rotationAngle)
@@ -33,14 +34,17 @@ UNIVERSE.Sensor = function(name, shape) {
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = new Array();
-            rotationAxis[0] = 1.0;
-            rotationAxis[1] = 0.0;
-            rotationAxis[2] = 0.0;
+            var rotationAxis = {
+                x: 1.0,
+                y: 0.0,
+                z: 0.0
+            }
+            
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
-            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis[0]);
-            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis[1]);
-            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis[2]);
+            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
+            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
+            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
+            
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
@@ -52,14 +56,17 @@ UNIVERSE.Sensor = function(name, shape) {
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = new Array();
-            rotationAxis[0] = 0.0;
-            rotationAxis[1] = 1.0;
-            rotationAxis[2] = 0.0;
+            var rotationAxis = {
+                x: 0.0,
+                y: 1.0,
+                z: 0.0
+            }
+            
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
-            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis[0]);
-            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis[1]);
-            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis[2]);
+            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
+            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
+            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
+            
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
@@ -71,14 +78,17 @@ UNIVERSE.Sensor = function(name, shape) {
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = new Array();
-            rotationAxis[0] = 0.0;
-            rotationAxis[1] = 0.0;
-            rotationAxis[2] = 1.0;
+            var rotationAxis = {
+                x: 0.0,
+                y: 0.0,
+                z: 1.0
+            }
+            
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
-            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis[0]);
-            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis[1]);
-            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis[2]);
+            rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
+            rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
+            rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
+            
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
@@ -152,17 +162,15 @@ UNIVERSE.Sensor = function(name, shape) {
         var deltaECIdotS = MathTools.dotMultiplyVector(deltaECI, s);
         var deltaECIdotW = MathTools.dotMultiplyVector(deltaECI, w);
         
-        var targetInRSWCoordinates = [deltaECIdotR/MathTools.magnitudeVector(rvec),deltaECIdotS/MathTools.magnitudeVector(s),deltaECIdotW/MathTools.magnitudeVector(w)];
-		
+        var targetInRSWCoordinates = {
+            x: deltaECIdotR/MathTools.magnitudeVector(rvec),
+            y: deltaECIdotS/MathTools.magnitudeVector(s),
+            z: deltaECIdotW/MathTools.magnitudeVector(w)
+        }
 
         //get the quaternion to convert the ECI coordinate of the target into an RSW coordinate triplet
-        var targetInSensorCoordinatesArray = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
+        var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
         
-        var targetInSensorCoordinates = {
-            x: targetInSensorCoordinatesArray[0],
-            y: targetInSensorCoordinatesArray[1],
-            z: targetInSensorCoordinatesArray[2]
-        }
         //console.log("targetInSensorCoordinates: " + JSON.stringify(targetInSensorCoordinates));
 
         //---determine the three vectors that define the extent of the sensor shape in the sensor coordinate system
@@ -191,12 +199,16 @@ UNIVERSE.Sensor = function(name, shape) {
         //reference http://mathworld.wolfram.com/SphericalTrigonometry.html
         //a is the angle between the centerline and the right hand side
         var a = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, rightline));//radians
+        
         //b is the angle between the centerline and the target
         var b = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, targetInSensorCoordinates));//radians
+        
         //c is the angle between the right hand side and the target
         var c = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(rightline, targetInSensorCoordinates));//radians
+        
         //d is the angle between the top side and the target
         var d = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, targetInSensorCoordinates));//radians
+        
         //e is the angle between the top side and the target
         var e = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, centerline));//radians
 
@@ -370,18 +382,16 @@ UNIVERSE.Sensor = function(name, shape) {
             //build the sensor field of view vector in RSW
 
             //define the vector to the sensor boundary
-            var FOVboundary = new Array(3);
-
-            FOVboundary[0] = 1.0;  //radial
-            FOVboundary[1] = el * Math.cos(MathTools.toRadians(az)); //along
-            FOVboundary[2] = el * Math.sin(MathTools.toRadians(az));  //cross
+            var FOVboundary = {
+                x: 1.0, // radial
+                y: el * Math.cos(MathTools.toRadians(az)), //along
+                z: el * Math.sin(MathTools.toRadians(az))  //cross
+            }
 
             //ensure that it is a unit vector
-            var FOVmagnitude = MathTools.magnitude(FOVboundary);
+            var FOVmagnitude = MathTools.magnitudeVector(FOVboundary);
 			
-            FOVboundary[0] = FOVboundary[0] / FOVmagnitude;
-            FOVboundary[1] = FOVboundary[1] / FOVmagnitude;
-            FOVboundary[2] = FOVboundary[2] / FOVmagnitude;
+            FOVboundary = MathTools.scalarMultiplyVector(FOVboundary, 1/FOVmagnitude);
 
             //console.log("FOVboundary1: " + JSON.stringify(FOVboundary));
 
@@ -389,7 +399,7 @@ UNIVERSE.Sensor = function(name, shape) {
 
             //console.log("FOVboundary2: " + JSON.stringify(FOVboundary));
 
-            var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary[0], FOVboundary[1], FOVboundary[2]);
+            var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary.x, FOVboundary.y, FOVboundary.z);
 			
             //console.log("rswPoint: " + JSON.stringify(rswPoint));
 
@@ -405,8 +415,6 @@ UNIVERSE.Sensor = function(name, shape) {
                 y: satYpos + eciTemp.getY(),
                 z: satZpos + eciTemp.getZ()
             }
-
-        //System.out.println(i + "," + az + "," + el + "," + FOV[i][0] + "," + FOV[i][1] + "," + FOV[i][2]);
         }
 
         return FOV;

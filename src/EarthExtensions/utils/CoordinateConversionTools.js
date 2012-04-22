@@ -369,41 +369,41 @@ var CoordinateConversionTools = {
         */
         //reference Vallado 120
 
-        var r = new Array(); //Double[3];
-        r[0] = eci.x;
-        r[1] = eci.y;
-        r[2] = eci.z;
-        
-        var v = new Array(); //Double[3];
-        v[0] = eci.vx;
-        v[1] = eci.vy;
-        v[2] = eci.vz;
-
-        var h = MathTools.cross(r, v); //Double[3]
-        var hmag = MathTools.magnitude(h); //double
-        var rmag = MathTools.magnitude(r); //double
-        var vmag = MathTools.magnitude(v); //double
-
-        var khat = new Array(); //Double[3];
-        khat[0] = 0.0;
-        khat[1] = 0.0;
-        khat[2] = 1.0;
-
-        var n = new Array(); //Double[3];
-        n = MathTools.cross(khat, h);
-        
-        var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
-        var coeff2 = MathTools.dotMultiply(r, v);            //double
-       
-        var e = new Array(); //Double[3];
-
-        var i = 0;
-        for (i = 0; i < 3; i++)
-        {
-            e[i] = (1 / Constants.muEarth) * (coeff1 * r[i] - coeff2 * v[i]);
+        var r = {
+            x: eci.x,
+            y: eci.y,
+            z: eci.z
         }
         
-        var emag = MathTools.magnitude(e);                       //double
+        var v = {
+            x: eci.vx,
+            y: eci.vy,
+            z: eci.vz
+        }
+
+        var h = MathTools.crossVector(r, v); //Double[3]
+        var hmag = MathTools.magnitudeVector(h); //double
+        var rmag = MathTools.magnitudeVector(r); //double
+        var vmag = MathTools.magnitudeVector(v); //double
+
+        var khat = {
+            x: 0.0,
+            y: 0.0,
+            z: 1.0
+        }
+
+        var n = MathTools.crossVector(khat, h);
+        
+        var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
+        var coeff2 = MathTools.dotMultiplyVector(r, v);            //double
+       
+        var e = {
+            x: (1 / Constants.muEarth) * (coeff1 * r.x - coeff2 * v.x),
+            y: (1 / Constants.muEarth) * (coeff1 * r.y - coeff2 * v.y),
+            z: (1 / Constants.muEarth) * (coeff1 * r.z - coeff2 * v.z)
+        }
+        
+        var emag = MathTools.magnitudeVector(e);                       //double
         var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
         
         var p = 0.0; //double
@@ -420,34 +420,34 @@ var CoordinateConversionTools = {
             p = a * (1 - emag * emag);
         }
 
-        var inc = MathTools.toDegrees(Math.acos(h[2] / hmag));                    //double
-        var raan = MathTools.toDegrees(Math.acos(n[0] / MathTools.magnitude(n))); //double
+        var inc = MathTools.toDegrees(Math.acos(h.z / hmag));                    //double
+        var raan = MathTools.toDegrees(Math.acos(n.x / MathTools.magnitudeVector(n))); //double
 
-        if (n[1] < 0)
+        if (n.y < 0)
         {
             raan = 360 - raan;
         }
         
         
-        var arg = MathTools.toDegrees(Math.acos(MathTools.dotMultiply(n, e) /
-            (MathTools.magnitude(n) * emag)));  //double
+        var arg = MathTools.toDegrees(Math.acos(MathTools.dotMultiplyVector(n, e) /
+            (MathTools.magnitudeVector(n) * emag)));  //double
 
-        if (e[2] < 0)
+        if (e.z < 0)
         {
             arg = 360 - arg;
         }
         
-        // console.log("MathTools.dotMultiply(e, r) / (emag * rmag): " + MathTools.dotMultiply(e, r) / (emag * rmag) )
-        // console.log("Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiply(e, r) / (emag * rmag)));
+        // console.log("MathTools.dotMultiplyVector(e, r) / (emag * rmag): " + MathTools.dotMultiplyVector(e, r) / (emag * rmag) )
+        // console.log("Math.acos(MathTools.dotMultiplyVector(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiplyVector(e, r) / (emag * rmag)));
         
-        var value = MathTools.dotMultiply(e, r) / (emag * rmag);
+        var value = MathTools.dotMultiplyVector(e, r) / (emag * rmag);
         if(value > 1) {
             // console.log("setting to 1");
             value = 1;
         }
         var nu = MathTools.toDegrees(Math.acos(value)); //double
         // console.log("nu: " + nu);
-        if (MathTools.dotMultiply(v, r) < 0)
+        if (MathTools.dotMultiplyVector(v, r) < 0)
         {
             nu = 360 - nu;
         }

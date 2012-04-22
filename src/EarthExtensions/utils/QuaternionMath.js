@@ -72,9 +72,13 @@ var QuaternionMath = {
         A[2][1] = 2*q2*q3-2*q0*q1;
         A[2][2] = 2*q0*q0-1+2*q3*q3;
 
-        var matrixProduct = MathTools.multiply2dBy1d(A, inputVector);
+        var matrixProduct = MathTools.multiply2dBy1d(A, [inputVector.x, inputVector.y, inputVector.z]);
 
-        return matrixProduct;
+        return {
+            x: matrixProduct[0],
+            y: matrixProduct[1],
+            z: matrixProduct[2]
+        }
     },
 
     /**

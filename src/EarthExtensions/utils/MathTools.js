@@ -6,7 +6,7 @@ var MathTools = {
      * @param x vector
      * @param a vector
      *
-     * @returns Array of double
+     * @returns vector
      */
     scalarMultiplyVector: function(x, a)
     {
@@ -19,31 +19,11 @@ var MathTools = {
 
     /**
      *
-     * @param x Double[]
-     * @param y Double[]
+     * @param x vector
+     * @param y vector
      *
      * @returns double
      */
-    dotMultiply: function(x,  y)
-    {
-        if (x.length != y.length)
-        {
-            return 0.0;
-        }
-        else
-        {
-            var N = x.length; //int
-            var xDotY = 0.0;  //double
-
-            for (var i = 0; i < N; i++)
-            {
-                xDotY += (x[i] * y[i]);
-            }
-
-            return xDotY;
-        }
-    },
-
     dotMultiplyVector: function(x, y)
     {
         var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
@@ -93,11 +73,11 @@ var MathTools = {
 
     /**
     * @param x1 object 1's x coordinate
-    * @param x1 object 2's x coordinate
-    * @param x2 object 1's y coordinate
-    * @param x2 object 2's y coordinate
-    * @param x3 object 1's z coordinate
-    * @param x3 object 2's z coordinate
+    * @param x2 object 2's x coordinate
+    * @param y1 object 1's y coordinate
+    * @param y2 object 2's y coordinate
+    * @param z1 object 1's z coordinate
+    * @param z2 object 2's z coordinate
     * @return distance betewen points
     */
     distanceBetweenTwoPoints: function(x1, y1, z1, x2, y2, z2)
@@ -114,14 +94,6 @@ var MathTools = {
      *
      * @returns double
      */
-    magnitude: function(x)
-    {
-        var vectorMagnitude = 0; //double
-        vectorMagnitude = Math.sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-
-        return vectorMagnitude;
-    },
-
     magnitudeVector: function(x)
     {
         return Math.sqrt(x.x*x.x + x.y * x.y + x.z * x.z);
@@ -129,23 +101,11 @@ var MathTools = {
 
     /**
      *
-     * @param x Double[]
-     * @param y Double[]
+     * @param x vector
+     * @param y vector
      *
-     * @returns Array of double
+     * @returns vector
      */
-    cross: function(x, y)
-    {
-        var result = new Array(); //Double[3];
-
-        //returns the cross product of x cross y
-        result[0] = x[1] * y[2] - y[1] * x[2];    //i
-        result[1] = -(x[0] * y[2] - y[0] * x[2]); //j
-        result[2] = x[0] * y[1] - y[0] * x[1];    //k
-
-        return result;
-    },
-    
     crossVector: function(x, y)
     {
         var result = {
