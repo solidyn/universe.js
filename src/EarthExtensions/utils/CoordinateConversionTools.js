@@ -1,17 +1,17 @@
 var CoordinateConversionTools = {
 
     /**
+     * returns the Julian date equivalent of the date provided
+     * @param {Date} currentEpoch the time to be converted
      *
-     * @param currentEpoch Date
-     *
-     * @returns
+     * @returns {double} julianDate julian date in days
      */
     convertCurrentEpochToJulianDate: function(currentEpoch)
     {
         //convert a date to the Julian Date
         //this is the time since January 1, 4713 BC (12:00)
         //unit of measure = days
-	//console.log("convertCurrentEpochToJulianDate:currentEpoch: " + currentEpoch);
+        //console.log("convertCurrentEpochToJulianDate:currentEpoch: " + currentEpoch);
         var JD = 0;                               //double
         var year = currentEpoch.getUTCFullYear();  //int
         var month = currentEpoch.getUTCMonth() + 1;      //int
@@ -20,25 +20,25 @@ var CoordinateConversionTools = {
         var minute = currentEpoch.getUTCMinutes();   //int
         var second = currentEpoch.getUTCSeconds() + (currentEpoch.getUTCMilliseconds()/1000);   //double
 
-		// console.log("year: " + year);
-		// 		console.log("month: " + month);
-		// 		console.log("day: " + day);
-		// 		console.log("hour: " + hour);
-		// 		console.log("minute: " + minute);
-		// 		console.log("second: " + second);
+        // console.log("year: " + year);
+        // 		console.log("month: " + month);
+        // 		console.log("day: " + day);
+        // 		console.log("hour: " + hour);
+        // 		console.log("minute: " + minute);
+        // 		console.log("second: " + second);
 
         JD = 367 * year - Math.floor((7 * (year + Math.floor(((month + 9) / 12))) / 4)) +
-            Math.floor((275 * month / 9)) + (day) + 1721013.5 +
-            ((second / 60 + minute) / 60 + hour) / 24;
+        Math.floor((275 * month / 9)) + (day) + 1721013.5 +
+        ((second / 60 + minute) / 60 + hour) / 24;
 
         return JD;
     },
 
     /**
+     * returns the Greenwich mean sideral time for the current epoch
+     * @param {Date} currentEpoch the time to be converted
      *
-     * @param currentEpoch Date
-     *
-     * @returns double
+     * @returns {double} GST angle in degrees
      */
     convertTimeToGMST: function(currentEpoch)
     {
@@ -49,7 +49,7 @@ var CoordinateConversionTools = {
 
         //this is in seconds
         var GMST = 67310.54841 + (876600.0 * 3600 + 8640184.812866) * TUT +
-            0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;  //double
+        0.093104 * TUT * TUT - (0.0000062) * TUT * TUT * TUT;  //double
 
         var multiples = Math.floor(GMST / 86400.0); //double
 
@@ -65,10 +65,12 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the Earth Centered Earth Fixed XYZ equivalent of a passed
+     * lat/lon/alt coordinate. Note that the returned velocity terms in ECEF
+     * are set to zero (ignores Earth's rotation)
+     * @param {LLACoordinates} lla lat/lon/alt
      *
-     * @param LLACoordinates
-     *
-     * @returns ECEFCoordinates
+     * @returns {ECEFCoordinates} ecef Earth Centered Earth Fixed XYZ coordinates (km)
      */
     convertLLAtoECEF: function(lla)
     {
@@ -86,7 +88,7 @@ var CoordinateConversionTools = {
         //REFER TO VALLADO PAGE 144 and 150
         var cearth = Re / Math.sqrt(1 - eearth * eearth * sinLat * sinLat); //double
         var searth = Re * (1 - eearth * eearth) / 
-            Math.sqrt(1 - eearth * eearth * sinLat * sinLat); //double
+        Math.sqrt(1 - eearth * eearth * sinLat * sinLat); //double
 
         var x = (cearth + hellp) * (Math.cos(lat) * Math.cos(lon)); //double
         var y = (cearth + hellp) * (Math.cos(lat) * Math.sin(lon)); //double
@@ -98,10 +100,10 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the lat/lon/alt equivalent of an Earth Centered Earth Fixed coordinate
+     * @param {ECEFCoordinates} ecef Earth Centered Earth Fixed XYZ coordinates (km)
      *
-     * @param ecef ECEFCoordinates
-     *
-     * @returns LLACoordinates
+     * @returns {LLACoordinates} lla lat/lon/alt
      */
     convertECEFtoLLA: function(ecef)
     {
@@ -172,11 +174,13 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the Earth Centered Earth Fixed coordinate equivalent of the 
+     * provided Earth Centered Inertial coordinate at a given point in time
+     * represented by the Greenwich Mean Sideral Time angle
+     * @param {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
+     * @param {double} GST Greenwich Mean Sideral Time angle in degrees
      *
-     * @param eci ECICoordinates
-     * @param GST double
-     *
-     * @returns ECEFCoordinates
+     * @returns {ECEFCoordinates} ecef Earth Centered Earth Fixed XYZ coordinates (km)
      */
     convertECItoECEF: function(eci, GST)
     {
@@ -222,11 +226,13 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the Earth Centered Inertial coordinate equivalent of the 
+     * provided Earth Centered Earth Fixed coordinate at a given point in time
+     * represented by the Greenwich Mean Sideral Time angle
+     * @param {ECEFCoordinates} ecef Earth Centered Earth Fixed XYZ coordinates (km)
+     * @param {double} GST Greenwich Mean Sideral Time angle in degrees
      *
-     * @param ecef ECEFCoordinates
-     * @param GST  double
-     *
-     * @returns ECICoordinates
+     * @returns {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
      */
     convertECEFtoECI: function(ecef,  GST)
     {
@@ -272,11 +278,13 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the Lat/Lon/Alt coordinate equivalent of the 
+     * provided Earth Centered Inertial coordinate at a given point in time
+     * represented by the Greenwich Mean Sideral Time angle
+     * @param {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
+     * @param {double} GST Greenwich Mean Sideral Time angle in degrees
      *
-     * @param eci ECICoordinates
-     * @param GST double
-     *
-     * @returns LLACoordinates
+     * @returns {LLACoordinates} lla lat/lon/alt
      */
     convertECItoLLA: function(eci, GST)
     {
@@ -285,11 +293,13 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the Earth Centered Inertial coordinate equivalent of the 
+     * provided Lat/Lon/Alt coordinate at a given point in time
+     * represented by the Greenwich Mean Sideral Time angle
+     * @param {LLACoordinates} lla lat/lon/alt
+     * @param {double} GST Greenwich Mean Sideral Time angle in degrees
      *
-     * @param lla LLAcoordinates
-     * @param GST double
-     *
-     * @returns ECICoordinates
+     * @returns {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
      */
     convertLLAtoECI: function(lla, GST)
     {
@@ -298,10 +308,12 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * Estimates a vehicle's Earth Centered Inertial coordinates and velocity based upon the
+     * Keplerian orbital elements of the vehicle
+     * NOTE: results only valid for eccentricities <1 (elliptical and circular orbits)
+     * @param {KeplerianCoordinates} keplar Keplerian orbital elements of the vehicle
      *
-     * @param keplar KeplerianCoordinates
-     *
-     * @returns ECICoordinates
+     * @returns {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
      */
     convertKeplerianToECI: function(kepler)
     {
@@ -351,10 +363,12 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * Estimates a vehicle's keplerian orbital elements based upon the
+     * Earth Centered Inertial coordinates and velocity of the vehicle
+     * NOTE: results only valid for eccentricities <1 (elliptical and circular orbits)
+     * @param {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
      *
-     * @param eci ECICoordinates
-     *
-     * @returns KeplerianCoordinates
+     * @returns {KeplerianCoordinates} keplar Keplerian orbital elements of the vehicle
      *
      */
     convertECIToKeplerian: function(eci)
@@ -485,10 +499,12 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the rotation matrix (3x3) used to convert an Earth Centered Inertial
+     * coordinate to a satellites's Radial, Along Track, Cross Track coordinates 
+     * relative to the satellite's center
+     * @param {satellite} SimulationObject
      *
-     * @param satellite SimulationObject
-     *
-     * @returns double[][]
+     * @returns {double[][]} rotationMatrix (unitless)
      */
     buildRotationMatrixToConvertECItoRSW: function(satellite)
     {
@@ -516,11 +532,12 @@ var CoordinateConversionTools = {
     },
 
     /**
-     *
+     * returns the Radial, Along Track, Cross Track coordinate equivalent of a 
+     * provided Earth Centered Inertial coordinate relative to the satellite's center
      * @param satellite SimulationObject
-     * @param targetECI ECIcoordinates
+     * @param {ECICoordinates} targetECI Earth Centered Intertial XYZ coordinates of the target object/point(km)
      *
-     * @returns RSWcoordinates
+     * @returns {RSWcoordinates} rsw RSW equivalent point (km)
      *
      */
     convertTargetECIToSatelliteRSW: function(satellite, targetECI)
@@ -552,11 +569,12 @@ var CoordinateConversionTools = {
     },
 
     /**
-     *
+     * returns the Earth Centered Inertial coordinate equivalent of a provided 
+     * Radial, Along Track, Cross Track coordinate relative to the satellite's center
      * @param satellite SimulationObject
-     * @param rsw RSWcoordinates
+     * @param {RSWcoordinates} rsw RSW point in question (km)
      *
-     * @returns ECIcoordinates
+     * @returns {ECICoordinates} eci Earth Centered Intertial equivalent point (km)
      */
     convertRSWToECI: function(satellite, rsw)
     {
@@ -587,10 +605,11 @@ var CoordinateConversionTools = {
     },
 
     /**
+     * returns the position of the sun in Earth Centered Inertial coordinates
+     * at the indicated time
+     * @param {Date} currentEpoch the time in question
      *
-     * @param currentEpoch Date
-     *
-     * @returns ECIcoordinates
+     * @returns {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
      */
     getSunPositionECIAtCurrentTime: function(currentEpoch)
     {
@@ -602,12 +621,12 @@ var CoordinateConversionTools = {
         var lambdaSun = 280.4606184 + 36000.77005361 * TUT;  //solar angle (deg)
         var Msun = 357.5277233 + 35999.05034 * TUT;
         var lambdaEcliptic = lambdaSun + 1.914666471 *
-            Math.sin(MathTools.toRadians(Msun)) + 0.019994643 *
-            Math.sin(2 * MathTools.toRadians(Msun));//ecliptic angle (deg)
+        Math.sin(MathTools.toRadians(Msun)) + 0.019994643 *
+        Math.sin(2 * MathTools.toRadians(Msun));//ecliptic angle (deg)
 
         //distance of the sun in AU
         var rsun = 1.000140612 - 0.016708617 * Math.cos(MathTools.toRadians(Msun)) -
-            0.000139589 * Math.cos(2 * MathTools.toRadians(Msun));
+        0.000139589 * Math.cos(2 * MathTools.toRadians(Msun));
         var e = 23.439291 - 0.0130042 * TUT;  //ecliptic latitude on the earth
 
         var AU = 149597870.0;  //one astronomical unit (km)
@@ -622,33 +641,41 @@ var CoordinateConversionTools = {
         return sunPosition;
     },
 
-	convertCurrentEpochToBarycentricTime: function(currentEpoch)
-	{
+    /**
+     * returns the Barycentric time equivalent of the provided time
+     * at the indicated time
+     * NOTE: accurate on the order of 100 km
+     * @param {Date} currentEpoch the time in question
+     *
+     * @returns {double} BT Barycentric time equivalent (days)
+     */
+    convertCurrentEpochToBarycentricTime: function(currentEpoch)
+    {
         //reference Vallado 3rd edition page 201
         var UTC = new Date(currentEpoch);
 		
         //var newSeconds = (int) (UTC.getSeconds() - 0.463326);
-		var UTI = new Date(UTC.getTime() - 463);
-		//console.log("UTI: " + UTI)
+        var UTI = new Date(UTC.getTime() - 463);
+        //console.log("UTI: " + UTI)
 		
         //Date UTI = new Date(UTC.getYear(), UTC.getMonth(), UTC.getDate(), UTC.getHours(), UTC.getMinutes(), newSeconds);
         //newSeconds = (int) (UTI.getSeconds() + 32);
-		var TAI = new Date(UTI.getTime() + 32000);
+        var TAI = new Date(UTI.getTime() + 32000);
         //Date TAI = new Date(UTI.getYear(), UTI.getMonth(), UTI.getDate(), UTI.getHours(), UTI.getMinutes(), newSeconds);
 
-		var TT = new Date(TAI.getTime() + 32184);
+        var TT = new Date(TAI.getTime() + 32184);
         //newSeconds = (int) (TAI.getSeconds() + 32.184);
         //Date TT = new Date(TAI.getYear(), TAI.getMonth(), TAI.getDate(), TAI.getHours(), TAI.getMinutes(), newSeconds);
         
-		//console.log("TT: " + TT);
-		var JDtt = this.convertCurrentEpochToJulianDate(TT);
+        //console.log("TT: " + TT);
+        var JDtt = this.convertCurrentEpochToJulianDate(TT);
         var Ttt = (JDtt - 2451545.0) / 36525.0;
         //console.log("JDtt: " + JDtt);
-		//newSeconds = (int) (TT.getSeconds() + 0.001658 * Math.sin(628.3076 * Ttt + 6.2401));  //note, higher order terms are available
-		//console.log("equation: " + (0.001658 * Math.sin(628.3076 * Ttt + 6.2401)) * 1000)
+        //newSeconds = (int) (TT.getSeconds() + 0.001658 * Math.sin(628.3076 * Ttt + 6.2401));  //note, higher order terms are available
+        //console.log("equation: " + (0.001658 * Math.sin(628.3076 * Ttt + 6.2401)) * 1000)
         var TDB = new Date(TT.getTime() + ((0.001658 * Math.sin(628.3076 * Ttt + 6.2401)) * 1000));
-		//Date TDB = new Date(TT.getYear(), TT.getMonth(), TT.getDate(), TT.getHours(), TT.getMinutes(), newSeconds);
-		//console.log("TDB: " + TDB);
+        //Date TDB = new Date(TT.getYear(), TT.getMonth(), TT.getDate(), TT.getHours(), TT.getMinutes(), newSeconds);
+        //console.log("TDB: " + TDB);
         var JDtdb = this.convertCurrentEpochToJulianDate(TDB);
         var Ttdb = (JDtdb - 2451545.0) / 36525.0;  //julian centuries since January 1, 2000 12h UT1  //this is the terrestrial time
 
@@ -660,12 +687,20 @@ var CoordinateConversionTools = {
         return Ttdb;
     },
 
+    /**
+     * returns the position of the moon in Earth Centered Inertial coordinates
+     * at the indicated time
+     * NOTE: accurate on the order of 100 km
+     * @param {Date} currentEpoch the time in question
+     *
+     * @returns {ECICoordinates} eci Earth Centered Intertial XYZ coordinates (km)
+     */
     getMoonPositionECIAtCurrentTime: function(currentEpoch)
     {
-		//console.log("currentEpoch: " + currentEpoch);
+        //console.log("currentEpoch: " + currentEpoch);
         //reference Vallado 3rd ed page 291
         var Ttdb = CoordinateConversionTools.convertCurrentEpochToBarycentricTime(currentEpoch);
-		//console.log("Ttdb: " + Ttdb);
+        //console.log("Ttdb: " + Ttdb);
         var lambda = 218.32 + 481267.8813 * Ttdb;
         lambda += 6.29 * Math.sin(MathTools.toRadians(134.9 + 477198.85 * Ttdb));
         lambda += -1.27 * Math.sin(MathTools.toRadians(259.2 - 413335.38 * Ttdb));
@@ -715,9 +750,9 @@ var CoordinateConversionTools = {
         var rMoon=1/Math.sin(MathTools.toRadians(parallax));//earth radii
         rMoon=rMoon*Constants.radiusEarth;//km
 
-		// console.log("lambda: " + lambda);
-		// console.log("phi: " + phi);
-		// console.log("parallax: " + parallax);
+        // console.log("lambda: " + lambda);
+        // console.log("phi: " + phi);
+        // console.log("parallax: " + parallax);
         e=MathTools.toRadians(e);
         phi=MathTools.toRadians(phi);
         lambda=MathTools.toRadians(lambda);

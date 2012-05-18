@@ -2,11 +2,11 @@
 var MathTools = {
 
     /**
+     * returns the product of a vector and a scalar
+     * @param {vector} x (unitless)
+     * @param {Number} a (unitless)
      *
-     * @param x vector
-     * @param a vector
-     *
-     * @returns vector
+     * @returns {vector} product (unitless)
      */
     scalarMultiplyVector: function(x, a)
     {
@@ -18,11 +18,11 @@ var MathTools = {
     },
 
     /**
+     * returns the dot product of two vectors
+     * @param {vector} x (unitless)
+     * @param {vector} y (unitless)
      *
-     * @param x vector
-     * @param y vector
-     *
-     * @returns double
+     * @returns {Number} dotProduct (unitless)
      */
     dotMultiplyVector: function(x, y)
     {
@@ -32,11 +32,11 @@ var MathTools = {
     },
     
     /**
+     * returns the angle between two vectors
+     * @param {vector} x (unitless)
+     * @param {vector} y (unitless)
      *
-     * @param x vector
-     * @param y vector
-     *
-     * @returns double
+     * @returns {Number} angle
      */
     angleBetweenTwoVectorsVector: function(x, y)
     {
@@ -56,9 +56,11 @@ var MathTools = {
     },
 
     /**
-    * @param x - vector in {x, y, z}
-    * @param y - vector in {x, y, z}
-    * @return distance betewen points
+    * returns the distance between two points
+    * @param {vector} x (unitless)
+    * @param {vector} y (unitless)
+    * 
+    * @return {Number} distance (unitless)
     */
     distanceBetweenTwoPoints: function(x, y)
     {
@@ -72,13 +74,17 @@ var MathTools = {
     },
 
     /**
-    * @param x1 object 1's x coordinate
-    * @param x2 object 2's x coordinate
-    * @param y1 object 1's y coordinate
-    * @param y2 object 2's y coordinate
-    * @param z1 object 1's z coordinate
-    * @param z2 object 2's z coordinate
-    * @return distance betewen points
+    * an alternate form of 'distanceBetweenTwoPoints', this form takes in six Numbers
+    * assumed to be defining (x,y,z) of point 1 and (x,y,z) of point 2
+    * and returns the distance between the two points
+    * @param {Number} x1 x-coordinate of the first point
+    * @param {Number} y1 y-coordinate of the first point
+    * @param {Number} z1 z-coordinate of the first point
+    * @param {Number} x2 x-coordinate of the second point
+    * @param {Number} y2 y-coordinate of the second point
+    * @param {Number} z2 z-coordinate of the second point
+    * 
+    * @return {Number} distance (unitless)
     */
     distanceBetweenTwoPoints: function(x1, y1, z1, x2, y2, z2)
     {
@@ -89,10 +95,10 @@ var MathTools = {
     },
 
     /**
+     * returns the magnitude of a vector
+     * @param {vector} x
      *
-     * @param x Double[]
-     *
-     * @returns double
+     * @returns {Number} magnitude magnitude of x
      */
     magnitudeVector: function(x)
     {
@@ -100,11 +106,11 @@ var MathTools = {
     },
 
     /**
+     * returns the cross product of two vectors
+     * @param {vector} x
+     * @param {vector} y
      *
-     * @param x vector
-     * @param y vector
-     *
-     * @returns vector
+     * @returns {vector} crossProduct cross product of x and y
      */
     crossVector: function(x, y)
     {
@@ -118,11 +124,11 @@ var MathTools = {
     },
 
     /**
+     * rotates vector 'vec' about the x-axis by 'x' degrees
+     * @param {Number} x (degrees)
+     * @param {Double[]} vec (an array of length 3, assumed to be x,y,z values)
      *
-     * @param x   double
-     * @param vec Double[]
-     *
-     * @returns Array of double
+     * @returns {Double[]} result (3x1)
      */
     rot1: function(x, vec)
     {
@@ -137,11 +143,11 @@ var MathTools = {
     },
 
     /**
+     * rotates vector 'vec' about the y-axis by 'x' degrees
+     * @param {Number} x (degrees)
+     * @param {Double[]} vec (an array of length 3, assumed to be x,y,z values)
      *
-     * @param x   double
-     * @param vec Double[]
-     *
-     * @returns Array of double
+     * @returns {Double[]} result (3x1)
      */
     rot2: function(x, vec)
     {
@@ -157,11 +163,11 @@ var MathTools = {
     },
 
     /**
+     * rotates vector 'vec' about the z-axis by 'x' degrees
+     * @param {Number} x (degrees)
+     * @param {Double[]} vec (an array of length 3, assumed to be x,y,z values)
      *
-     * @param x   double
-     * @param vec Double[]
-     *
-     * @returns Array of double
+     * @returns {Double[]} result (3x1)
      */
     rot3: function(x, vec)
     {
@@ -177,10 +183,10 @@ var MathTools = {
     },
 
     /**
+     * returns the radian equivalent of an angle provided in degrees
+     * @param {Number} valueInDegrees 
      *
-     * @param valueInDegrees   double
-     *
-     * @returns double
+     * @returns {Number} valueInRadians
      */
     toRadians: function(valueInDegrees)
     {
@@ -189,10 +195,10 @@ var MathTools = {
     },
 
     /**
+     * returns the degree equivalent of an angle provided in radians
+     * @param {Number} valueInRadians 
      *
-     * @param valueInRadians double
-     *
-     * @returns double
+     * @returns {Number} valueInDegrees
      */
     toDegrees: function(valueInRadians)
     {
@@ -201,10 +207,11 @@ var MathTools = {
     },
 
     /**
+     * returns the 3x3 rotation matrix that is used to rotate a vector
+     * about the x-axis by 'x' degrees
+     * @param {Number} x (degrees)
      *
-     * @param x double
-     *
-     * @returns double[3][3]
+     * @returns {Number[][]} rotationMatrix  (3x3)
      */
     buildRotationMatrix1: function(x)
     {
@@ -231,10 +238,11 @@ var MathTools = {
     },
 
     /**
+     * returns the 3x3 rotation matrix that is used to rotate a vector
+     * about the y-axis by 'x' degrees
+     * @param {Number} x (degrees)
      *
-     * @param x double
-     *
-     * @returns double[3][3]
+     * @returns {Number[][]} rotationMatrix  (3x3)
      */
     buildRotationMatrix2: function(x)
     {
@@ -261,10 +269,11 @@ var MathTools = {
     },
 
     /**
+     * returns the 3x3 rotation matrix that is used to rotate a vector
+     * about the z-axis by 'x' degrees
+     * @param {Number} x (degrees)
      *
-     * @param x double
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} rotationMatrix  (3x3)
      */
     buildRotationMatrix3: function(x)
     {
@@ -291,10 +300,11 @@ var MathTools = {
     },
 
     /**
+     * returns an identity matrix (a matrix of all zeros with ones on the diagonals)
+     * of size (NxN)
+     * @param {int} N size of the desired identity matrix (NxN)
      *
-     * @param N int
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} identityMatrix (size NxN)
      */
     ones: function(N)
     {
@@ -326,11 +336,11 @@ var MathTools = {
         return x;
     },
 
-    /**
+   /**
+     * returns a matrix full of zeros (no null values) of size (NxN)
+     * @param {int} N size of the desired matrix (NxN)
      *
-     * @param N int
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} zerosMatrix (size NxN)
      */
     zeros: function(N)
     {
@@ -355,12 +365,12 @@ var MathTools = {
         return x;
     },
 
-    /**
+   /**
+     * returns a matrix full of zeros (no null values) of size (MxN)
+     * @param {int} M number of rows in the desired matrix (MxN)
+     * @param {int} N number of columns the desired matrix (MxN)
      *
-     * @param M int
-     * @param N int
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} zerosMatrix (size MxN)
      */
     zeros: function(M, N)
     {
@@ -386,11 +396,12 @@ var MathTools = {
     },
 
     /**
+     * returns the product of two arrays where the first array is 1xN in size and the
+     * second array is NxM in size
+     * @param {Number[]} x 1d array of size (1xN)
+     * @param {Number[][]} y 2d array of size (NxM)
      *
-     * @param x 1d array
-     * @param y 2d array
-     *
-     * @returns Double[]
+     * @returns {Number[]} product 1d array of size (1xM)
      */
     multiply1dBy2d: function(x, y)
     {
@@ -421,11 +432,12 @@ var MathTools = {
     },
 
     /**
+     * returns the product of two arrays where the first array is MxN in size and the
+     * second array is Nx1 in size
+     * @param {Number[][]} x 2d array of size (MxN)
+     * @param {Number[]} y 1d array of size (Nx1)
      *
-     * @param x 2d array
-     * @param y 1d array
-     *
-     * @returns Double[]
+     * @returns {Number[]} product 1d array of size (Mx1)
      */
     multiply2dBy1d: function(x, y)
     {
@@ -457,11 +469,11 @@ var MathTools = {
     },
 
     /**
+     * returns a matrix multiplied by a scalar
+     * @param {Number} h scalar
+     * @param {Number[][]} x 2d array of size (MxN)
      *
-     * @param h double
-     * @param x 2d array
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} product 2d array of size (MxN)
      */
     multiplyDoubleBy2d: function(h, x)
     {
@@ -495,12 +507,13 @@ var MathTools = {
         return hTimesX;
     },
 
-    /**
+   /**
+     * returns the product of two arrays where the first array is MxN in size and the
+     * second array is NxP in size
+     * @param {Number[][]} x 2d array of size (MxN)
+     * @param {Number[][]} y 2d array of size (NxP)
      *
-     * @param x Double[][]
-     * @param y Double[][]
-     *
-     * @returns Double[][] 
+     * @returns {Number[][]} product 2d array of size (MxP)
      */
     multiply2dBy2d: function(x, y)
     {
@@ -547,10 +560,11 @@ var MathTools = {
     },
 
     /**
+     * returns the transpose of an array
+     * given an array of size (MxN), this will transpose the matrix to size (NxM)
+     * @param {Number[][]} x 2d array of size (MxN)
      *
-     * @param x Double[][]
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} transpose 2d array of size (NxM)
      */
     transposeMatrix: function(x)
     {
@@ -581,11 +595,12 @@ var MathTools = {
     },
 
     /**
+     * returns the sum of two arrays of size (Nx1)
+     * NOTE: both arrays must be of the same size
+     * @param {Number[]} x 1d array of size (Nx1)
+     * @param {Number[]} y 1d array of size (Nx1)
      *
-     * @param x Double[]
-     * @param y Double[]
-     *
-     * @returns Double[]
+     * @returns {Number[]} sum 1d array of size (Nx1)
      */
     add1dTo1d: function(x, y)
     {
@@ -609,13 +624,13 @@ var MathTools = {
         return returnVal;
     },
 
-    /**
+        /**
+     * returns the sum of two arrays of size (MxN)
+     * NOTE: both arrays must be of the same size
+     * @param {Number[][]} x 2d array of size (MxN)
+     * @param {Number[][]} y 2d array of size (MxN)
      *
-     * @param x Double[][]
-     * @param y Double[][]
-     *
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} sum 1d array of size (MxN)
      */
     add2dTo2d: function(x, y)
     {
@@ -652,11 +667,12 @@ var MathTools = {
     },
 
     /**
+     * returns the difference of two arrays of size (MxN)  (x - y)
+     * NOTE: both arrays must be of the same size
+     * @param {Number[][]} x 2d array of size (MxN)
+     * @param {Number[][]} y 2d array of size (MxN)
      *
-     * @param x Double[][]
-     * @param y Double[][]
-     *
-     * @returns Double[][]
+     * @returns {Number[][]} difference 2d array of size (MxN) representing x-y
      */
     subtract2dMinus2d: function(x, y)
     {
@@ -693,11 +709,12 @@ var MathTools = {
     },
 
     /**
+     * returns the difference of two arrays of size (Nx1)  (x - y)
+     * NOTE: both arrays must be of the same size
+     * @param {Number[]} x 1d array of size (Nx1)
+     * @param {Number[]} y 1d array of size (Nx1)
      *
-     * @param x Double[]
-     * @param y Double[]
-     *
-     * @returns Double[]
+     * @returns {Number[]} difference 1d array of size (Nx1) representing x-y
      */
     subtract1dMinus1d: function(x, y)
     {
