@@ -13,8 +13,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	
     // constants
     var earthSphereRadius = Constants.radiusEarth;
-
-    var centerPoint = new THREE.Vector3(0,0,0);
 	
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableVisibilityLines = false;
@@ -74,50 +72,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         universe.getObjectFromLibraryById(spaceObject.modelId, function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
             universe.getObjectFromLibraryById("default_material", function(retrieved_material) {
-                material = retrieved_material;
-
-                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( -Math.PI/2, 0, 0 ) ));
-                var objectModel = new THREE.Mesh(objectGeometry, material);
-
-                var spaceGraphicsObject = new UNIVERSE.GraphicsObject(
-                    spaceObject.id,
-                    spaceObject.objectName,
-                    undefined,
-                    function(elapsedTime) {
-                        // need to pass a time to the propagator
-                        var propagatedLocation = spaceObject.propagator();
-                        var convertedLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
-                        if(convertedLocation != undefined) {
-                            objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-
-                            //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                            objectModel.lookAt(centerPoint);
-                            this.currentLocation = propagatedLocation;
-                        }
-                    },
-                    function() {
-                        universe.draw(this.id, objectModel, false);
-                        earthExtensions.showModelForId(spaceObject.showVehicle, this.id);
-                    }
-                    )
-                universe.addObject(spaceGraphicsObject);
+                universe.addObject(spaceObject.getGraphicsObject(retrieved_material, objectGeometry, universe, earthExtensions));
                 universe.updateOnce();
                 callback();
-
-                earthExtensions.addPropogationLineForObject(spaceObject, callback);
-                earthExtensions.showOrbitLineForObject(spaceObject.showPropogationLine, spaceObject.id);
-
-                earthExtensions.addGroundTrackPointForObject(spaceObject, callback);
-                earthExtensions.showGroundTrackForId(spaceObject.showGroundTrackPoint, spaceObject.id);
-
-                earthExtensions.addSensorProjections(spaceObject, callback);
-                earthExtensions.showSensorProjectionForId(spaceObject.showSensorProjections, spaceObject.id);
-
-                earthExtensions.addSensorFootprintProjections(spaceObject, callback);
-                earthExtensions.showSensorFootprintProjectionsForId(spaceObject.showSensorFootprintProjections, spaceObject.id);
-				
-                earthExtensions.addSensorVisibilityLines(spaceObject, callback);
-                earthExtensions.showSensorVisibilityLinesForId(spaceObject.showSensorVisibilityLines, spaceObject.id);
             });
         });
     };
