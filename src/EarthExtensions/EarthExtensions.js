@@ -16,8 +16,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableVisibilityLines = false;
-    var enableSensorProjections = false;
-    var enableSensorFootprintProjections = false;
+    this.enableSensorProjections = false;
+    this.enableSensorFootprintProjections = false;
     var enableSubSatellitePoints = false;
     var enablePropagationLines = false;
     this.lockCameraToWithEarthRotation = false;
@@ -27,7 +27,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     // Is the sun-lighting on the Earth enabled or disabled
     this.useSunLighting = isSunLighting ? isSunLighting : true;
     
-    var defaultObjects = new UNIVERSE.DefaultObjects(universe);
+    this.defaultObjects = new UNIVERSE.DefaultObjects(universe);
 
     /**
         Add the Earth at the center of the Universe
@@ -160,6 +160,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.addGroundObject = function(groundObject, callback) {
         var objectGeometry, objectMaterial, material;
+        
         if(!groundObject.modelId) {
             groundObject.modelId = "default_ground_object_geometry";
             material = "default_ground_object_material";
@@ -167,37 +168,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         else {
             material = "default_material";
         }
+        
         universe.getObjectFromLibraryById(groundObject.modelId, function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
+            
             universe.getObjectFromLibraryById(material, function(retrieved_material) {
-                objectMaterial = retrieved_material;
-                objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
-                var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
-
-                var groundGraphicsObject = new UNIVERSE.GraphicsObject(
-                    groundObject.id,
-                    groundObject.objectName,
-                    undefined,
-                    function(elapsedTime) {
-                        // check earth rotation and update location
-                        var propagatedPosition = groundObject.propagator();
-                        var position = earthExtensions.eciTo3DCoordinates(propagatedPosition);
-                        groundObjectMesh.position.set(position.x, position.y, position.z);
-                        this.currentLocation = propagatedPosition;
-
-                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                        var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
-
-                        // arbitrary size, just a point along the position vector further out for the object to lookAt
-                        scaled_position_vector.multiplyScalar(1.4);
-
-                        groundObjectMesh.lookAt(scaled_position_vector);
-                    },
-                    function() {
-                        universe.draw(this.id, groundObjectMesh, true);
-                    }
-                    );
-                universe.addObject(groundGraphicsObject);
+                universe.addObject(groundObject.getGraphicsObject(retrieved_material, objectGeometry, universe, earthExtensions));
                 universe.updateOnce();
                 callback();
             });
@@ -214,35 +190,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         universe.getObjectFromLibraryById("default_ground_object_geometry", function(retrieved_geometry) {
             objectGeometry = retrieved_geometry;
             universe.getObjectFromLibraryById("default_ground_track_material", function(retrieved_material) {
-                objectMaterial = retrieved_material;
-
-
-                var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
-
-                var groundGraphicsObject = new UNIVERSE.GraphicsObject(
-                    object.id + "_groundPoint",
-                    object.objectName,
-                    undefined,
-                    function(elapsedTime) {
-                        //if(enableSubSatellitePoints) {
-                        var propagatedLocation = object.propagator(undefined, false);
-                        var objectLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
-                        if(objectLocation != undefined) {
-                            var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
-
-                            // move the vector to the surface of the earth
-                            vector.multiplyScalar(earthSphereRadius / vector.length())
-
-                            groundObjectMesh.position.copy(vector);
-                        }
-                        this.currentLocation = propagatedLocation;
-                    //}
-                    },
-                    function() {
-                        universe.draw(this.id, groundObjectMesh, true);
-                    }
-                    );
-                universe.addObject(groundGraphicsObject);
+                var groundTrackPoint = new UNIVERSE.GroundTrackPoint(object, universe, earthExtensions, retrieved_material, objectGeometry);
+                universe.addObject(groundTrackPoint);
                 universe.updateOnce();
                 callback();
             });
@@ -257,56 +206,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.addPropogationLineForObject = function(object, callback) {
         var objectGeometry, objectMaterial;
         objectGeometry = new THREE.Geometry();
+        
         universe.getObjectFromLibraryById("default_orbit_line_material", function(retrieved_material) {
-            objectMaterial = retrieved_material;
-            var timeToPropogate = new Date(universe.getCurrentUniverseTime());
-            var loopCount = 1440;
-                        
-            var eciLocations = new Array();
-
-            // draw a vertex for each minute in a 24 hour period
-            // dropped this to a vertex for every 5 minutes.  This seems to be about the max that you can use for a LEO
-            // and still look decent.  HEOs and GEOs look fine with much greater spans.  For performance reasons, may want
-            // to make this a param that can be set per vehicle
-            for(var j = 0; j < loopCount; j += 5) {
-                var location = object.propagator(timeToPropogate, false);
-                eciLocations.push(location);
-                var convertedLocation = earthExtensions.eciTo3DCoordinates(location);
-                if(convertedLocation != undefined) {
-                    var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-                    objectGeometry.vertices.push(new THREE.Vertex(vector));
-                }
-
-                timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 5);
-            }
-
-            var lineS = new THREE.Line(objectGeometry, objectMaterial);
-
-            var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-                object.id + "_propogation",
-                object.objectName,
-                undefined,
-                function(elapsedTime) {
-                    if(earthExtensions.lockCameraToWithEarthRotation) {
-                        var length = eciLocations.length;
-                        for(var i = 0; i < length; i++) {
-                            var convertedLocation = earthExtensions.eciTo3DCoordinates(eciLocations[i]);
-                            if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
-                                lineS.geometry.vertices[i].position = {
-                                    x: convertedLocation.x, 
-                                    y: convertedLocation.y, 
-                                    z: convertedLocation.z
-                                }
-                            }
-                        }
-                        lineS.geometry.__dirtyVertices = true;
-                    }
-                    
-                },
-                function() {
-                    universe.draw(this.id, lineS, false);
-                }
-                );
+            var lineGraphicsObject = new UNIVERSE.PropogationLine(object, universe, earthExtensions, retrieved_material, objectGeometry)
             universe.addObject(lineGraphicsObject);
             universe.updateOnce();
             callback();
@@ -320,68 +222,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.addSensorProjection = function(sensor, spaceObject) {
 
-
-        var objectGeometry, objectMaterial;
-
         // Determine the object's location in 3D space
         var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
+        
         if(objectLocation != undefined) {
-            // Create a SensorPattern
-
-            var sensorPointCount = 30;
-            // obtain the points of the sensor
-            var points = sensor.buildPointsToDefineSensorShapeInECI(sensorPointCount, spaceObject);
-            //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
-            var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
-
-
-            var THREEPoints = new Array( extendedPoints.length );
-            var pointCount = extendedPoints.length;
-            for(var j = 0; j< pointCount; j++) {
-                var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
-                THREEPoints[j] = coord;
-            }
-            objectGeometry = new SensorProjection(objectLocation, THREEPoints);
-
-            var objectMaterial = new THREE.MeshBasicMaterial({
-                color: defaultObjects.sensorColors.nextColor(),
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-                opacity: 0.15,
-                overdraw: true
-            });
-
-            var sensorProjection = new THREE.Mesh(objectGeometry, objectMaterial);
-
-            sensorProjection.doubleSided=true;
-
-            var sensorProjectionGraphicsObject = new UNIVERSE.GraphicsObject(
-                spaceObject.id + "_sensorProjection_" + sensor.name,
-                spaceObject.objectName,
-                undefined,
-                function(elapsedTime) {
-                    if(enableSensorProjections) {
-                        var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
-
-                        if(objectLocation != undefined) {
-
-                            var points = sensor.buildPointsToDefineSensorShapeInECI(sensorPointCount, spaceObject);
-                            var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
-
-                            THREEPoints = [];
-                            for(var j = 0; j< pointCount; j++) {
-                                var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
-                                THREEPoints[j] = coord;
-                            }
-                            sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);
-                        }
-                    }
-                },
-                function() {
-                    universe.draw(this.id, sensorProjection, false);
-                }
-                );
-            universe.addObject(sensorProjectionGraphicsObject);
+            var sensorProjection = UNIVERSE.SensorProjection(sensor, spaceObject, universe, earthExtensions, objectLocation)
+            universe.addObject(sensorProjection);
             universe.updateOnce();
         }
     }
@@ -407,64 +253,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     }
 	
     this.addSensorFootprintProjection = function(sensor, spaceObject) {
-        var objectMaterial = new THREE.LineBasicMaterial({
-            color : get_random_color(),
-            opacity : .5,
-            linewidth : 3
-        });
-
-        //console.log("sensor: " + JSON.stringify(spaceObject.sensors[i]));
-        var objectGeometry = new THREE.Geometry();
-
-        var points = sensor.buildPointsToDefineSensorShapeInECI(40, spaceObject);
-        //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
-        var extendedPoints = sensor.findProjectionPoints(points, spaceObject, 1000);
-		
-        for(var j = 0; j< extendedPoints.length; j++) {
-            var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
-            objectGeometry.vertices.push(new THREE.Vertex(vector));
-        }
-
-        objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
-
-        var line = new THREE.Line(objectGeometry, objectMaterial);
-
-        
-        var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-            spaceObject.id + "_footprint_" + sensor.name,
-            undefined,
-            undefined,
-            function(elapsedTime) {
-                if(enableSensorFootprintProjections) {
-                    var points = this.sensor.buildPointsToDefineSensorShapeInECI(40, spaceObject);
-                    //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
-                    var extendedPoints = this.sensor.findProjectionPoints(points, spaceObject, 1000);
-                    //console.log("points: " + JSON.stringify(extendedPoints));
-
-                    for(var k = 0; k < extendedPoints.length; k++) {
-                        var convertedLocation = earthExtensions.eciTo3DCoordinates(extendedPoints[k]);
-                        line.geometry.vertices[k].position = {
-                            x: convertedLocation.x, 
-                            y: convertedLocation.y, 
-                            z: convertedLocation.z
-                        }
-                    }
-                                        
-                    var convertedLastPoint = earthExtensions.eciTo3DCoordinates(extendedPoints[0]);
-                    line.geometry.vertices[extendedPoints.length].position = {
-                        x: convertedLastPoint.x, 
-                        y: convertedLastPoint.y, 
-                        z: convertedLastPoint.z
-                    }
-
-                    line.geometry.__dirtyVertices = true;
-                }
-            },
-            function() {
-                universe.draw(this.id, line, false) ;
-            }
-            );
-        lineGraphicsObject.sensor = sensor;
+        var lineGraphicsObject = new UNIVERSE.SensorFootprintProjection(sensor, spaceObject, universe, earthExtensions);
         universe.addObject(lineGraphicsObject);
         universe.updateOnce();
     }
@@ -734,7 +523,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.showAllSensorProjections = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
 		
-        enableSensorProjections = isEnabled;
+        this.enableSensorProjections = isEnabled;
 
         for(var i in graphicsObjects) {
             if(graphicsObjects[i].id.indexOf("_sensorProjection") != -1){
@@ -768,7 +557,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.showAllSensorFootprintProjections = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
 		
-        enableSensorFootprintProjections = isEnabled;
+        this.enableSensorFootprintProjections = isEnabled;
 
         for(var i in graphicsObjects) {
             if(graphicsObjects[i].id.indexOf("_footprint") != -1){
@@ -947,15 +736,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             vy : location.vz,
             vz : location.vy
         };
-    }
-
-    function get_random_color() {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '0x';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.round(Math.random() * 15)];
-        }
-        return color;
     }
 };
 
