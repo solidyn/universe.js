@@ -1,0 +1,99 @@
+
+<project name="universe" default="dist">
+
+    <property name="build.dir" value="build" />
+    <property name="dist.dir" value="${build.dir}/dist" />
+    <property name="docs.dir" value="${build.dir}/docs" />
+    
+    <!-- output files -->
+    <property name="universe.libs.file" value="${build.dir}/universe-libs.js" />
+    <property name="universe.core.file" value="${build.dir}/universe-core.js" />
+    <property name="universe.file" value="${dist.dir}/universe.js" />
+    <property name="earthext.file" value="${dist.dir}/UniverseEarthExtensions.js" />
+    <property name="dist.file" value="${dist.dir}/universe-js.zip" />
+
+    <target name="dist" depends="clean, build, test, docs">
+        <zip destfile="${dist.file}" basedir="${dist.dir}" />
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${docs.dir}" />
+    </target>
+
+    <target name="build" depends="-build-universe, -build-earthext"/>
+
+    <target name="-build-universe">
+        <concat destfile="${universe.libs.file}">
+            <fileset dir="lib">
+                <include name="Three/**/*.js"/>
+                <include name="Input/**/*.js"/>
+            </fileset>
+        </concat>
+        
+        <concat destfile="${universe.core.file}">
+            <fileset dir="src">
+                <include name="core/**/*.js"/>
+                <include name="core/Universe.js"/>
+            </fileset>
+        </concat>
+        
+        <concat destfile="${universe.file}">
+            <fileset file="${universe.libs.file}" />
+            <fileset file="${universe.core.file}" />
+        </concat>
+        
+        <minify file="${universe.file}" />
+    </target>
+    
+    <target name="-build-earthext">
+        <concat destfile="${earthext.file}">
+            <fileset dir="src">
+                <include name="EarthExtensions/**/*.js"/>
+                <include name="EarthExtensions/*.js"/>
+            </fileset>
+        </concat>
+        
+        <minify file="${earthext.file}" />
+    </target>
+
+    <macrodef name="minify">
+        <attribute name="file"/>
+        <sequential>
+            <apply executable="java" parallel="false">
+                <arg line="-jar"/>
+                <arg path="utils/yuicompressor-2.4.7.jar"/>
+                <srcfile/>
+                <fileset file="@{file}"/>
+                <arg line="-o"/>
+                <globmapper from="*.js" to="${dist.dir}/*-min.js"/>
+                <targetfile/>
+            </apply>
+        </sequential>
+    </macrodef>
+
+    <target name="test">
+        <exec executable="utils/jscoverage">
+            <arg line="-v src build/instrumented" />
+        </exec>
+        <echo message="Test and coverage can be viewed at /build/instrumented" />
+        
+        <apply executable="java"  parallel="true"
+               force="true" output="build/jshint-output.txt">
+            <arg line="-jar ./utils/rhino1_7R3/js.jar utils/jshint-rhino.js" />
+            <fileset dir="." includes="src/**/*.js" />
+            <identitymapper />
+            <targetfile/>
+        </apply>
+        <echo message="JSHint output can be viewed at build/jshint-output.txt" />
+    </target>
+    
+    <target name="docs">
+        <exec executable="java">
+            <arg line="-jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js" />
+            <arg line="-a ${universe.core.file} ${earthext.file}" />
+            <arg line="-t=utils/jsdoc/templates/universe_web" />
+            <arg line="--suppress -d=${docs.dir}" />
+        </exec>
+    </target>
+</project>
