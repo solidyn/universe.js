@@ -63,4 +63,4 @@ var NearCircularPropagator = {
         eciState.setAZ(0.0);
         return eciState;
     }
-}
+};

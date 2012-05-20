@@ -25,22 +25,25 @@
 
     <target name="-build-universe">
         <concat destfile="${universe.libs.file}">
-            <fileset dir="lib">
-                <include name="Three/**/*.js"/>
-                <include name="Input/**/*.js"/>
-            </fileset>
+            <filelist dir="lib">
+                <file name="Three/ThreeWebGL.js"/>
+                <file name="Three/Detector.js"/>
+                <file name="Three/ThreeExtras.js"/>
+                <file name="Three/RequestAnimationFrame.js"/>
+                <file name="Input/input.js"/>
+            </filelist>
         </concat>
         
         <concat destfile="${universe.core.file}">
-            <fileset dir="src">
-                <include name="core/**/*.js"/>
-                <include name="core/Universe.js"/>
-            </fileset>
+            <fileset dir="src/core" includes="**/*.js"/>
+            <filelist dir="src" files="Universe.js"/>
         </concat>
         
         <concat destfile="${universe.file}">
-            <fileset file="${universe.libs.file}" />
-            <fileset file="${universe.core.file}" />
+            <filelist>
+                <file name="${universe.libs.file}" />
+                <file name="${universe.core.file}" />
+            </filelist>
         </concat>
         
         <minify file="${universe.file}" />
@@ -48,10 +51,8 @@
     
     <target name="-build-earthext">
         <concat destfile="${earthext.file}">
-            <fileset dir="src">
-                <include name="EarthExtensions/**/*.js"/>
-                <include name="EarthExtensions/*.js"/>
-            </fileset>
+            <fileset dir="src" includes="EarthExtensions/**/*.js"/>
+            <filelist dir="src" files="EarthExtensions/EarthExtensions.js"/>
         </concat>
         
         <minify file="${earthext.file}" />
@@ -95,5 +96,11 @@
             <arg line="-t=utils/jsdoc/templates/universe_web" />
             <arg line="--suppress -d=${docs.dir}" />
         </exec>
+    </target>
+    
+    <target name="fix">
+        <fixcrlf srcdir="src" includes="**/*.js"
+                 tab="remove" tablength="4"
+                 eol="lf" eof="remove" />
     </target>
 </project>

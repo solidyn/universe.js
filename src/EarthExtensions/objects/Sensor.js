@@ -20,17 +20,17 @@ UNIVERSE.Sensor = function(name, shape) {
         x: 0.0,
         y: 0.0,
         z: 1.0
-    }
+    };
 
     this.quaternionFromRSWToSensor.setW(Math.cos(this.rotationRadians / 2.0));
     this.quaternionFromRSWToSensor.setX(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.x);
     this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.y);
     this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.z);
 
-	
+    
     this.rotateSensorAboutRadialVector = function(rotationAngle)
     {
-        if (rotationAngle && rotationAngle != 0)
+        if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
@@ -38,7 +38,7 @@ UNIVERSE.Sensor = function(name, shape) {
                 x: 1.0,
                 y: 0.0,
                 z: 0.0
-            }
+            };
             
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
@@ -48,11 +48,11 @@ UNIVERSE.Sensor = function(name, shape) {
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
-    }
+    };
 
     this.rotateSensorAboutAlongTrackVector = function(rotationAngle)
     {
-        if (rotationAngle && rotationAngle != 0)
+        if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
@@ -60,7 +60,7 @@ UNIVERSE.Sensor = function(name, shape) {
                 x: 0.0,
                 y: 1.0,
                 z: 0.0
-            }
+            };
             
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
@@ -70,11 +70,11 @@ UNIVERSE.Sensor = function(name, shape) {
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
-    }
+    };
 
     this.rotateSensorAboutCrossTrackVector = function(rotationAngle)
     {
-        if (rotationAngle && rotationAngle != 0)
+        if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
             var rotationRadians = MathTools.toRadians(rotationAngle);
@@ -82,7 +82,7 @@ UNIVERSE.Sensor = function(name, shape) {
                 x: 0.0,
                 y: 0.0,
                 z: 1.0
-            }
+            };
             
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
@@ -92,37 +92,37 @@ UNIVERSE.Sensor = function(name, shape) {
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
-    }
+    };
 
     this.getSensorQuaternionRSW = function()
     {
         return this.quaternionFromRSWToSensor;
-    }
+    };
 
     this.setSensorQuaternionRSW = function(sensorQuaternionRSW)
     {
         this.quaternionFromRSWToSensor = sensorQuaternionRSW;
-    }
+    };
 
     this.getName = function()
     {
         return this.name;
-    }
+    };
 
     this.setName = function(name)
     {
         this.name = name;
-    }
+    };
 
     this.getShape = function()
     {
         return this.shape;
-    }
+    };
 
     this.setShape = function(shape)
     {
         this.shape = shape;
-    }
+    };
 
     this.determineTargetAzElRelativeToSensor = function(satellite, targetPosition)
     {
@@ -130,16 +130,16 @@ UNIVERSE.Sensor = function(name, shape) {
         //console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
         //            "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
-        ;
+        
         var satelliteEci = satellite.getEci();
         var deltaECI = {
             x: targetPosition.x - satelliteEci.getX(),
             y: targetPosition.y - satelliteEci.getY(),
             z: targetPosition.z - satelliteEci.getZ()
-        }
+        };
         
         //console.log("delta ECI: " + deltaECI[0] + ", " + deltaECI[1] + ", " + deltaECI[2]);
-		
+        
         var r = {
             x: satelliteEci.getX(), 
             y: satelliteEci.getY(), 
@@ -150,7 +150,7 @@ UNIVERSE.Sensor = function(name, shape) {
             x: satelliteEci.getVX(),
             y: satelliteEci.getVY(),
             z: satelliteEci.getVZ()
-        }
+        };
         
         var rmag = MathTools.magnitudeVector(r);
         var rcrossv = MathTools.crossVector(r, v);
@@ -166,7 +166,7 @@ UNIVERSE.Sensor = function(name, shape) {
             x: deltaECIdotR/MathTools.magnitudeVector(rvec),
             y: deltaECIdotS/MathTools.magnitudeVector(s),
             z: deltaECIdotW/MathTools.magnitudeVector(w)
-        }
+        };
 
         //get the quaternion to convert the ECI coordinate of the target into an RSW coordinate triplet
         var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
@@ -180,13 +180,13 @@ UNIVERSE.Sensor = function(name, shape) {
             x: 1.0,//center (radial)
             y: 0.0,//left
             z: 0.0//top
-        }
+        };
 
         var rightline = {
             x : 1.0,//center
             y : -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0))),//left
             z : 0.0//top
-        }
+        };
 
         var topline = {
             x : 1.0,//center
@@ -232,7 +232,7 @@ UNIVERSE.Sensor = function(name, shape) {
             az: az, 
             el: el
         };
-    }
+    };
 
     this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetSphericalEarth = function(satellite, targetPosition)
     {
@@ -244,12 +244,12 @@ UNIVERSE.Sensor = function(name, shape) {
             x: satelliteEci.getX() / radEarth,
             y: satelliteEci.getY() / radEarth,
             z: satelliteEci.getZ() / radEarth
-        }
+        };
         var r2 = {
             x: targetPosition.getX() / radEarth,
             y: targetPosition.getY() / radEarth,
             z: targetPosition.getZ() / radEarth
-        }
+        };
         
         var r1mag = MathTools.magnitudeVector(r1);
         var r2mag = MathTools.magnitudeVector(r2);
@@ -278,7 +278,7 @@ UNIVERSE.Sensor = function(name, shape) {
 
         }
         return !haveSight;
-    }
+    };
 
     this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth = function(satellite, targetPosition)
     {
@@ -291,12 +291,12 @@ UNIVERSE.Sensor = function(name, shape) {
             x: satelliteEci.getX() / radEarth,
             y: satelliteEci.getY() / radEarth,
             z: satelliteEci.getZ() / radEarth
-        }
+        };
         var r2 = {
             x: targetPosition.getX() / radEarth,
             y: targetPosition.getY() / radEarth,
             z: targetPosition.getZ() / radEarth
-        }
+        };
         var r1mag = MathTools.magnitudeVector(r1);
         var r2mag = MathTools.magnitudeVector(r2);
         var tmin = 0.5;
@@ -327,7 +327,7 @@ UNIVERSE.Sensor = function(name, shape) {
 
         //}
         return !haveSight;
-    }
+    };
 
     this.checkSensorVisibilityOfTargetPoint = function(satellite, targetPosition)
     {
@@ -349,7 +349,7 @@ UNIVERSE.Sensor = function(name, shape) {
         }
         else
         {
-            if (inFOV == true && earthObscured == false)  //if it's in the field of view and not obscured, indicate that you can see the target
+            if (inFOV === true && earthObscured === false)  //if it's in the field of view and not obscured, indicate that you can see the target
             {
                 return true;
             }
@@ -358,7 +358,7 @@ UNIVERSE.Sensor = function(name, shape) {
                 return false;
             }
         }
-    }
+    };
 
     this.buildPointsToDefineSensorShapeInECI = function(NumPoints, satellite)
     {
@@ -366,7 +366,7 @@ UNIVERSE.Sensor = function(name, shape) {
         //a set of 'NumPoints' unit vectors from the center of the satellite to the boundaries
         //of the sensor field of view in ECI coordinates
         //it is assumed that each xyz pair 
-        var FOV = new Array(NumPoints)
+        var FOV = new Array(NumPoints);
 //        for(var i = 0; i < NumPoints; i++) {
 //            FOV[i] = new Array(3);
 //        }
@@ -386,11 +386,11 @@ UNIVERSE.Sensor = function(name, shape) {
                 x: 1.0, // radial
                 y: el * Math.cos(MathTools.toRadians(az)), //along
                 z: el * Math.sin(MathTools.toRadians(az))  //cross
-            }
+            };
 
             //ensure that it is a unit vector
             var FOVmagnitude = MathTools.magnitudeVector(FOVboundary);
-			
+            
             FOVboundary = MathTools.scalarMultiplyVector(FOVboundary, 1/FOVmagnitude);
 
             //console.log("FOVboundary1: " + JSON.stringify(FOVboundary));
@@ -400,25 +400,25 @@ UNIVERSE.Sensor = function(name, shape) {
             //console.log("FOVboundary2: " + JSON.stringify(FOVboundary));
 
             var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary.x, FOVboundary.y, FOVboundary.z);
-			
+            
             //console.log("rswPoint: " + JSON.stringify(rswPoint));
 
             var satelliteEci = satellite.getEci();
             var satXpos = satelliteEci.getX();
             var satYpos = satelliteEci.getY();
             var satZpos = satelliteEci.getZ();
-	
+    
             //convert the RSW to ECI
             var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
             FOV[i] = {
                 x: satXpos + eciTemp.getX(),
                 y: satYpos + eciTemp.getY(),
                 z: satZpos + eciTemp.getZ()
-            }
+            };
         }
 
         return FOV;
-    }
+    };
 
     this.findProjectionPoints = function(endpoints, satellite, distancePastEarthToDraw) {
         var satellitePosition = satellite.getEci();
@@ -429,7 +429,7 @@ UNIVERSE.Sensor = function(name, shape) {
             z: - satellitePosition.z
         };
 
-        var pointsOnEarth = new Array();
+        var pointsOnEarth = [];
 
         var endPointLen = endpoints.length;
         for(var i = 0; i < endPointLen; i++) {
@@ -469,7 +469,7 @@ UNIVERSE.Sensor = function(name, shape) {
                     y: shiftedBoundaryPoint.y * distanceToIntersectionMinus + satellitePosition.y,
                     z: shiftedBoundaryPoint.z * distanceToIntersectionMinus + satellitePosition.z
                 };
-                if(pointOnEarth.x != null) {
+                if(pointOnEarth.x) {
                     pointsOnEarth.push(pointOnEarth);
                 }
 
@@ -497,13 +497,13 @@ UNIVERSE.Sensor = function(name, shape) {
                     x: (extendedEndPoint.x)*scaleFromEndPointToTangentPoint + satellitePosition.x,
                     y: (extendedEndPoint.y)*scaleFromEndPointToTangentPoint + satellitePosition.y,
                     z: (extendedEndPoint.z)*scaleFromEndPointToTangentPoint + satellitePosition.z
-                }
+                };
 
                 // scale down to the earth's surface, plus an arbitrary distance above the earth
                 var tangentPointMagnitude = MathTools.magnitudeVector(tangentPoint);
                 var scaleToEarthSurface = (Constants.radiusEarth + aboveTheEarth)/tangentPointMagnitude;
 
-                var tangentPointOnSurface = MathTools.scalarMultiplyVector(tangentPoint, scaleToEarthSurface)
+                var tangentPointOnSurface = MathTools.scalarMultiplyVector(tangentPoint, scaleToEarthSurface);
 
                 pointsOnEarth.push(tangentPointOnSurface);
             }
@@ -511,7 +511,7 @@ UNIVERSE.Sensor = function(name, shape) {
         }
 
         return pointsOnEarth;
-    }
+    };
 
     // TODO: This method is not currently used by anything...  Do not know for sure that it works or what it would be used for
     this.getQuaternionFromECIToSensor = function(eciXYZvector, satellite)
@@ -521,7 +521,7 @@ UNIVERSE.Sensor = function(name, shape) {
             x: eciXYZvector.x / refMagnitude,
             y: eciXYZvector.y / refMagnitude,
             z: eciXYZvector.z / refMagnitude
-        }
+        };
         
         //determine the quaternion from the reference vector to the satellite position vector
         
@@ -535,7 +535,7 @@ UNIVERSE.Sensor = function(name, shape) {
             x: x / satelliteMagnitude,
             y: y / satelliteMagnitude,
             z: z / satelliteMagnitude
-        }
+        };
         
         //figure out the quaternion from RSW to the default sensor axis (nadir)
         var nadirQuaternion = new Quaternion();
@@ -544,7 +544,7 @@ UNIVERSE.Sensor = function(name, shape) {
             x: 0.0,
             y: 0.0,
             z: 1.0
-        }
+        };
         
         nadirQuaternion.setW(Math.cos(rotationRadians / 2.0));
         nadirQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
@@ -565,5 +565,5 @@ UNIVERSE.Sensor = function(name, shape) {
         result = QuaternionMath.multiplyQuaternions(result,this.quaternionFromRSWToSensor);
 
         return result;
-    }
+    };
 };

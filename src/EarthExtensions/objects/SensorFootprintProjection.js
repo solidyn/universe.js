@@ -9,7 +9,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
     
     var objectMaterial = new THREE.LineBasicMaterial({
         color : Utilities.get_random_color(),
-        opacity : .5,
+        opacity : 0.5,
         linewidth : 3
     });
 
@@ -19,7 +19,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
     var points = sensor.buildPointsToDefineSensorShapeInECI(40, object);
     //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
     var extendedPoints = sensor.findProjectionPoints(points, object, 1000);
-		
+        
     for(var j = 0; j< extendedPoints.length; j++) {
         var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
         objectGeometry.vertices.push(new THREE.Vertex(vector));
@@ -46,7 +46,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
                         x: convertedLocation.x, 
                         y: convertedLocation.y, 
                         z: convertedLocation.z
-                    }
+                    };
                 }
                                         
                 var convertedLastPoint = Utilities.eciTo3DCoordinates(extendedPoints[0], earthExtensions);
@@ -54,7 +54,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
                     x: convertedLastPoint.x, 
                     y: convertedLastPoint.y, 
                     z: convertedLastPoint.z
-                }
+                };
 
                 line.geometry.__dirtyVertices = true;
             }
@@ -66,4 +66,4 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
     lineGraphicsObject.sensor = sensor;
     
     return lineGraphicsObject;
-}
+};

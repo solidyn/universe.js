@@ -44,7 +44,7 @@ UNIVERSE.SensorProjection = function(sensor, object, universe, earthExtensions, 
             if(earthExtensions.enableSensorProjections) {
                 var objectLocation = Utilities.eciTo3DCoordinates(object.propagator(undefined, false), earthExtensions);
 
-                if(objectLocation != undefined) {
+                if(objectLocation) {
 
                     var points = sensor.buildPointsToDefineSensorShapeInECI(sensorPointCount, object);
                     var extendedPoints = sensor.findProjectionPoints(points, object, 1000);

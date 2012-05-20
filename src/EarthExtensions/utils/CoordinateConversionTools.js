@@ -21,11 +21,11 @@ var CoordinateConversionTools = {
         var second = currentEpoch.getUTCSeconds() + (currentEpoch.getUTCMilliseconds()/1000);   //double
 
         // console.log("year: " + year);
-        // 		console.log("month: " + month);
-        // 		console.log("day: " + day);
-        // 		console.log("hour: " + hour);
-        // 		console.log("minute: " + minute);
-        // 		console.log("second: " + second);
+        //         console.log("month: " + month);
+        //         console.log("day: " + day);
+        //         console.log("hour: " + hour);
+        //         console.log("minute: " + minute);
+        //         console.log("second: " + second);
 
         JD = 367 * year - Math.floor((7 * (year + Math.floor(((month + 9) / 12))) / 4)) +
         Math.floor((275 * month / 9)) + (day) + 1721013.5 +
@@ -188,7 +188,7 @@ var CoordinateConversionTools = {
         var ecef = new UNIVERSE.ECEFCoordinates();
 
         //convert the position
-        eciPos = new Array(); //Double[3];
+        eciPos = []; //Double[3];
         eciPos[0] = eci.getX();
         eciPos[1] = eci.getY();
         eciPos[2] = eci.getZ();
@@ -199,7 +199,7 @@ var CoordinateConversionTools = {
         ecef.setZ(xyz[2]);
 
         //convert the velocity
-        var eciVel = new Array(); //Double[3];
+        var eciVel = []; //Double[3];
         eciVel[0] = eci.getVX();
         eciVel[1] = eci.getVY();
         eciVel[2] = eci.getVZ();
@@ -211,7 +211,7 @@ var CoordinateConversionTools = {
         ecef.setVZ(xyz[2]);
 
         //convert the acceleration
-        var eciAcc = new Array(); //Double[3];
+        var eciAcc = []; //Double[3];
         eciAcc[0] = eci.getAX();
         eciAcc[1] = eci.getAY();
         eciAcc[2] = eci.getAZ();
@@ -240,7 +240,7 @@ var CoordinateConversionTools = {
         var eci = new UNIVERSE.ECICoordinates();
 
         //convert the position
-        var eciPos = new Array(); //Double[3];
+        var eciPos = []; //Double[3];
         eciPos[0] = ecef.getX();
         eciPos[1] = ecef.getY();
         eciPos[2] = ecef.getZ();
@@ -251,7 +251,7 @@ var CoordinateConversionTools = {
         eci.setZ(xyz[2]);
 
         //convert the velocity
-        var eciVel = new Array(); //Double[3];
+        var eciVel = []; //Double[3];
         eciVel[0] = ecef.getVX();
         eciVel[1] = ecef.getVY();
         eciVel[2] = ecef.getVZ();
@@ -263,7 +263,7 @@ var CoordinateConversionTools = {
         eci.setVZ(xyz[2]);
 
         //convert the acceleration
-        var eciAcc = new Array(); //Double[3];
+        var eciAcc = []; //Double[3];
         eciAcc[0] = ecef.getAX();
         eciAcc[1] = ecef.getAY();
         eciAcc[2] = ecef.getAZ();
@@ -332,12 +332,12 @@ var CoordinateConversionTools = {
         var Ypqw = p * sinNu / (1 + e * cosNu); //double
         var Zpqw = 0;                           //double
 
-        var pqw = new Array(); //Double[3];
+        var pqw = []; //Double[3];
         pqw[0] = Xpqw;
         pqw[1] = Ypqw;
         pqw[2] = Zpqw;
 
-        var eciValues = new Array(); //Double[3];
+        var eciValues = []; //Double[3];
         eciValues = MathTools.rot3(-kepler.getArgOfPerigee(), pqw);
         eciValues = MathTools.rot1(-kepler.getInclination(), eciValues);
         eciValues = MathTools.rot3(-kepler.getRaan(), eciValues);
@@ -387,13 +387,13 @@ var CoordinateConversionTools = {
             x: eci.x,
             y: eci.y,
             z: eci.z
-        }
+        };
         
         var v = {
             x: eci.vx,
             y: eci.vy,
             z: eci.vz
-        }
+        };
 
         var h = MathTools.crossVector(r, v); //Double[3]
         var hmag = MathTools.magnitudeVector(h); //double
@@ -404,7 +404,7 @@ var CoordinateConversionTools = {
             x: 0.0,
             y: 0.0,
             z: 1.0
-        }
+        };
 
         var n = MathTools.crossVector(khat, h);
         
@@ -415,7 +415,7 @@ var CoordinateConversionTools = {
             x: (1 / Constants.muEarth) * (coeff1 * r.x - coeff2 * v.x),
             y: (1 / Constants.muEarth) * (coeff1 * r.y - coeff2 * v.y),
             z: (1 / Constants.muEarth) * (coeff1 * r.z - coeff2 * v.z)
-        }
+        };
         
         var emag = MathTools.magnitudeVector(e);                       //double
         var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
@@ -518,7 +518,7 @@ var CoordinateConversionTools = {
         var netRotationMatrix = new Array(3);
 
         var i = 0;
-        for(var i = 0; i < 3; i++) //create as Double[3][3];
+        for(i = 0; i < 3; i++) //create as Double[3][3];
         {
             netRotationMatrix[i] = new Array(3);
         }
@@ -551,7 +551,7 @@ var CoordinateConversionTools = {
         var inc = satelliteKepler.getInclination(); //double
         var raan = satelliteKepler.getRaan();       //double
 
-        var rijk = new Array(); //Double[3];
+        var rijk = []; //Double[3];
         rijk[0] = targetECI.getX() - satelliteECI.getX();
         rijk[1] = targetECI.getY() - satelliteECI.getY();
         rijk[2] = targetECI.getZ() - satelliteECI.getZ();
@@ -586,12 +586,12 @@ var CoordinateConversionTools = {
         var inc = satelliteKepler.getInclination();
         var raan = satelliteKepler.getRaan();
 
-        var rswVec = new Array();        //Double[3];
+        var rswVec = [];        //Double[3];
         rswVec[0] = rsw.radial;
         rswVec[1] = rsw.alongTrack;
         rswVec[2] = rsw.crossTrack;
 
-        var rijk = new Array();              //Double[3];
+        var rijk = [];              //Double[3];
         rijk = MathTools.rot3(-nu, rswVec);  //to PQW format
         rijk = MathTools.rot3(-w, rijk);
         rijk = MathTools.rot1(-inc, rijk);
@@ -653,11 +653,11 @@ var CoordinateConversionTools = {
     {
         //reference Vallado 3rd edition page 201
         var UTC = new Date(currentEpoch);
-		
+        
         //var newSeconds = (int) (UTC.getSeconds() - 0.463326);
         var UTI = new Date(UTC.getTime() - 463);
         //console.log("UTI: " + UTI)
-		
+        
         //Date UTI = new Date(UTC.getYear(), UTC.getMonth(), UTC.getDate(), UTC.getHours(), UTC.getMinutes(), newSeconds);
         //newSeconds = (int) (UTI.getSeconds() + 32);
         var TAI = new Date(UTI.getTime() + 32000);

@@ -18,7 +18,7 @@ UNIVERSE.Moon = function(universe, earthExtensions, moonImageURL) {
         transparent: true,
         // reflectivity: 1
         blending: THREE.AdditiveBlending
-    })
+    });
 
     var dayMoonMesh = new THREE.Mesh(geometry, dayMaterial);
 
@@ -61,5 +61,5 @@ UNIVERSE.Moon = function(universe, earthExtensions, moonImageURL) {
             earthExtensions.setSunLighting(earthExtensions.useSunLighting);
         }
     );
-    return moonObject
-}
+    return moonObject;
+};

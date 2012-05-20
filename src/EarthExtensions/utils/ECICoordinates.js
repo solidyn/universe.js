@@ -4,20 +4,20 @@ UNIVERSE.ECICoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal,
     
     // define variables as <var name>: <value>
 
-    this.x = xVal ? xVal : 0.0, //km
-    this.y =  yVal ? yVal : 0.0, //km
-    this.z =  zVal ? zVal : 0.0, //km
-    this.vx = vxVal ? vxVal : 0.0, //km
-    this.vy = vyVal ? vyVal : 0.0, //km
-    this.vz = vzVal ? vzVal : 0.0, //km
-    this.ax = axVal ? axVal : 0.0, //km
-    this.ay = ayVal ? ayVal : 0.0, //km
-    this.az = azVal ? azVal : 0.0 //km
-}
+    this.x = xVal ? xVal : 0.0; //km
+    this.y =  yVal ? yVal : 0.0; //km
+    this.z =  zVal ? zVal : 0.0; //km
+    this.vx = vxVal ? vxVal : 0.0; //km
+    this.vy = vyVal ? vyVal : 0.0; //km
+    this.vz = vzVal ? vzVal : 0.0; //km
+    this.ax = axVal ? axVal : 0.0; //km
+    this.ay = ayVal ? ayVal : 0.0; //km
+    this.az = azVal ? azVal : 0.0; //km
+};
 
 UNIVERSE.ECICoordinates.prototype = {
-	constructor: UNIVERSE.ECICoordinates,
-	
+    constructor: UNIVERSE.ECICoordinates,
+    
     /**
      * Get the X value.
      */

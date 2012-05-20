@@ -2,7 +2,7 @@
 var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.ObjectLibrary = function() {
-    var objects = new Array();
+    var objects = [];
     var numberOfElements = 0;
 
     // adds a mesh object to the object library
@@ -11,7 +11,7 @@ UNIVERSE.ObjectLibrary = function() {
     // material -> material to apply to the model's geometry
     this.addGeometryObjectFromUrl = function(id, url, callback) {
         // if we have already loaded an onject with this id, return
-        if (objects[id] != undefined) {
+        if (objects[id]) {
             callback();
             return;
         }
@@ -37,23 +37,28 @@ UNIVERSE.ObjectLibrary = function() {
             }
         });
         
-    }
+    };
 
     // gets an object from the library based on the given id
     this.getObjectById = function(id, callback) {
         //console.log("number of elements: " + numberOfElements);
         var object = objects[id];
-        var objectLib = this;
-        if(object == "loading") {
-            setTimeout(function() {objectLib.getObjectById(id, callback)}, 1000)
-        }
-        else if (object == null)
+        
+        if (!object) {
             throw "Tried to retrieve object [" + id + "] from object library but didn't exist";
-        else
+        }
+        else if(object == "loading") {
+            var objectLib = this;
+            setTimeout(function() {
+                objectLib.getObjectById(id, callback);
+            }, 1000);
+        }
+        else {
             callback(object);
-    }
+        }
+    };
     
     this.setObject = function(id, object) {
         objects[id] = object;
-    }
-}
+    };
+};

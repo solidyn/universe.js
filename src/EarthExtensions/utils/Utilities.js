@@ -59,6 +59,6 @@ var Utilities = {
             vz : location.vy
         };
     }
-} 
+}; 
 
 

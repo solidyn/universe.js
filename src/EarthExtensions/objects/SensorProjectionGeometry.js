@@ -70,7 +70,7 @@ UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
         ypos = groundPoints[x].y;
         zpos = groundPoints[x].z;
 
-        //		console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
+        //        console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
         this.vertices.push( new THREE.Vertex( new THREE.Vector3( xpos, ypos, zpos ) ) );
         verticesRow.push( this.vertices.length - 1 );
         uvsRow.push( new THREE.UV( u, v ) );
@@ -110,7 +110,7 @@ UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
     this.computeCentroids();
     this.computeFaceNormals();
     this.dynamic = true;
-}
+};
 UNIVERSE.SensorProjectionGeometry.prototype = new THREE.Geometry();
 UNIVERSE.SensorProjectionGeometry.prototype.constructor = UNIVERSE.SensorProjectionGeometry;
 
@@ -125,10 +125,10 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
     var segmentsX = groundPoints.length;
     var segmentsY = 1;
     // tack on the initial ground point back to the end of the groundpoints array
-	
+    
     var xpos, ypos, zpos, u;
     for ( x = 0; x < segmentsX; x ++ ) {
-		
+        
         u = x / segmentsX;
 
         xpos = sensorOrigin.x;
@@ -150,7 +150,7 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         ypos = groundPoints[x].y;
         zpos = groundPoints[x].z;
 
-        //				console.log("updating vertice point " + ( x + segmentsX )+ " to Vertice point: " + xpos + "," + ypos + "," + zpos);
+        //                console.log("updating vertice point " + ( x + segmentsX )+ " to Vertice point: " + xpos + "," + ypos + "," + zpos);
         this.vertices[x + segmentsX].position = {
             x: xpos, 
             y:ypos, 
@@ -158,6 +158,6 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         }; 
     }
 
-		  
+          
     this.__dirtyVertices=true;
 };

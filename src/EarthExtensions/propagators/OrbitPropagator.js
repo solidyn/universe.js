@@ -16,7 +16,7 @@ var OrbitPropagator = {
         var kep = CoordinateConversionTools.convertECIToKeplerian(eci);
         //console.log('eccentricity: ' + JSON.stringify(kep.getEccentricity()));
         //timespan is in seconds
-        if (elapsedTime == 0.0 || isNaN(kep.getEccentricity()))
+        if (elapsedTime === 0.0 || isNaN(kep.getEccentricity()))
         {
             return eci;
         }

@@ -38,7 +38,7 @@ UNIVERSE.DefaultObjects = function(universe) {
         // GRab the next color on the list and iterate to the next color
         nextColor: function() {
             this.iterator = (this.iterator + 1) % this.colorList.length;
-            return this.colorList[this.iterator];	 
+            return this.colorList[this.iterator];     
         }
     };
 };

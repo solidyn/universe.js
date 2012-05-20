@@ -14,26 +14,26 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
     this.getSemiMajorAngle = function()
     {
         return this.semiMajorAngle;
-    }
+    };
 
     this.setSemiMajorAngle = function(semiMajorAngle)
     {
         this.semiMajorAngle = semiMajorAngle;
-    }
+    };
 
     this.getSemiMinorAngle = function()
     {
         return this.semiMinorAngle;
-    }
+    };
 
     this.setSemiMinorAngle = function(semiMinorAngle)
     {
         this.semiMinorAngle = semiMinorAngle;
-    }
+    };
 
     this.getAngularExtentOfSensorAtSpecifiedAzimuth = function(checkAngle)
     {
-        if ((this.semiMajorAngle==0)&&(this.semiMinorAngle==0)){
+        if ((this.semiMajorAngle===0)&&(this.semiMinorAngle===0)){
             return 0;
         }
         else{
@@ -43,18 +43,18 @@ UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle
             var sinTheta=Math.sin(MathTools.toRadians(checkAngle));
             return MathTools.toDegrees(a*b/Math.sqrt((b*cosTheta)*(b*cosTheta)+(a*sinTheta)*(a*sinTheta)));
         }
-    }
+    };
 
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
         var canSee = false;
         
-			var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
-			//console.log('ellipseSensor canSensorSee:  '+
-			//	"radius sensor: " + radiusSensor+
-			//	"    relative radius: " + relativeRadius);
-			if(radiusSensor > relativeRadius){
-				canSee = true;
-			}
+            var radiusSensor = this.getAngularExtentOfSensorAtSpecifiedAzimuth(relativeAzimuth);
+            //console.log('ellipseSensor canSensorSee:  '+
+            //    "radius sensor: " + radiusSensor+
+            //    "    relative radius: " + relativeRadius);
+            if(radiusSensor > relativeRadius){
+                canSee = true;
+            }
         return canSee;
-    }
+    };
 };
