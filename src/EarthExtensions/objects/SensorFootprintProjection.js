@@ -41,7 +41,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
                 var extendedPoints = this.sensor.findProjectionPoints(points, object, 1000);
 
                 for(var k = 0; k < extendedPoints.length; k++) {
-                    var convertedLocation = earthExtensions.eciTo3DCoordinates(extendedPoints[k]);
+                    var convertedLocation = Utilities.eciTo3DCoordinates(extendedPoints[k], earthExtensions);
                     line.geometry.vertices[k].position = {
                         x: convertedLocation.x, 
                         y: convertedLocation.y, 
@@ -49,7 +49,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
                     }
                 }
                                         
-                var convertedLastPoint = earthExtensions.eciTo3DCoordinates(extendedPoints[0]);
+                var convertedLastPoint = Utilities.eciTo3DCoordinates(extendedPoints[0], earthExtensions);
                 line.geometry.vertices[extendedPoints.length].position = {
                     x: convertedLastPoint.x, 
                     y: convertedLastPoint.y, 

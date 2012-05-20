@@ -18,7 +18,7 @@ UNIVERSE.SensorProjection = function(sensor, object, universe, earthExtensions, 
     var THREEPoints = new Array( extendedPoints.length );
     var pointCount = extendedPoints.length;
     for(var j = 0; j< pointCount; j++) {
-        var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
+        var coord = Utilities.eciTo3DCoordinates(extendedPoints[j], earthExtensions);
         THREEPoints[j] = coord;
     }
     
@@ -42,7 +42,7 @@ UNIVERSE.SensorProjection = function(sensor, object, universe, earthExtensions, 
         undefined,
         function(elapsedTime) {
             if(earthExtensions.enableSensorProjections) {
-                var objectLocation = earthExtensions.eciTo3DCoordinates(object.propagator(undefined, false));
+                var objectLocation = Utilities.eciTo3DCoordinates(object.propagator(undefined, false), earthExtensions);
 
                 if(objectLocation != undefined) {
 
@@ -51,7 +51,7 @@ UNIVERSE.SensorProjection = function(sensor, object, universe, earthExtensions, 
 
                     THREEPoints = [];
                     for(var j = 0; j< pointCount; j++) {
-                        var coord = earthExtensions.eciTo3DCoordinates(extendedPoints[j]);
+                        var coord = Utilities.eciTo3DCoordinates(extendedPoints[j], earthExtensions);
                         THREEPoints[j] = coord;
                     }
                     sensorProjection.geometry.recalculateVertices(objectLocation, THREEPoints);

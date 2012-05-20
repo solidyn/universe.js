@@ -15,7 +15,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     var earthSphereRadius = Constants.radiusEarth;
 	
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
-    var enableVisibilityLines = false;
+    this.enableVisibilityLines = false;
     this.enableSensorProjections = false;
     this.enableSensorFootprintProjections = false;
     var enableSubSatellitePoints = false;
@@ -57,7 +57,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.addSun = function() {
         //var sunLight = new THREE.PointLight( 0xffffff, 1.5);
-	var sun = new UNIVERSE.Sun(universe, earthExtensions);
+        var sun = new UNIVERSE.Sun(universe, earthExtensions);
         universe.addObject(sun);
         universe.updateOnce();
     }
@@ -81,72 +81,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	
     this.addSensorVisibilityLines = function(object, callback) {
         if(object.sensors && object.sensors.length > 0) {
-            var visibilityLinesController = new UNIVERSE.GraphicsObject(
-                object.id + "_visibilityLines",
-                object.objectName,
-                undefined,
-                function(elapsedTime) {
-                    if(enableVisibilityLines) {
-                        var sensorLength = object.sensors.length;
-						
-                        var graphicsObjects = universe.getGraphicsObjects();
-                        var objectsToDrawLinesTo = new Array();
-                        for(var i = 0; i < sensorLength; i++) {
-                            var sensor = object.sensors[i];
-                            for(var j in graphicsObjects) {
-                                var obj = graphicsObjects[j];
-                                //console.log("obj.id: " + obj.id + " object.id: " + object.id);
-                                if ( obj.currentLocation != undefined && 
-                                    obj.modelName != "earth" && 
-                                    obj.modelName != "moon" && 
-                                    obj.modelName != "sun" && 
-                                    obj.id != object.id && 
-                                    obj.id.indexOf("_groundPoint") == -1 && 
-                                    obj.id.indexOf("_propagation") == -1 &&
-                                    obj.id.indexOf("_to_") == -1 && 
-                                    obj.id.indexOf("_visibility_") == -1)
-                                    {
-                                    // Now we're looking at a point 
-                                    //console.log(obj.id);
-                                    //var currentLocationInEci = threeDToEciCoordinates(obj.currentLocation);
-                                    //var targetPosition = new UNIVERSE.ECICoordinates(currentLocationInEci.x, currentLocationInEci.y, currentLocationInEci.z, 0,0,0,0,0,0);	
-                                    //var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
-                                    var inView = sensor.checkSensorVisibilityOfTargetPoint(object, obj.currentLocation );
-                                    //console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
-                                    if(!objectsToDrawLinesTo[obj.id]) {
-                                        objectsToDrawLinesTo[obj.id] = inView;
-                                    }
-                                }
-                            }
-                        }
-
-                        for(var k in objectsToDrawLinesTo) {
-                            if(objectsToDrawLinesTo[k] ) {
-                                if(universe.getGraphicsObjectById(object.id + "_visibility_" + k) == undefined)
-                                {
-                                    //console.log("adding line for object: " + object.id + " and " + k);
-                                    earthExtensions.addLineBetweenObjects(object.id, k, undefined, "_visibility_");	
-                                //universe.updateOnce();
-                                }
-                                else {
-                                //console.log("line already there for: " + k);
-                                }
-                            }
-                            else {
-                                earthExtensions.removeLineBetweenObjects(object.id, k, "_visibility_");
-                            }
-                        //console.log("finished: " + k);
-                        }
-
-						
-                    }
-                    earthExtensions.showAllSensorVisibilityLines(enableVisibilityLines);
-					
-                },
-                function() {
-                // nothing to draw, this is a controller
-                }
-                )
+            var visibilityLinesController = new UNIVERSE.SensorVisibilityLinesController(object, universe, earthExtensions)
             universe.addObject(visibilityLinesController);
             universe.updateOnce();
             callback();
@@ -223,7 +158,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.addSensorProjection = function(sensor, spaceObject) {
 
         // Determine the object's location in 3D space
-        var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
+        var objectLocation = Utilities.eciTo3DCoordinates(spaceObject.propagator(undefined, false), earthExtensions);
         
         if(objectLocation != undefined) {
             var sensorProjection = UNIVERSE.SensorProjection(sensor, spaceObject, universe, earthExtensions, objectLocation)
@@ -270,7 +205,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             object.objectName,
             undefined,
             function(elapsedTime) {
-                var objectLocation = earthExtensions.eciTo3DCoordinates(object.propagator(undefined, false));
+                var objectLocation = Utilities.eciTo3DCoordinates(object.propagator(undefined, false), earthExtensions);
 
                 var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
 
@@ -295,86 +230,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {string} object2_id - end object of the line
 	*/
     this.addLineBetweenObjects = function(object1_id, object2_id, color, customIdentifier) {
-        var objectGeometry, objectMaterial;
-        
-        //universe.getObjectFromLibraryById("default_ground_object_tracing_line_material", function(retrieved_material) {
-        if(!color) {
-            color = 0x009900;
-        }
-        // else {
-        // 				objectMaterial = retrieved_material;
-        // 			}
-			
-        objectMaterial = new THREE.LineBasicMaterial({
-            color : color,
-            opacity : 1
-        });
-			
-        var object1 = universe.getGraphicsObjectById(object1_id);
-        var object2 = universe.getGraphicsObjectById(object2_id);
-			
-        if(object1 == undefined || object2 == undefined) {
-            return;
-        }
-			
-        var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
-        var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
-			
-        if(object1Location == undefined || object2Location == undefined) {
-            return;
-        }
-            
-        objectGeometry = new THREE.Geometry();
-        objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z)));
-                
-        objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
-            
-        var line = new THREE.Line(objectGeometry, objectMaterial);
-
-        var identifier = "_to_"
-        if(customIdentifier)
-        {
-            identifier = customIdentifier;
-        }
-			
-        var lineGraphicsObject = new UNIVERSE.GraphicsObject(
-            object1_id + identifier + object2_id,
-            undefined,
-            undefined,
-            function(elapsedTime) {
-                var object1 = universe.getGraphicsObjectById(object1_id);
-                var object2 = universe.getGraphicsObjectById(object2_id);
-                if(object1 == undefined || object2 == undefined) {
-                    return;
-                }
-                var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
-                var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
-					
-                if(object1Location == undefined || object2Location == undefined) {
-                    return;
-                }
-                   
-                objectGeometry.vertices[0].position = {
-                    x: object1Location.x, 
-                    y: object1Location.y, 
-                    z: object1Location.z
-                };
-					
-                objectGeometry.vertices[1].position = {
-                    x: object2Location.x, 
-                    y: object2Location.y, 
-                    z: object2Location.z
-                };
-					
-                objectGeometry.__dirtyVertices = true;
-            },
-            function() {
-                universe.draw(this.id, line, false)	;
-            }
-            );
+        var lineGraphicsObject = new UNIVERSE.LineBetweenObjects(object1_id, object2_id, universe, earthExtensions, color, customIdentifier);        
         universe.addObject(lineGraphicsObject);
-    //universe.updateOnce();
-    //});
     }
 
     /**
@@ -607,7 +464,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.showAllSensorVisibilityLines = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
-        enableVisibilityLines = isEnabled;
+        this.enableVisibilityLines = isEnabled;
 
         for(var i in graphicsObjects) {
             if(graphicsObjects[i].id.indexOf("_visibility_") != -1){
@@ -684,58 +541,6 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.setup = function() {
         this.removeAllExceptEarthAndMoon();
         universe.setup();
-    }
-
-    /**
-		Converts ECI to THREE.js 3D coordinate system. Compare these two websites for details on why we have to do this:
-    	http://celestrak.com/columns/v02n01/
-    	http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
-		@private
-	*/
-    this.eciTo3DCoordinates = function(location) {
-        if(location == undefined) {
-            return undefined;
-        }
-                
-        /*
-                 *  z' = z*cos q - x*sin q
-                 *  x' = z*sin q + x*cos q
-                 *  y' = y
-                 *  x = -location.x
-                 *  y = location.z
-                 *  z = location.y
-                 */
-        return {
-            x : (location.y) * Math.sin(-earthExtensions.rotationOffsetFromXAxis) + (-location.x) * Math.cos(-earthExtensions.rotationOffsetFromXAxis),
-            y : location.z,
-            z : location.y * Math.cos(-earthExtensions.rotationOffsetFromXAxis) - (-location.x) * Math.sin(-earthExtensions.rotationOffsetFromXAxis),
-            vx : -location.vx,
-            vy : location.vz,
-            vz : location.vy
-        };
-    }
-        
-    function threeDToEciCoordinates(location) {
-        if(location == undefined) {
-            return undefined;
-        }
-                
-        /*
-                 *  z' = z*cos q - x*sin q
-                 *  x' = z*sin q + x*cos q
-                 *  y' = y
-                 *  x = -location.x
-                 *  y = location.z
-                 *  z = location.y
-                 */
-        return {
-            x : (location.y) * Math.sin(earthExtensions.rotationOffsetFromXAxis) + (-location.x) * Math.cos(earthExtensions.rotationOffsetFromXAxis),
-            y : location.z,
-            z : location.y * Math.cos(earthExtensions.rotationOffsetFromXAxis) - (-location.x) * Math.sin(earthExtensions.rotationOffsetFromXAxis),
-            vx : -location.vx,
-            vy : location.vz,
-            vz : location.vy
-        };
     }
 };
 

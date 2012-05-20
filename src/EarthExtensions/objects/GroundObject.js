@@ -47,9 +47,9 @@ UNIVERSE.GroundObject.prototype = {
                 function(elapsedTime) {
                     // check earth rotation and update location
                     var propagatedPosition = groundObject.propagator();
-                    var position = earthExtensions.eciTo3DCoordinates(propagatedPosition);
+                    var position = Utilities.eciTo3DCoordinates(propagatedPosition, earthExtensions);
                     groundObjectMesh.position.set(position.x, position.y, position.z);
-                    groundObject.currentLocation = propagatedPosition;
+                    this.currentLocation = propagatedPosition;
 
                     //http://mrdoob.github.com/three.js/examples/misc_lookat.html
                     var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);

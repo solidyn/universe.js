@@ -7,11 +7,11 @@ UNIVERSE.Sun = function(universe, earthExtensions) {
             //console.log("sun update");
             var sunLocation = CoordinateConversionTools.getSunPositionECIAtCurrentTime(universe.getCurrentUniverseTime());
             //console.log("sun location: " + JSON.stringify(sunLocation));
-            var convertedLocation = earthExtensions.eciTo3DCoordinates({
+            var convertedLocation = Utilities.eciTo3DCoordinates({
                 x: sunLocation.x, 
                 y: sunLocation.y, 
                 z: sunLocation.z
-            });
+            }, earthExtensions);
             //sunLight.position.set({x: sunLocation.x, y: sunLocation.y, z: sunLocation.z});
             //console.log("sunLocation: " + JSON.stringify(sunLocation));
             universe.updateLight(convertedLocation.x, convertedLocation.y, convertedLocation.z, 1.5);

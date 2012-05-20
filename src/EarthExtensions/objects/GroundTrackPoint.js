@@ -16,7 +16,7 @@ UNIVERSE.GroundTrackPoint = function(object, universe, earthExtensions, material
         function(elapsedTime) {
             //if(enableSubSatellitePoints) {
             var propagatedLocation = object.propagator(undefined, false);
-            var objectLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
+            var objectLocation = Utilities.eciTo3DCoordinates(propagatedLocation, earthExtensions);
             if(objectLocation != undefined) {
                 var vector = new THREE.Vector3(objectLocation.x, objectLocation.y, objectLocation.z);
 

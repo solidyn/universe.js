@@ -38,11 +38,11 @@ UNIVERSE.Moon = function(universe, earthExtensions, moonImageURL) {
         function(elapsedTime) {
             var time = new Date(universe.getCurrentUniverseTime());
             var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
-            var convertedLocation = earthExtensions.eciTo3DCoordinates({
+            var convertedLocation = Utilities.eciTo3DCoordinates({
                 x: propagatedValue.x, 
                 y: propagatedValue.y, 
                 z: propagatedValue.z
-            });
+            }, earthExtensions);
             dayMoonMesh.position = {
                 x: convertedLocation.x, 
                 y: convertedLocation.y, 

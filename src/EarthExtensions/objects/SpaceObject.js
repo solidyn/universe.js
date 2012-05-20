@@ -71,13 +71,14 @@ UNIVERSE.SpaceObject.prototype = {
                 function(elapsedTime) {
                     // need to pass a time to the propagator
                     var propagatedLocation = spaceObject.propagator();
-                    var convertedLocation = earthExtensions.eciTo3DCoordinates(propagatedLocation);
+                    var convertedLocation = Utilities.eciTo3DCoordinates(propagatedLocation, earthExtensions);
                     if(convertedLocation != undefined) {
                         objectModel.position.set(convertedLocation.x, convertedLocation.y, convertedLocation.z);
 
                         //http://mrdoob.github.com/three.js/examples/misc_lookat.html
                         objectModel.lookAt(new THREE.Vector3(0,0,0));
-                        spaceObject.currentLocation = propagatedLocation;
+                        this.currentLocation = propagatedLocation;
+                        //console.log("currentLocation: " + spaceObject.currentLocation);
                     }
                 },
                 function() {
