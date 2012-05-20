@@ -18,7 +18,7 @@ UNIVERSE.GroundObject = function(id, objectName, modelId, propagator) {
 	this.objectName = objectName || id;
 	this.propagator = propagator;
 	this.modelId = modelId;
-}
+};
 
 UNIVERSE.GroundObject.prototype = {
 	constructor: UNIVERSE.GroundObject,

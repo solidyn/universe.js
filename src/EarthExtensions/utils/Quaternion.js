@@ -1,11 +1,11 @@
 
 function Quaternion(wVal, xVal, yVal, zVal) {
 
-    this.w = wVal ? wVal : 0.0,
-    this.x = xVal ? xVal : 0.0,
-    this.y = yVal ? yVal : 0.0,
-    this.z = zVal ? zVal : 0.0,
-    this.q = new Array(4)
+    this.w = wVal ? wVal : 0.0;
+    this.x = xVal ? xVal : 0.0;
+    this.y = yVal ? yVal : 0.0;
+    this.z = zVal ? zVal : 0.0;
+    this.q = new Array(4);
 
     /**
      *
@@ -16,7 +16,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
         this.q[1] = this.x;
         this.q[2] = this.y;
         this.q[3] = this.z;
-    }
+    };
 
     /**
      *
@@ -25,7 +25,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     this.getQ = function()
     {
         return q;
-    }
+    };
 
     /**
      *
@@ -38,7 +38,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
         this.y = q[2];
         this.z = q[3];
         this.q = q;
-    }
+    };
 
     /**
      *
@@ -48,7 +48,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     this.getW = function()
     {
         return this.w;
-    }
+    };
 
     /**
      *
@@ -58,7 +58,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     {
         this.w = newW;
         this.updateQ();
-    }
+    };
 
     /**
      *
@@ -67,7 +67,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     this.getX = function()
     {
         return this.x;
-    }
+    };
 
     /**
      *
@@ -77,7 +77,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     {
         this.x = newX;
         this.updateQ();
-    }
+    };
 
     /**
      *
@@ -86,7 +86,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     this.getY = function()
     {
         return this.y;
-    }
+    };
 
     /**
      *
@@ -96,7 +96,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     {
         this.y = newY;
         this.updateQ();
-    }
+    };
 
     /**
      *
@@ -105,7 +105,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     this.getZ = function()
     {
         return this.z;
-    }
+    };
 
     /**
      *
@@ -115,7 +115,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
     {
         this.z = newZ;
         this.updateQ();
-    }
+    };
 
     /**
      *
@@ -139,5 +139,5 @@ function Quaternion(wVal, xVal, yVal, zVal) {
         }
 
         return allZeros;
-    }
-};
+    };
+}

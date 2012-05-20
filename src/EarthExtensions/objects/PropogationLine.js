@@ -10,7 +10,7 @@ UNIVERSE.PropogationLine = function(object, universe, earthExtensions, material,
     var timeToPropogate = new Date(universe.getCurrentUniverseTime());
     var loopCount = 1440;
 
-    var eciLocations = new Array();
+    var eciLocations = [];
 
     // draw a vertex for each minute in a 24 hour period
     // dropped this to a vertex for every 5 minutes.  This seems to be about the max that you can use for a LEO
@@ -44,7 +44,7 @@ UNIVERSE.PropogationLine = function(object, universe, earthExtensions, material,
                             x: convertedLocation.x, 
                             y: convertedLocation.y, 
                             z: convertedLocation.z
-                        }
+                        };
                     }
                 }
                 lineS.geometry.__dirtyVertices = true;
@@ -57,4 +57,4 @@ UNIVERSE.PropogationLine = function(object, universe, earthExtensions, material,
     );
         
     return lineGraphicsObject;
-}
+};

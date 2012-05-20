@@ -1,7 +1,7 @@
 var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.UniverseController = function(theRefreshRate) {
-    var graphicsObjects = new Array();
+    var graphicsObjects = [];
 
     // Timeout that runs the animation, will be cleared when paused
     var refreshTimeout;
@@ -37,7 +37,7 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
             graphicsObjects[i].update(null);
             graphicsObjects[i].draw();
         }
-    }
+    };
 
     // id
     // objectName
@@ -45,11 +45,11 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     this.addGraphicsObject = function(graphicsObject) {
         graphicsObjects[graphicsObject.id] = graphicsObject;
         //this.updateOnce();
-    }
+    };
     
     this.removeGraphicsObject = function(id) {
         delete graphicsObjects[id];
-    }
+    };
 
     this.play = function() {
         // set our last update time to now since this is the first update
@@ -62,14 +62,14 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     };
     
     this.removeAllGraphicsObjects = function () {
-        graphicsObjects = new Array();
-    }
+        graphicsObjects = [];
+    };
     
     this.getGraphicsObjects = function() {
         return graphicsObjects;
-    }
+    };
 
 	this.getGraphicsObjectById = function(id) {
 		return graphicsObjects[id];
-	}
+	};
 };

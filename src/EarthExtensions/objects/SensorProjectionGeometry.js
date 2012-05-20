@@ -110,7 +110,7 @@ UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
     this.computeCentroids();
     this.computeFaceNormals();
     this.dynamic = true;
-}
+};
 UNIVERSE.SensorProjectionGeometry.prototype = new THREE.Geometry();
 UNIVERSE.SensorProjectionGeometry.prototype.constructor = UNIVERSE.SensorProjectionGeometry;
 

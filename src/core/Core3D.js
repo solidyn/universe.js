@@ -42,7 +42,7 @@ UNIVERSE.Core3D = function(container) {
     this.minZoom = 7000;
 
 
-    var drawnObjects = new Array();
+    var drawnObjects = [];
 
     var resizeTimeout = null;
 
@@ -207,7 +207,7 @@ UNIVERSE.Core3D = function(container) {
     function onMouseWheelFF(event) {
         event.preventDefault();
         if(overRenderer) {
-            var delta = event.detail? event.detail*(-120) : event.wheelDelta
+            var delta = event.detail? event.detail*(-120) : event.wheelDelta;
             zoom(delta * (10));
         }
         return false;
@@ -262,7 +262,7 @@ UNIVERSE.Core3D = function(container) {
                 scale : scale
             };
         }
-    }
+    };
 
     this.showObject = function(id, isShown) {
         // if object exists in drawnObjects then add back to scene
@@ -275,7 +275,7 @@ UNIVERSE.Core3D = function(container) {
                 scene.remove(drawnObjects[id].shape);
             }
         }
-    }
+    };
     
     this.removeObject = function(id) {
         if(drawnObjects[id] != undefined) {
@@ -284,7 +284,7 @@ UNIVERSE.Core3D = function(container) {
             }
             delete drawnObjects[id];
         }
-    }
+    };
     
     this.removeAllObjects = function() {
         for(var i in drawnObjects) {
@@ -292,8 +292,8 @@ UNIVERSE.Core3D = function(container) {
                 scene.remove(drawnObjects[i].shape);
             }
         }
-        drawnObjects = new Array();
-    }
+        drawnObjects = [];
+    };
 
     this.getObjectPosition = function(id) {
         if(drawnObjects[id] == undefined) {
@@ -303,7 +303,7 @@ UNIVERSE.Core3D = function(container) {
             return undefined;
         }
         return drawnObjects[id].shape.position;
-    }
+    };
 
     this.moveCameraTo = function(position_vector) {
         // This method converts a position into the rotation coordinate system used to move the camera
@@ -349,11 +349,11 @@ UNIVERSE.Core3D = function(container) {
         // set it to zero if NaN
         target.y = isNaN(y) ? 0 : y;
         target.x = isNaN(x) ? 0 : x;
-    }
+    };
     
     this.getCameraPosition = function() {
         return camera.position;
-    }
+    };
     
     this.addRotationToCameraTarget = function(xRotation, yRotation) {
         if(xRotation != undefined) {
@@ -363,12 +363,12 @@ UNIVERSE.Core3D = function(container) {
         if(yRotation != undefined) {
             target.y += yRotation;
         }
-    }
+    };
 
     this.updateLight = function(position, intensity) {
         light.position = position;
         light.intensity = intensity;
-    }
+    };
 
     // shim layer with setTimeout fallback
     window.requestAnimFrame = (function(){
@@ -403,7 +403,7 @@ UNIVERSE.Core3D = function(container) {
     }
 
     var GAMEPAD_ZOOM_SCALING_FACTOR = 1500;
-    var GAMEPAD_ZOOM_MIN_SENSITIVITY = .1;
+    var GAMEPAD_ZOOM_MIN_SENSITIVITY = 0.1;
     var GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR = 0.05;
     var GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR = 0.5;
     var GAMEPAD_CAMERA_ROTATION_DELTA =
@@ -425,11 +425,11 @@ UNIVERSE.Core3D = function(container) {
             ((distanceFromEarth / self.maxZoom) * GAMEPAD_CAMERA_ROTATION_DELTA);
         //console.log(distanceFromEarth + ", " + self.maxZoom + ", " + adjustedRotationScalingFactor);
 
-        var xRot = gamepad.axes["Right_Stick_X"];
+        var xRot = gamepad.axes.Right_Stick_X;
         xRot = xRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && xRot < GAMEPAD_CAMERA_MIN_SENSITIVITY
             ? 0 : xRot * adjustedRotationScalingFactor * -1;
         
-        var yRot = gamepad.axes["Right_Stick_Y"];
+        var yRot = gamepad.axes.Right_Stick_Y;
         yRot = yRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && yRot < GAMEPAD_CAMERA_MIN_SENSITIVITY
             ? 0 : yRot * adjustedRotationScalingFactor;
 
@@ -451,12 +451,12 @@ UNIVERSE.Core3D = function(container) {
         */
 
         // zoom in / out
-        var zoomInAmount = gamepad.buttons["Right_Trigger_2"];
+        var zoomInAmount = gamepad.buttons.Right_Trigger_2;
         if (zoomInAmount > GAMEPAD_ZOOM_MIN_SENSITIVITY) {
             zoom(zoomInAmount * GAMEPAD_ZOOM_SCALING_FACTOR);
         }
 
-        var zoomOutAmount = gamepad.buttons["Left_Trigger_2"];
+        var zoomOutAmount = gamepad.buttons.Left_Trigger_2;
         if (zoomOutAmount > GAMEPAD_ZOOM_MIN_SENSITIVITY) {
             zoom(zoomOutAmount * -GAMEPAD_ZOOM_SCALING_FACTOR);
         }

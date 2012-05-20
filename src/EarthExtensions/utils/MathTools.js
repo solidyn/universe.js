@@ -14,7 +14,7 @@ var MathTools = {
             x: x.x * a,
             y: x.y * a,
             z: x.z * a
-        }
+        };
     },
 
     /**
@@ -118,7 +118,7 @@ var MathTools = {
             x: x.y * y.z - y.y * x.z,
             y: -(x.x * y.z - y.x * x.z),
             z: x.x * y.y - y.x * x.y
-        }
+        };
         
         return result;
     },
@@ -134,7 +134,7 @@ var MathTools = {
     {
         x = MathTools.toRadians(x);
 
-        var result = new Array(); //Double[3];
+        var result = []; //Double[3];
         result[0] = vec[0];
         result[1] = Math.cos(x) * vec[1] + Math.sin(x) * vec[2];
         result[2] = -Math.sin(x) * vec[1] + Math.cos(x) * vec[2];
@@ -153,7 +153,7 @@ var MathTools = {
     {
         x = MathTools.toRadians(x);
         
-        var result = new Array(); //Double[3];
+        var result = []; //Double[3];
 
         result[0] = Math.cos(x) * vec[0] - Math.sin(x) * vec[2];
         result[1] = vec[1];
@@ -173,7 +173,7 @@ var MathTools = {
     {
         x = MathTools.toRadians(x);
 
-        var result = new Array(); //Double[3];
+        var result = []; //Double[3];
 
         result[0] = Math.cos(x) * vec[0] + Math.sin(x) * vec[1];
         result[1] = -Math.sin(x) * vec[0] + Math.cos(x) * vec[1];
@@ -216,12 +216,12 @@ var MathTools = {
     buildRotationMatrix1: function(x)
     {
         x = MathTools.toRadians(x);
-        var result = new Array(); //Double[3][3];
+        var result = []; //Double[3][3];
 
         var i = 0;
         for(i = 0; i < 3; i++)
         {
-           result[i] = new Array();
+           result[i] = [];
         }
 
         result[0][0] = 1.0;
@@ -247,12 +247,12 @@ var MathTools = {
     buildRotationMatrix2: function(x)
     {
         x = MathTools.toRadians(x);
-        var result = new Array(); //Double[3][3];
+        var result = []; //Double[3][3];
 
         var i = 0;
         for(i = 0; i < 3; i++)
         {
-           result[i] = new Array();
+           result[i] = [];
         }
 
         result[0][0] = Math.cos(x);
@@ -278,12 +278,12 @@ var MathTools = {
     buildRotationMatrix3: function(x)
     {
         x = MathTools.toRadians(x);
-        var result = new Array(); //Double[3][3];
+        var result = []; //Double[3][3];
 
         var i = 0;
         for(i = 0; i < 3; i++)
         {
-           result[i] = new Array();
+           result[i] = [];
         }
 
         result[0][0] = Math.cos(x);
@@ -308,7 +308,7 @@ var MathTools = {
      */
     ones: function(N)
     {
-        var x = new Array(); //Double[N][N];
+        var x = []; //Double[N][N];
 
         var i = 0;
         var j = 0;
@@ -737,4 +737,4 @@ var MathTools = {
 
         return returnVal;
     }
-}
+};

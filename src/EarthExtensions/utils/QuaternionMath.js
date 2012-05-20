@@ -78,7 +78,7 @@ var QuaternionMath = {
             x: matrixProduct[0],
             y: matrixProduct[1],
             z: matrixProduct[2]
-        }
+        };
     },
 
     /**

@@ -50,7 +50,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         var moon = new UNIVERSE.Moon(universe, earthExtensions, moonImageURL);
         universe.addObject(moon);
         universe.updateOnce();
-    }
+    };
 
     /**
 		Add the sun to the Universe at the correct position relative to the Earth-centered universe
@@ -60,7 +60,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	var sun = new UNIVERSE.Sun(universe, earthExtensions);
         universe.addObject(sun);
         universe.updateOnce();
-    }
+    };
 
     /**
         Add a Space Object to the Universe
@@ -90,7 +90,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                         var sensorLength = object.sensors.length;
 						
                         var graphicsObjects = universe.getGraphicsObjects();
-                        var objectsToDrawLinesTo = new Array();
+                        var objectsToDrawLinesTo = [];
                         for(var i = 0; i < sensorLength; i++) {
                             var sensor = object.sensors[i];
                             for(var j in graphicsObjects) {
@@ -146,7 +146,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 function() {
                 // nothing to draw, this is a controller
                 }
-                )
+                );
             universe.addObject(visibilityLinesController);
             universe.updateOnce();
             callback();
@@ -196,7 +196,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 callback();
             });
         });
-    }
+    };
 
     /**
 		Add a Propagation Line for an Object
@@ -208,12 +208,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         objectGeometry = new THREE.Geometry();
         
         universe.getObjectFromLibraryById("default_orbit_line_material", function(retrieved_material) {
-            var lineGraphicsObject = new UNIVERSE.PropogationLine(object, universe, earthExtensions, retrieved_material, objectGeometry)
+            var lineGraphicsObject = new UNIVERSE.PropogationLine(object, universe, earthExtensions, retrieved_material, objectGeometry);
             universe.addObject(lineGraphicsObject);
             universe.updateOnce();
             callback();
         });
-    }
+    };
 
     /**
 		Add a Sensor Projection for an Object
@@ -226,37 +226,37 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
         
         if(objectLocation != undefined) {
-            var sensorProjection = UNIVERSE.SensorProjection(sensor, spaceObject, universe, earthExtensions, objectLocation)
+            var sensorProjection = UNIVERSE.SensorProjection(sensor, spaceObject, universe, earthExtensions, objectLocation);
             universe.addObject(sensorProjection);
             universe.updateOnce();
         }
-    }
+    };
 
 
 
     this.addSensorProjections = function(spaceObject, callback) {
         if(spaceObject.sensors.length > 0 ) {
             for(var i = spaceObject.sensors.length-1; i >= 0; i--) {
-                this.addSensorProjection(spaceObject.sensors[i], spaceObject)
+                this.addSensorProjection(spaceObject.sensors[i], spaceObject);
             }
             callback();
         }
-    }
+    };
 	
     this.addSensorFootprintProjections = function(spaceObject, callback) {
         if(spaceObject.sensors.length > 0 ) {
             for(var i = 0; i < spaceObject.sensors.length; i++) {
-                this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject)
+                this.addSensorFootprintProjection(spaceObject.sensors[i], spaceObject);
             }
             callback();
         }
-    }
+    };
 	
     this.addSensorFootprintProjection = function(sensor, spaceObject) {
         var lineGraphicsObject = new UNIVERSE.SensorFootprintProjection(sensor, spaceObject, universe, earthExtensions);
         universe.addObject(lineGraphicsObject);
         universe.updateOnce();
-    }
+    };
     
     /**
 		Add a Tracing Line to the closest ground object for an Object
@@ -264,7 +264,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 		@param {UNIVERSE.SpaceObject} object - A Space Object to add a tracing line to the closest ground object for
 	*/
     this.addClosestGroundObjectTracingLine = function(object) {
-        var closestObject_id = undefined;
+        var closestObject_id;
         var closestGroundObjectLineController = new UNIVERSE.GraphicsObject(
             object.id + "_controlLine",
             object.objectName,
@@ -283,10 +283,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             function() {
 				
             }
-            )
+            );
         universe.addObject(closestGroundObjectLineController);
         universe.updateOnce();
-    }
+    };
 
     /**
 		Add a Line between two graphics objects
@@ -331,7 +331,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             
         var line = new THREE.Line(objectGeometry, objectMaterial);
 
-        var identifier = "_to_"
+        var identifier = "_to_";
         if(customIdentifier)
         {
             identifier = customIdentifier;
@@ -375,7 +375,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         universe.addObject(lineGraphicsObject);
     //universe.updateOnce();
     //});
-    }
+    };
 
     /**
 		Remove a Line between two graphics objects
@@ -389,7 +389,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             identifier = customIdentifier;
         }
         universe.removeObject(object1_id + identifier + object2_id);
-    }
+    };
 	
     /**
 		Remove all Lines between two graphics objects
@@ -402,7 +402,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.removeObject(i);
             }
         }
-    }
+    };
     
     /**
 		Return the closest Ground Object to a location
@@ -416,7 +416,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
             // move the vector to the surface of the earth
-            location_vector.multiplyScalar(earthSphereRadius / location_vector.length())
+            location_vector.multiplyScalar(earthSphereRadius / location_vector.length());
 
             return earthExtensions.findClosestObject({
                 x: location_vector.x, 
@@ -425,7 +425,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             });
         }
         return undefined;
-    }
+    };
     
     /**
 		Return the closest Object to a location
@@ -435,8 +435,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.findClosestObject = function(location) {
         var graphicsObjects = universe.getGraphicsObjects();
         
-        var closestDistance = undefined;
-        var closestObject = undefined;
+        var closestDistance;
+        var closestObject;
         var location_vector = new THREE.Vector3(location.x, location.y, location.z);
         
         for(var i in graphicsObjects) {
@@ -451,7 +451,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
         
         return closestObject;
-    }
+    };
     
     /**
 		Enable or disable all orbit lines
@@ -467,7 +467,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 
     /**
 		Enable or disable orbit lines for a specific object
@@ -477,7 +477,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.showOrbitLineForObject = function(isEnabled, id) {
         universe.showObject(id + "_propogation", isEnabled);
-    }
+    };
 
     /**
 		Enable or disable display of an object
@@ -487,7 +487,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.showModelForId = function(isEnabled, id) {
         universe.showObject(id, isEnabled);
-    }
+    };
     
     /**
 		Enable or disable display of all ground tracks
@@ -503,7 +503,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 
     /**
 		Enable or disable display of a ground track for an object
@@ -513,7 +513,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 	*/
     this.showGroundTrackForId = function(isEnabled, id) {
         universe.showObject(id + "_groundPoint", isEnabled);
-    }
+    };
     
     /**
 		Enable or disable display of all sensor projections
@@ -530,7 +530,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 
     /**
 		Enable or disable display of sensor projections for an object
@@ -547,7 +547,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(i, isEnabled);
             }
         }
-    }
+    };
 
     /**
 		Enable or disable display of all sensor projections
@@ -564,7 +564,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 
     /**
 		Enable or disable display of sensor projections for an object
@@ -581,7 +581,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 	
     /**
 		Enable or disable display of sensor projections for an object
@@ -598,7 +598,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
 	
     /**
 		Enable or disable display of all lines between objects
@@ -614,7 +614,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
     
     /**
 		Enable or disable display of all lines between objects
@@ -629,7 +629,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
     
     /**
 		Enable or disable display of lines for an object
@@ -645,11 +645,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.showObject(graphicsObjects[i].id, isEnabled);
             }
         }
-    }
+    };
         
     this.lockCameraPositionRelativeToEarth = function(isLocked) {
         this.lockCameraToWithEarthRotation = isLocked;
-    }
+    };
 
     /**
 		Turn on or off sun lighting
@@ -661,7 +661,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         universe.showObject("earth", !isSunLighting);
         universe.showObject("earth_day", isSunLighting);
         universe.showObject("earth_night", isSunLighting);
-    }
+    };
 
     /**
 		Remove all objects from the Universe except the Earth and Moon
@@ -675,7 +675,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 universe.removeObject(graphicsObjects[i].id);
             }
         }
-    }
+    };
 
     /**
 		Set up the Universe with the Earth Extensions
@@ -684,7 +684,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     this.setup = function() {
         this.removeAllExceptEarthAndMoon();
         universe.setup();
-    }
+    };
 
     /**
 		Converts ECI to THREE.js 3D coordinate system. Compare these two websites for details on why we have to do this:
@@ -713,7 +713,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             vy : location.vz,
             vz : location.vy
         };
-    }
+    };
         
     function threeDToEciCoordinates(location) {
         if(location == undefined) {

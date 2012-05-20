@@ -28,7 +28,7 @@ UNIVERSE.SpaceObject = function(id, objectName, modelId, propagator, showPropaga
 	this.currentLocation = currentLocation || undefined;
         this.universe = universe || undefined;
         this.earthExtensions = earthExtensions || undefined;
-}
+};
 
 UNIVERSE.SpaceObject.prototype = {
 	constructor: UNIVERSE.SpaceObject,
@@ -84,7 +84,7 @@ UNIVERSE.SpaceObject.prototype = {
                     spaceObject.universe.draw(this.id, objectModel, false);
                     spaceObject.earthExtensions.showModelForId(spaceObject.showVehicle, this.id);
                 }
-            )
+            );
             return spaceGraphicsObject;
         }
 };

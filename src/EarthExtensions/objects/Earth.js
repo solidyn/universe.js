@@ -24,7 +24,7 @@ UNIVERSE.Earth = function(universe, earthExtensions, dayImageURL, nightImageURL)
         transparent: true,
         // reflectivity: 1
         blending: THREE.AdditiveBlending
-    })
+    });
 
     var dayEarthMesh = new THREE.Mesh(geometry, dayMaterial);
 

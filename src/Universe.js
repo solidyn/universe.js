@@ -118,19 +118,19 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
 
     this.getMinZoomDistance = function() {
         return core.minZoom;
-    }
+    };
 
     this.getMaxZoomDistance = function() {
         return core.maxZoom;
-    }
+    };
 
     this.setCurrentZoomDistance = function(newDistanceTarget) {
         core.distanceTarget = newDistanceTarget;
-    }
+    };
 
     this.getCurrentZoomDistance = function() {
         return core.distanceTarget;
-    }
+    };
     
     /**
         Pause playback for the universe
@@ -148,7 +148,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
      */
     this.setPlaybackSpeed = function(speed) {
         playbackSpeed = speed;
-    }
+    };
 
     /**
         Set the current time of the Universe
@@ -158,7 +158,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.setCurrentUniverseTime = function(newUniverseTime) {
         currentUniverseTime = new Date(newUniverseTime);
         controller.updateOnce();
-    }
+    };
 
     /**
         Get the current time of the Universe
@@ -166,7 +166,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.getCurrentUniverseTime = function() {
         return currentUniverseTime;
-    }
+    };
 
     /**
         Add a geometry to the universe with an ID and url to retrieve the model's geometry
@@ -190,7 +190,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.addObject = function(object) {
         controller.addGraphicsObject(object);
-    }
+    };
 
     /**
         Draws an object in the Universe
@@ -201,7 +201,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.draw = function(id, mesh, isScale) {
         core.draw(id, mesh, isScale);
-    }
+    };
 
     /**
         Removes an object from the Universe
@@ -210,7 +210,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.unDraw = function(id) {
         core.removeObject(id);
-    }
+    };
 
     /**
         Add an object to the Universe.js object pipeline.
@@ -221,7 +221,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.setObjectInLibrary = function(id, object) {
         objectLibrary.setObject(id, object);
-    }
+    };
 
     /**
         Retrieves an object from the Universe.js object pipeline
@@ -231,7 +231,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.getObjectFromLibraryById = function(id, callback) {
         objectLibrary.getObjectById(id, callback);
-    }
+    };
 
     /**
         Remove an object completely from the Universe
@@ -241,7 +241,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.removeObject = function(id) {
         controller.removeGraphicsObject(id);
         core.removeObject(id);
-    }
+    };
 
     /**
         Snap the Universe's camera to be directly behind an object
@@ -264,11 +264,11 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         else {
             // Object is not added to the core so not doing anything
         }
-    }
+    };
     
     this.addRotationToCamera = function(xRotation, yRotation) {
         core.addRotationToCameraTarget(xRotation, yRotation);
-    }
+    };
 
     /**
         Remove all objects from the Universe
@@ -277,7 +277,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.removeAll = function() {
         core.removeAllObjects();
         controller.removeAllGraphicsObjects();
-    }
+    };
     
     /**
         Get all of the objects currently in the Universe
@@ -285,7 +285,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.getGraphicsObjects = function() {
         return controller.getGraphicsObjects();
-    }
+    };
 
     /**
         Get a graphics object by its id
@@ -294,18 +294,18 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.getGraphicsObjectById = function(id) {
         return controller.getGraphicsObjectById(id);
-    }
+    };
 
     /**
         @ignore
     */
     this.updateObject = function(id, propertyName, propertyValue) {
         // TODO: Implement or delete
-    }
+    };
 
     this.updateOnce = function() {
         controller.updateOnce();
-    }
+    };
 
     /**
         Toggle whether an object is visible in the Universe
@@ -315,11 +315,11 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.showObject = function(id, isEnabled) {
         core.showObject(id, isEnabled);
-    }
+    };
 
     this.updateLight = function(x, y, z, intensity) {
         core.updateLight(new THREE.Vector3(x, y, z), intensity);
-    }
+    };
 
     /**
         Basic setup method, needs to be called after all objects are removed from the Universe
@@ -327,7 +327,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     */
     this.setup = function() {
         addSimStateObject();
-    }
+    };
 
     this.setup();
 };

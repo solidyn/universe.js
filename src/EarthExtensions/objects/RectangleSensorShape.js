@@ -14,22 +14,22 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
     this.getHeight = function()
     {
         return this.height;
-    }
+    };
 
     this.setHeight = function(height)
     {
         this.height = height;
-    }
+    };
 
     this.getWidth = function()
     {
         return this.width;
-    }
+    };
 
     this.setWidth = function(width)
     {
         this.width = width;
-    }
+    };
 
     this.getAngularExtentOfSensorAtSpecifiedAzimuth = function(checkAngle)
     {
@@ -72,7 +72,7 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
 
         }
 
-    }
+    };
 
     this.canSensorSeePointAtAzEl = function(relativeAzimuth, relativeRadius){
         var canSee=false;
@@ -86,5 +86,5 @@ UNIVERSE.RectangleSensorShape = function(shapeName, width, height)
             canSee=true;
         }
         return canSee;
-    }
+    };
 };

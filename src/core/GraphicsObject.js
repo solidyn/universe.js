@@ -15,8 +15,8 @@ UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunctio
 	this.currentLocation = currentLocation;
 	this.update = updateFunction;
 	this.draw = drawFunction;
-}
+};
 
 UNIVERSE.GraphicsObject.prototype = {
 	constructor: UNIVERSE.GraphicsObject
-}
+};

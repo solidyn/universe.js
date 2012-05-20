@@ -7,6 +7,6 @@ var Utilities = {
         }
         return color;
     }
-} 
+}; 
 
 

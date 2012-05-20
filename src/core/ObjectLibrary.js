@@ -2,7 +2,7 @@
 var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.ObjectLibrary = function() {
-    var objects = new Array();
+    var objects = [];
     var numberOfElements = 0;
 
     // adds a mesh object to the object library
@@ -37,7 +37,7 @@ UNIVERSE.ObjectLibrary = function() {
             }
         });
         
-    }
+    };
 
     // gets an object from the library based on the given id
     this.getObjectById = function(id, callback) {
@@ -45,15 +45,15 @@ UNIVERSE.ObjectLibrary = function() {
         var object = objects[id];
         var objectLib = this;
         if(object == "loading") {
-            setTimeout(function() {objectLib.getObjectById(id, callback)}, 1000)
+            setTimeout(function() {objectLib.getObjectById(id, callback);}, 1000);
         }
         else if (object == null)
             throw "Tried to retrieve object [" + id + "] from object library but didn't exist";
         else
             callback(object);
-    }
+    };
     
     this.setObject = function(id, object) {
         objects[id] = object;
-    }
-}
+    };
+};

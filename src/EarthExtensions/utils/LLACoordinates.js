@@ -4,9 +4,9 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
 
     // define variables as <var name>: <value>
 
-    this.latitude =  lat ? lat : 0.0, //deg
-    this.longitude = lon ? lon : 0.0, //deg
-    this.altitude =  alt ? alt : 0.0  //km
+    this.latitude =  lat ? lat : 0.0; //deg
+    this.longitude = lon ? lon : 0.0; //deg
+    this.altitude =  alt ? alt : 0.0;  //km
 
     /**
      * Returns the altitude value.
@@ -14,7 +14,7 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.getAltitude = function()
     {
         return this.altitude;
-    }
+    };
 
     /**
      * Sets a new altitude value.
@@ -22,7 +22,7 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.setAltitude = function(newAltitude)
     {
         this.altitude = newAltitude;
-    }
+    };
 
     /**
      * Returns the latitude value.
@@ -30,7 +30,7 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.getLatitude = function()
     {
         return this.latitude;
-    }
+    };
 
     /**
      * Sets a new latitude value.
@@ -38,7 +38,7 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.setLatitude = function(newLatitude)
     {
         this.latitude = newLatitude;
-    }
+    };
 
     /**
      * Returns the longitude value.
@@ -46,7 +46,7 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.getLongitude = function()
     {
         return this.longitude;
-    }
+    };
 
     /**
      * Sets a new longitude value.
@@ -54,5 +54,5 @@ UNIVERSE.LLACoordinates = function(lat, lon, alt) {
     this.setLongitude = function(setLongitude)
     {
         this.longitude = setLongitude;
-    }
+    };
 };

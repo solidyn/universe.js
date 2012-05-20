@@ -15,8 +15,8 @@ var RungeKuttaFehlbergPropagator = {
         //fifth order runge-kutta-fehlberg integrator
         var tempState = state;
 
-        var f = new Array();          //array of doubles[9]
-        var deltaState = new Array(); //array of doubles[9]
+        var f = [];          //array of doubles[9]
+        var deltaState = []; //array of doubles[9]
         var dtPrime = 0.0;            //double
 
         var N = 1;  //int
@@ -42,12 +42,12 @@ var RungeKuttaFehlbergPropagator = {
             var simTime = new Date(newMilliseconds);
             GST = CoordinateConversionTools.convertTimeToGMST(simTime); //double
 
-            var k1 = new Array(); //double[9]
-            var k2 = new Array(); //double[9]
-            var k3 = new Array(); //double[9]
-            var k4 = new Array(); //double[9]
-            var k5 = new Array(); //double[9]
-            var k6 = new Array(); //double[9]
+            var k1 = []; //double[9]
+            var k2 = []; //double[9]
+            var k3 = []; //double[9]
+            var k4 = []; //double[9]
+            var k5 = []; //double[9]
+            var k6 = []; //double[9]
 
             //for loop counter
             var i = 0;
@@ -172,7 +172,7 @@ var RungeKuttaFehlbergPropagator = {
     {
         //state is 9x1
         //state structure is x,y,z,vx,vy,vz,ax,ay,az
-        var stateRateOfChange = new Array(); //double[9]
+        var stateRateOfChange = []; //double[9]
         var mu = Constants.muEarth;     //double
         var r = Math.sqrt((state[0] * state[0]) + (state[1] * state[1]) +
             (state[2] * state[2])); //double
@@ -193,7 +193,7 @@ var RungeKuttaFehlbergPropagator = {
     
     propagateOrbit: function(eci, elapsedTime, dt, timeAtStartOfPropagation)
     {
-        var state = new Array();     //double[9]
+        var state = [];     //double[9]
 
         //establish the starting state vector;
         state[0] = eci.x;
@@ -225,4 +225,4 @@ var RungeKuttaFehlbergPropagator = {
         //console.log("newEci: " + JSON.stringify(newEci));
         return newEci;
     }
-}
+};
