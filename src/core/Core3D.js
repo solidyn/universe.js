@@ -139,7 +139,7 @@ UNIVERSE.Core3D = function(container) {
 
     function scaleDrawnObjects() {
         for(var i in drawnObjects) {
-            if(drawnObjects[i].scale == true) {
+            if(drawnObjects[i].scale === true) {
                 var objectPosition = drawnObjects[i].shape.position;
                 var distanceFromCamera = MathTools.distanceBetweenTwoPoints(
                     objectPosition.x, objectPosition.y, objectPosition.z,
@@ -253,8 +253,8 @@ UNIVERSE.Core3D = function(container) {
 
     // Priviledged Methods
     this.draw = function(id, shape, scale) {
-        if(drawnObjects[id] == undefined) {
-            if(shape != undefined) {
+        if(!drawnObjects[id]) {
+            if(shape) {
                 scene.add(shape);
             }
             drawnObjects[id] = {
@@ -266,7 +266,7 @@ UNIVERSE.Core3D = function(container) {
 
     this.showObject = function(id, isShown) {
         // if object exists in drawnObjects then add back to scene
-        if (drawnObjects[id] != undefined) {
+        if (drawnObjects[id]) {
             if(isShown) {
                 //TODO: Fix so that multiple calls with true don't add the same object over and over'
                 scene.add(drawnObjects[id].shape);
@@ -278,8 +278,8 @@ UNIVERSE.Core3D = function(container) {
     };
     
     this.removeObject = function(id) {
-        if(drawnObjects[id] != undefined) {
-            if(drawnObjects[id].shape != undefined) {
+        if(drawnObjects[id]) {
+            if(drawnObjects[id].shape) {
                 scene.remove(drawnObjects[id].shape);
             }
             delete drawnObjects[id];
@@ -288,7 +288,7 @@ UNIVERSE.Core3D = function(container) {
     
     this.removeAllObjects = function() {
         for(var i in drawnObjects) {
-            if(drawnObjects[i].shape != undefined) {
+            if(drawnObjects[i].shape) {
                 scene.remove(drawnObjects[i].shape);
             }
         }
@@ -296,10 +296,10 @@ UNIVERSE.Core3D = function(container) {
     };
 
     this.getObjectPosition = function(id) {
-        if(drawnObjects[id] == undefined) {
+        if(drawnObjects[id] === undefined) {
             return undefined;
         }
-        else if(drawnObjects[id].shape == undefined) {
+        else if(drawnObjects[id].shape === undefined) {
             return undefined;
         }
         return drawnObjects[id].shape.position;
@@ -356,11 +356,11 @@ UNIVERSE.Core3D = function(container) {
     };
     
     this.addRotationToCameraTarget = function(xRotation, yRotation) {
-        if(xRotation != undefined) {
+        if(xRotation) {
             target.x += xRotation;
         }
         
-        if(yRotation != undefined) {
+        if(yRotation) {
             target.y += yRotation;
         }
     };
@@ -426,12 +426,12 @@ UNIVERSE.Core3D = function(container) {
         //console.log(distanceFromEarth + ", " + self.maxZoom + ", " + adjustedRotationScalingFactor);
 
         var xRot = gamepad.axes.Right_Stick_X;
-        xRot = xRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && xRot < GAMEPAD_CAMERA_MIN_SENSITIVITY
-            ? 0 : xRot * adjustedRotationScalingFactor * -1;
+        xRot = xRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && xRot < GAMEPAD_CAMERA_MIN_SENSITIVITY ?
+            0 : xRot * adjustedRotationScalingFactor * -1;
         
         var yRot = gamepad.axes.Right_Stick_Y;
-        yRot = yRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && yRot < GAMEPAD_CAMERA_MIN_SENSITIVITY
-            ? 0 : yRot * adjustedRotationScalingFactor;
+        yRot = yRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && yRot < GAMEPAD_CAMERA_MIN_SENSITIVITY ?
+            0 : yRot * adjustedRotationScalingFactor;
 
         self.addRotationToCameraTarget(xRot, yRot);
         

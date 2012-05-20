@@ -493,7 +493,7 @@ var MathTools = {
         {
             for (j = 0; j < N; j++)
             {
-                if (x[i][j] == 0)
+                if (x[i][j] === 0)
                 {
                     hTimesX[i][j] = 0.0;
                 }

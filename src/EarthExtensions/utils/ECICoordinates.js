@@ -16,8 +16,8 @@ UNIVERSE.ECICoordinates = function(xVal, yVal, zVal, vxVal, vyVal, vzVal, axVal,
 };
 
 UNIVERSE.ECICoordinates.prototype = {
-	constructor: UNIVERSE.ECICoordinates,
-	
+    constructor: UNIVERSE.ECICoordinates,
+    
     /**
      * Get the X value.
      */

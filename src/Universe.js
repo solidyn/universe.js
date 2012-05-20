@@ -48,7 +48,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @private
     */
     function fireStateChanged(state) {
-        if(stateChangedCallback != null) {
+        if(stateChangedCallback !== null) {
             stateChangedCallback(state);
         }
     }
@@ -62,7 +62,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
             id : "simState",
             objectName : "simState",
             update : function(elapsedTime) {
-                if(elapsedTime != null) {
+                if(elapsedTime !== null) {
                     currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
                 }
             },
@@ -99,14 +99,14 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {function} newStateChangedCallback
      */
     this.play = function(startTime, newPlaybackSpeed, newStateChangedCallback) {
-        if(startTime != undefined) {
+        if(startTime) {
             currentUniverseTime = new Date(startTime);
         }
-         if(newPlaybackSpeed != undefined) {
+         if(newPlaybackSpeed) {
             playbackSpeed = newPlaybackSpeed;
          }
         
-        if(newStateChangedCallback != undefined) {
+        if(newStateChangedCallback) {
             stateChangedCallback = newStateChangedCallback;
         }
         
@@ -176,7 +176,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {function} callback - callback function that gets called when the geometry is done loading
     */
     this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
-        if (modelId != undefined){
+        if (modelId){
             objectLibrary.addGeometryObjectFromUrl(modelId, modelUrl, callback);
         } else {
             callback();
@@ -251,7 +251,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
     this.snapToObject = function(id) {
         // get the object's position and copy it into a vector
         var position = core.getObjectPosition(id);
-        if(position != undefined) {
+        if(position) {
             var vector = new THREE.Vector3();
             vector.copy(position);
     

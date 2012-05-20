@@ -123,21 +123,14 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      */
     this.isZero = function()
     {
-        var allZeros = true;
-        var i = 0;
-
-        for (i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
-            if (this.q[i] != null)
+            if (this.q[i] && this.q[i] !== 0)
             {
-                if (this.q[i] != 0)
-                {
-                    allZeros = false;
-                    break;
-                }
+                return false;
             }
         }
 
-        return allZeros;
+        return true;
     };
 }

@@ -21,11 +21,11 @@ var CoordinateConversionTools = {
         var second = currentEpoch.getUTCSeconds() + (currentEpoch.getUTCMilliseconds()/1000);   //double
 
         // console.log("year: " + year);
-        // 		console.log("month: " + month);
-        // 		console.log("day: " + day);
-        // 		console.log("hour: " + hour);
-        // 		console.log("minute: " + minute);
-        // 		console.log("second: " + second);
+        //         console.log("month: " + month);
+        //         console.log("day: " + day);
+        //         console.log("hour: " + hour);
+        //         console.log("minute: " + minute);
+        //         console.log("second: " + second);
 
         JD = 367 * year - Math.floor((7 * (year + Math.floor(((month + 9) / 12))) / 4)) +
         Math.floor((275 * month / 9)) + (day) + 1721013.5 +
@@ -653,11 +653,11 @@ var CoordinateConversionTools = {
     {
         //reference Vallado 3rd edition page 201
         var UTC = new Date(currentEpoch);
-		
+        
         //var newSeconds = (int) (UTC.getSeconds() - 0.463326);
         var UTI = new Date(UTC.getTime() - 463);
         //console.log("UTI: " + UTI)
-		
+        
         //Date UTI = new Date(UTC.getYear(), UTC.getMonth(), UTC.getDate(), UTC.getHours(), UTC.getMinutes(), newSeconds);
         //newSeconds = (int) (UTI.getSeconds() + 32);
         var TAI = new Date(UTI.getTime() + 32000);

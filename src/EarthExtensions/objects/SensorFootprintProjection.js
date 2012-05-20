@@ -19,7 +19,7 @@ UNIVERSE.SensorFootprintProjection = function(sensor, object, universe, earthExt
     var points = sensor.buildPointsToDefineSensorShapeInECI(40, object);
     //var extendedPoints = sensors[0].extendSensorEndpointsInECIToConformToEarth(points, spaceObject, 1000, 10);
     var extendedPoints = sensor.findProjectionPoints(points, object, 1000);
-		
+        
     for(var j = 0; j< extendedPoints.length; j++) {
         var vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
         objectGeometry.vertices.push(new THREE.Vertex(vector));

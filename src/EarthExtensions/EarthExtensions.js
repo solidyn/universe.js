@@ -3,17 +3,17 @@
 var UNIVERSE = UNIVERSE || {};
 
 /** 
-	Extensions for doing Earth-based 3D modeling with Universe.js
-	@constructor
-	@param {UNIVERSE.Universe} universe - The Universe to draw in
-	@param {boolean} isSunLighting - Should the Earth be lit by the sun or not
+    Extensions for doing Earth-based 3D modeling with Universe.js
+    @constructor
+    @param {UNIVERSE.Universe} universe - The Universe to draw in
+    @param {boolean} isSunLighting - Should the Earth be lit by the sun or not
  */
 UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     var earthExtensions = this;
-	
+    
     // constants
     var earthSphereRadius = Constants.radiusEarth;
-	
+    
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
     var enableVisibilityLines = false;
     this.enableSensorProjections = false;
@@ -42,9 +42,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-	Add the Moon to the Universe
-	@public
-	@param {string} moonImageURL - the URL of the Moon image to use
+    Add the Moon to the Universe
+    @public
+    @param {string} moonImageURL - the URL of the Moon image to use
     */
     this.addMoon = function(moonImageURL) {
         var moon = new UNIVERSE.Moon(universe, earthExtensions, moonImageURL);
@@ -53,11 +53,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add the sun to the Universe at the correct position relative to the Earth-centered universe
-	*/
+        Add the sun to the Universe at the correct position relative to the Earth-centered universe
+    */
     this.addSun = function() {
         //var sunLight = new THREE.PointLight( 0xffffff, 1.5);
-	var sun = new UNIVERSE.Sun(universe, earthExtensions);
+    var sun = new UNIVERSE.Sun(universe, earthExtensions);
         universe.addObject(sun);
         universe.updateOnce();
     };
@@ -78,7 +78,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             });
         });
     };
-	
+    
     this.addSensorVisibilityLines = function(object, callback) {
         if(object.sensors && object.sensors.length > 0) {
             var visibilityLinesController = new UNIVERSE.GraphicsObject(
@@ -88,7 +88,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                 function(elapsedTime) {
                     if(enableVisibilityLines) {
                         var sensorLength = object.sensors.length;
-						
+                        
                         var graphicsObjects = universe.getGraphicsObjects();
                         var objectsToDrawLinesTo = [];
                         for(var i = 0; i < sensorLength; i++) {
@@ -96,7 +96,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                             for(var j in graphicsObjects) {
                                 var obj = graphicsObjects[j];
                                 //console.log("obj.id: " + obj.id + " object.id: " + object.id);
-                                if ( obj.currentLocation != undefined && 
+                                if ( obj.currentLocation !== undefined && 
                                     obj.modelName != "earth" && 
                                     obj.modelName != "moon" && 
                                     obj.modelName != "sun" && 
@@ -109,8 +109,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                                     // Now we're looking at a point 
                                     //console.log(obj.id);
                                     //var currentLocationInEci = threeDToEciCoordinates(obj.currentLocation);
-                                    //var targetPosition = new UNIVERSE.ECICoordinates(currentLocationInEci.x, currentLocationInEci.y, currentLocationInEci.z, 0,0,0,0,0,0);	
-                                    //var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);	
+                                    //var targetPosition = new UNIVERSE.ECICoordinates(currentLocationInEci.x, currentLocationInEci.y, currentLocationInEci.z, 0,0,0,0,0,0);    
+                                    //var targetPosition = new UNIVERSE.ECICoordinates(-obj.currentLocation.x, obj.currentLocation.z, obj.currentLocation.y, 0,0,0,0,0,0);    
                                     var inView = sensor.checkSensorVisibilityOfTargetPoint(object, obj.currentLocation );
                                     //console.log('VISIBILITY CHECK [' + object.objectName + ":" + sensor.name + ']  to '+ obj.modelName + " inview: " + inView);
                                     if(!objectsToDrawLinesTo[obj.id]) {
@@ -122,10 +122,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                         for(var k in objectsToDrawLinesTo) {
                             if(objectsToDrawLinesTo[k] ) {
-                                if(universe.getGraphicsObjectById(object.id + "_visibility_" + k) == undefined)
+                                if(universe.getGraphicsObjectById(object.id + "_visibility_" + k) === undefined)
                                 {
                                     //console.log("adding line for object: " + object.id + " and " + k);
-                                    earthExtensions.addLineBetweenObjects(object.id, k, undefined, "_visibility_");	
+                                    earthExtensions.addLineBetweenObjects(object.id, k, undefined, "_visibility_");    
                                 //universe.updateOnce();
                                 }
                                 else {
@@ -138,10 +138,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                         //console.log("finished: " + k);
                         }
 
-						
+                        
                     }
                     earthExtensions.showAllSensorVisibilityLines(enableVisibilityLines);
-					
+                    
                 },
                 function() {
                 // nothing to draw, this is a controller
@@ -154,10 +154,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add a Ground Object to the Earth
-		@public
-		@param {UNIVERSE.GroundObject} groundObject - an object to display on the Earth
-	*/
+        Add a Ground Object to the Earth
+        @public
+        @param {UNIVERSE.GroundObject} groundObject - an object to display on the Earth
+    */
     this.addGroundObject = function(groundObject, callback) {
         var objectGeometry, objectMaterial, material;
         
@@ -181,10 +181,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add a Ground Track Point for an Object
-		@public
-		@param {UNIVERSE.SpaceObject} object - The Space Object to add a ground track point for
-	*/
+        Add a Ground Track Point for an Object
+        @public
+        @param {UNIVERSE.SpaceObject} object - The Space Object to add a ground track point for
+    */
     this.addGroundTrackPointForObject = function(object, callback) {
         var objectGeometry, objectMaterial;
         universe.getObjectFromLibraryById("default_ground_object_geometry", function(retrieved_geometry) {
@@ -199,10 +199,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add a Propagation Line for an Object
-		@public
-		@param {UNIVERSE.SpaceObject} object - A Space Object to add a propagation line for
-	*/
+        Add a Propagation Line for an Object
+        @public
+        @param {UNIVERSE.SpaceObject} object - A Space Object to add a propagation line for
+    */
     this.addPropogationLineForObject = function(object, callback) {
         var objectGeometry, objectMaterial;
         objectGeometry = new THREE.Geometry();
@@ -216,16 +216,16 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add a Sensor Projection for an Object
-		@public
-		@param {UNIVERSE.SpaceObject} object - A Space Object to add a Sensor Projection for
-	*/
+        Add a Sensor Projection for an Object
+        @public
+        @param {UNIVERSE.SpaceObject} object - A Space Object to add a Sensor Projection for
+    */
     this.addSensorProjection = function(sensor, spaceObject) {
 
         // Determine the object's location in 3D space
         var objectLocation = earthExtensions.eciTo3DCoordinates(spaceObject.propagator(undefined, false));
         
-        if(objectLocation != undefined) {
+        if(objectLocation) {
             var sensorProjection = UNIVERSE.SensorProjection(sensor, spaceObject, universe, earthExtensions, objectLocation);
             universe.addObject(sensorProjection);
             universe.updateOnce();
@@ -242,7 +242,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             callback();
         }
     };
-	
+    
     this.addSensorFootprintProjections = function(spaceObject, callback) {
         if(spaceObject.sensors.length > 0 ) {
             for(var i = 0; i < spaceObject.sensors.length; i++) {
@@ -251,7 +251,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             callback();
         }
     };
-	
+    
     this.addSensorFootprintProjection = function(sensor, spaceObject) {
         var lineGraphicsObject = new UNIVERSE.SensorFootprintProjection(sensor, spaceObject, universe, earthExtensions);
         universe.addObject(lineGraphicsObject);
@@ -259,10 +259,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Add a Tracing Line to the closest ground object for an Object
-		@public
-		@param {UNIVERSE.SpaceObject} object - A Space Object to add a tracing line to the closest ground object for
-	*/
+        Add a Tracing Line to the closest ground object for an Object
+        @public
+        @param {UNIVERSE.SpaceObject} object - A Space Object to add a tracing line to the closest ground object for
+    */
     this.addClosestGroundObjectTracingLine = function(object) {
         var closestObject_id;
         var closestGroundObjectLineController = new UNIVERSE.GraphicsObject(
@@ -274,14 +274,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
 
                 var closestGroundObject = earthExtensions.findClosestGroundObject(objectLocation);
 
-                if(closestGroundObject != undefined && closestGroundObject.id != closestObject_id) {
+                if(closestGroundObject !== undefined && closestGroundObject.id != closestObject_id) {
                     earthExtensions.removeLineBetweenObjects(object.id, closestObject_id);
                     closestObject_id = closestGroundObject.id;
                     earthExtensions.addLineBetweenObjects(object.id, closestObject_id);
                 }
             },
             function() {
-				
+                
             }
             );
         universe.addObject(closestGroundObjectLineController);
@@ -289,11 +289,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Add a Line between two graphics objects
-		@public
-		@param {string} object1_id - starting object of the line
-		@param {string} object2_id - end object of the line
-	*/
+        Add a Line between two graphics objects
+        @public
+        @param {string} object1_id - starting object of the line
+        @param {string} object2_id - end object of the line
+    */
     this.addLineBetweenObjects = function(object1_id, object2_id, color, customIdentifier) {
         var objectGeometry, objectMaterial;
         
@@ -302,25 +302,25 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             color = 0x009900;
         }
         // else {
-        // 				objectMaterial = retrieved_material;
-        // 			}
-			
+        //                 objectMaterial = retrieved_material;
+        //             }
+            
         objectMaterial = new THREE.LineBasicMaterial({
             color : color,
             opacity : 1
         });
-			
+            
         var object1 = universe.getGraphicsObjectById(object1_id);
         var object2 = universe.getGraphicsObjectById(object2_id);
-			
-        if(object1 == undefined || object2 == undefined) {
+            
+        if(!object1 || !object2) {
             return;
         }
-			
+            
         var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
         var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
-			
-        if(object1Location == undefined || object2Location == undefined) {
+            
+        if(!object1Location || !object2Location) {
             return;
         }
             
@@ -336,7 +336,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         {
             identifier = customIdentifier;
         }
-			
+            
         var lineGraphicsObject = new UNIVERSE.GraphicsObject(
             object1_id + identifier + object2_id,
             undefined,
@@ -344,13 +344,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             function(elapsedTime) {
                 var object1 = universe.getGraphicsObjectById(object1_id);
                 var object2 = universe.getGraphicsObjectById(object2_id);
-                if(object1 == undefined || object2 == undefined) {
+                if(!object1 || !object2) {
                     return;
                 }
                 var object1Location = earthExtensions.eciTo3DCoordinates(object1.currentLocation);
                 var object2Location = earthExtensions.eciTo3DCoordinates(object2.currentLocation);
-					
-                if(object1Location == undefined || object2Location == undefined) {
+                    
+                if(!object1Location || !object2Location) {
                     return;
                 }
                    
@@ -359,17 +359,17 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
                     y: object1Location.y, 
                     z: object1Location.z
                 };
-					
+                    
                 objectGeometry.vertices[1].position = {
                     x: object2Location.x, 
                     y: object2Location.y, 
                     z: object2Location.z
                 };
-					
+                    
                 objectGeometry.__dirtyVertices = true;
             },
             function() {
-                universe.draw(this.id, line, false)	;
+                universe.draw(this.id, line, false);
             }
             );
         universe.addObject(lineGraphicsObject);
@@ -378,11 +378,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Remove a Line between two graphics objects
-		@public
-		@param {string} object1_id - starting object of the line
-		@param {string} object2_id - end object of the line
-	*/
+        Remove a Line between two graphics objects
+        @public
+        @param {string} object1_id - starting object of the line
+        @param {string} object2_id - end object of the line
+    */
     this.removeLineBetweenObjects = function(object1_id, object2_id, customIdentifier) {
         var identifier = "_to_";
         if(customIdentifier) {
@@ -390,11 +390,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
         universe.removeObject(object1_id + identifier + object2_id);
     };
-	
+    
     /**
-		Remove all Lines between two graphics objects
-		@public
-	*/
+        Remove all Lines between two graphics objects
+        @public
+    */
     this.removeAllLinesBetweenObjects = function() {
         var graphicsObjects = universe.getGraphicsObjects();
         for(var i in graphicsObjects) {
@@ -405,14 +405,14 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Return the closest Ground Object to a location
-		@public
-		@param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
-	*/
+        Return the closest Ground Object to a location
+        @public
+        @param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
+    */
     this.findClosestGroundObject = function(location) {
         // TODO: this undefined check may be covering up a bug where not everything gets removed in the 
         // removeAllExceptEarthAndMoon method
-        if(location != undefined) {
+        if(location) {
             var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
             // move the vector to the surface of the earth
@@ -428,10 +428,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Return the closest Object to a location
-		@public
-		@param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
-	*/
+        Return the closest Object to a location
+        @public
+        @param {UNIVERSE.ECICoordinates} location - the location to find the closest point to
+    */
     this.findClosestObject = function(location) {
         var graphicsObjects = universe.getGraphicsObjects();
         
@@ -440,10 +440,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         var location_vector = new THREE.Vector3(location.x, location.y, location.z);
         
         for(var i in graphicsObjects) {
-            if(graphicsObjects[i].currentLocation != undefined) {
+            if(graphicsObjects[i].currentLocation) {
                 var vector = new THREE.Vector3(graphicsObjects[i].currentLocation.x, graphicsObjects[i].currentLocation.y, graphicsObjects[i].currentLocation.z);
                 var distance_to = vector.distanceTo(location_vector);
-                if(closestDistance == undefined || distance_to < closestDistance) {
+                if(closestDistance === undefined || distance_to < closestDistance) {
                     closestObject = graphicsObjects[i];
                     closestDistance = distance_to;
                 }
@@ -454,10 +454,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Enable or disable all orbit lines
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable all orbit lines
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllOrbitLines = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
         enablePropagationLines = isEnabled;
@@ -470,30 +470,30 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Enable or disable orbit lines for a specific object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable orbit lines for a specific object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showOrbitLineForObject = function(isEnabled, id) {
         universe.showObject(id + "_propogation", isEnabled);
     };
 
     /**
-		Enable or disable display of an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showModelForId = function(isEnabled, id) {
         universe.showObject(id, isEnabled);
     };
     
     /**
-		Enable or disable display of all ground tracks
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of all ground tracks
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllGroundTracks = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
         enableSubSatellitePoints = isEnabled;
@@ -506,23 +506,23 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Enable or disable display of a ground track for an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of a ground track for an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showGroundTrackForId = function(isEnabled, id) {
         universe.showObject(id + "_groundPoint", isEnabled);
     };
     
     /**
-		Enable or disable display of all sensor projections
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of all sensor projections
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllSensorProjections = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
-		
+        
         this.enableSensorProjections = isEnabled;
 
         for(var i in graphicsObjects) {
@@ -533,11 +533,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Enable or disable display of sensor projections for an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of sensor projections for an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showSensorProjectionForId = function(isEnabled, id) {
         //console.log("show/hiding sensorProjection");
         // have to do this because there are multiple sensors per space object
@@ -550,13 +550,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Enable or disable display of all sensor projections
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of all sensor projections
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllSensorFootprintProjections = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
-		
+        
         this.enableSensorFootprintProjections = isEnabled;
 
         for(var i in graphicsObjects) {
@@ -567,11 +567,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Enable or disable display of sensor projections for an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of sensor projections for an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showSensorFootprintProjectionsForId = function(isEnabled, id) {
         //console.log("show/hiding sensorProjection");
         var graphicsObjects = universe.getGraphicsObjects();
@@ -582,13 +582,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             }
         }
     };
-	
+    
     /**
-		Enable or disable display of sensor projections for an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of sensor projections for an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showSensorVisibilityLinesForId = function(isEnabled, id) {
         //console.log("show/hiding sensorProjection");
         var graphicsObjects = universe.getGraphicsObjects();
@@ -599,12 +599,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             }
         }
     };
-	
+    
     /**
-		Enable or disable display of all lines between objects
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of all lines between objects
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllSensorVisibilityLines = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
         enableVisibilityLines = isEnabled;
@@ -617,10 +617,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Enable or disable display of all lines between objects
-		@public
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of all lines between objects
+        @public
+        @param {boolean} isEnabled
+    */
     this.showAllLinesBetweenObjects = function(isEnabled) {
         var graphicsObjects = universe.getGraphicsObjects();
 
@@ -632,11 +632,11 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
     
     /**
-		Enable or disable display of lines for an object
-		@public
-		@param {string} id - identifier for the object
-		@param {boolean} isEnabled
-	*/
+        Enable or disable display of lines for an object
+        @public
+        @param {string} id - identifier for the object
+        @param {boolean} isEnabled
+    */
     this.showLineBetweenObjectsForId = function(isEnabled, id) {
         var graphicsObjects = universe.getGraphicsObjects();
 
@@ -652,10 +652,10 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Turn on or off sun lighting
-		@public
-		@param {boolean} isSunLighting
-	*/
+        Turn on or off sun lighting
+        @public
+        @param {boolean} isSunLighting
+    */
     this.setSunLighting = function(isSunLighting) {
         earthExtensions.useSunLighting = isSunLighting;
         universe.showObject("earth", !isSunLighting);
@@ -664,9 +664,9 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Remove all objects from the Universe except the Earth and Moon
-		@public
-	*/
+        Remove all objects from the Universe except the Earth and Moon
+        @public
+    */
     this.removeAllExceptEarthAndMoon = function() {
         var graphicsObjects = universe.getGraphicsObjects();
         
@@ -678,22 +678,22 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
     /**
-		Set up the Universe with the Earth Extensions
-		@public
-	*/
+        Set up the Universe with the Earth Extensions
+        @public
+    */
     this.setup = function() {
         this.removeAllExceptEarthAndMoon();
         universe.setup();
     };
 
     /**
-		Converts ECI to THREE.js 3D coordinate system. Compare these two websites for details on why we have to do this:
-    	http://celestrak.com/columns/v02n01/
-    	http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
-		@private
-	*/
+        Converts ECI to THREE.js 3D coordinate system. Compare these two websites for details on why we have to do this:
+        http://celestrak.com/columns/v02n01/
+        http://stackoverflow.com/questions/7935209/three-js-3d-coordinates-system
+        @private
+    */
     this.eciTo3DCoordinates = function(location) {
-        if(location == undefined) {
+        if(!location) {
             return undefined;
         }
                 
@@ -716,7 +716,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
         
     function threeDToEciCoordinates(location) {
-        if(location == undefined) {
+        if(!location) {
             return undefined;
         }
                 

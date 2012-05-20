@@ -20,7 +20,7 @@ UNIVERSE.PropogationLine = function(object, universe, earthExtensions, material,
         var location = object.propagator(timeToPropogate, false);
         eciLocations.push(location);
         var convertedLocation = earthExtensions.eciTo3DCoordinates(location);
-        if(convertedLocation != undefined) {
+        if(convertedLocation) {
             var vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
             geometry.vertices.push(new THREE.Vertex(vector));
         }
@@ -39,7 +39,7 @@ UNIVERSE.PropogationLine = function(object, universe, earthExtensions, material,
                 var length = eciLocations.length;
                 for(var i = 0; i < length; i++) {
                     var convertedLocation = earthExtensions.eciTo3DCoordinates(eciLocations[i]);
-                    if(convertedLocation != undefined && lineS.geometry.vertices[i] != undefined) {
+                    if(convertedLocation && lineS.geometry.vertices[i]) {
                         lineS.geometry.vertices[i].position = {
                             x: convertedLocation.x, 
                             y: convertedLocation.y, 
