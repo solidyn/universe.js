@@ -1,10 +1,14 @@
 // EllipseSensorShape.js
-/**
- *
- * @author Justin
- */
+
 var UNIVERSE = UNIVERSE || {};
 
+/** 
+    Represents an Ellipse sensor shape to be used in Sensor projection and visibility calculation
+    @constructor
+    @param {string} shapeName - Name of the sensor shape
+    @param {double} semiMajorAngle - SMA of the ellipse sensor
+    @param {double} semiMinorAngle - SMI of the elipse sensor
+ */
 UNIVERSE.EllipseSensorShape = function(shapeName, semiMajorAngle, semiMinorAngle)
 {
     this.shapeName = shapeName;

@@ -11,9 +11,6 @@ var UNIVERSE = UNIVERSE || {};
 UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     var earthExtensions = this;
     
-    // constants
-    var earthSphereRadius = Constants.radiusEarth;
-    
     // have to do this this way since the decision of whether to show or hide it has to be made at draw time
     this.enableVisibilityLines = false;
     this.enableSensorProjections = false;
@@ -66,6 +63,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         Add a Space Object to the Universe
         @public
         @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
+        @param {function} callback - A function called at completion of the addition
     */
     this.addSpaceObject = function(spaceObject, callback) {
         var objectGeometry, material;
@@ -79,6 +77,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         });
     };
     
+    /**
+        Add Lines from a space object to objects in it's sensor FOVs to the Universe
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
+        @param {function} callback - A function called at completion of the addition
+    */
     this.addSensorVisibilityLines = function(object, callback) {
         if(object.sensors && object.sensors.length > 0) {
             var visibilityLinesController = new UNIVERSE.SensorVisibilityLinesController(object, universe, earthExtensions)
@@ -92,6 +96,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         Add a Ground Object to the Earth
         @public
         @param {UNIVERSE.GroundObject} groundObject - an object to display on the Earth
+        @param {function} callback - A function called at completion of the addition
     */
     this.addGroundObject = function(groundObject, callback) {
         var objectGeometry, objectMaterial, material;
@@ -119,6 +124,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         Add a Ground Track Point for an Object
         @public
         @param {UNIVERSE.SpaceObject} object - The Space Object to add a ground track point for
+        @param {function} callback - A function called at completion of the addition
     */
     this.addGroundTrackPointForObject = function(object, callback) {
         var objectGeometry, objectMaterial;
@@ -137,6 +143,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         Add a Propagation Line for an Object
         @public
         @param {UNIVERSE.SpaceObject} object - A Space Object to add a propagation line for
+        @param {function} callback - A function called at completion of the addition
     */
     this.addPropogationLineForObject = function(object, callback) {
         var objectGeometry, objectMaterial;
@@ -168,7 +175,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
     };
 
 
-
+    /**
+        Add sensor projections for a space object
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add projections for
+        @param {function} callback - A function called at completion of the addition
+    */
     this.addSensorProjections = function(spaceObject, callback) {
         if(spaceObject.sensors.length > 0 ) {
             for(var i = spaceObject.sensors.length-1; i >= 0; i--) {
@@ -178,6 +190,13 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
     };
     
+    
+    /**
+        Add sensor projection footprints for all sensors on a space object
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add projections for
+        @param {function} callback - A function called at completion of the addition
+    */
     this.addSensorFootprintProjections = function(spaceObject, callback) {
         if(spaceObject.sensors.length > 0 ) {
             for(var i = 0; i < spaceObject.sensors.length; i++) {
@@ -187,6 +206,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
     };
     
+    /**
+        Add sensor projection footprints for a specific sensor on a space object
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add projections for
+        @param {function} callback - A function called at completion of the addition
+    */
     this.addSensorFootprintProjection = function(sensor, spaceObject) {
         var lineGraphicsObject = new UNIVERSE.SensorFootprintProjection(sensor, spaceObject, universe, earthExtensions);
         universe.addObject(lineGraphicsObject);
@@ -228,6 +253,8 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         @public
         @param {string} object1_id - starting object of the line
         @param {string} object2_id - end object of the line
+        @param {string} color - color code in hex of the line between objects
+        @param {string} customIdentifier - a specific identifier to put between objects in the id
     */
     this.addLineBetweenObjects = function(object1_id, object2_id, color, customIdentifier) {
         var lineGraphicsObject = new UNIVERSE.LineBetweenObjects(object1_id, object2_id, universe, earthExtensions, color, customIdentifier);        
@@ -239,6 +266,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         @public
         @param {string} object1_id - starting object of the line
         @param {string} object2_id - end object of the line
+        @param {string} customIdentifier - a specific identifier to put between objects in the id
     */
     this.removeLineBetweenObjects = function(object1_id, object2_id, customIdentifier) {
         var identifier = "_to_";
@@ -273,7 +301,7 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
             var location_vector = new THREE.Vector3(location.x, location.y, location.z);
 
             // move the vector to the surface of the earth
-            location_vector.multiplyScalar(earthSphereRadius / location_vector.length());
+            location_vector.multiplyScalar(Constants.radiusEarth / location_vector.length());
 
             return earthExtensions.findClosestObject({
                 x: location_vector.x, 
@@ -504,6 +532,12 @@ UNIVERSE.EarthExtensions = function(universe, isSunLighting) {
         }
     };
         
+    /**
+        Lock the position of the camera relative to the Earth so that it appears
+        that the Earth is not spinning
+        @public
+        @param {boolean} isLocked
+    */
     this.lockCameraPositionRelativeToEarth = function(isLocked) {
         this.lockCameraToWithEarthRotation = isLocked;
     };

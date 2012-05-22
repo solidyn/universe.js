@@ -1,4 +1,8 @@
-
+/** 
+    A set of default objects to add to the Universe Object Library
+    @constructor
+    @param {UNIVERSE.Universe} universe - A Universe instance to use the default objects in
+ */
 UNIVERSE.DefaultObjects = function(universe) {
     
     universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(200, 20, 10));

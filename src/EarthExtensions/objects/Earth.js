@@ -1,3 +1,12 @@
+/** 
+    The Earth positioned at the center of the Universe
+    @constructor
+    @param {UNIVERSE.Universe} universe - A Universe instance to draw the Earth in
+    @param {UNIVERSE.EarthExtensions} earthExtensions - An EarthExtensions instance to draw the Earth with
+    @param {URL} dayImageURL - Image to be used for the day-side of the Earth
+    @param {URL} nightImageURL - Image to be used for the night-side of the Earth
+ */
+
 UNIVERSE.Earth = function(universe, earthExtensions, dayImageURL, nightImageURL) {
     var earthSphereSegments = 40, earthSphereRings = 30;
 
