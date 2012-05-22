@@ -77,7 +77,10 @@
         <exec executable="utils/jscoverage">
             <arg line="-v src build/instrumented" />
         </exec>
-        <echo message="Test and coverage can be viewed at /build/instrumented" />
+        <copy todir="build/instrumented/test">
+            <fileset dir="test"/>
+        </copy>
+        <echo message="Test and coverage can be viewed at /build/instrumented/test" />
         
         <apply executable="java"  parallel="true"
                force="true" output="build/jshint-output.txt">
