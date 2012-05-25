@@ -8,14 +8,14 @@ var MathTools = {
      *
      * @returns {vector} product (unitless)
      */
-    scalarMultiplyVector: function(x, a)
-    {
-        return {
-            x: x.x * a,
-            y: x.y * a,
-            z: x.z * a
-        };
-    },
+//    scalarMultiplyVector: function(x, a)
+//    {
+//        return {
+//            x: x.x * a,
+//            y: x.y * a,
+//            z: x.z * a
+//        };
+//    },
 
     /**
      * returns the dot product of two vectors
@@ -24,12 +24,12 @@ var MathTools = {
      *
      * @returns {Number} dotProduct (unitless)
      */
-    dotMultiplyVector: function(x, y)
-    {
-        var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
-
-        return xDotY;
-    },
+//    dotMultiplyVector: function(x, y)
+//    {
+//        var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
+//
+//        return xDotY;
+//    },
     
     /**
      * returns the angle between two vectors

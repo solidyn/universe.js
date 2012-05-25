@@ -383,41 +383,43 @@ var CoordinateConversionTools = {
         */
         //reference Vallado 120
 
-        var r = {
-            x: eci.x,
-            y: eci.y,
-            z: eci.z
-        };
+        var r = new THREE.Vector3(
+            eci.x,
+            eci.y,
+            eci.z
+        );
         
-        var v = {
-            x: eci.vx,
-            y: eci.vy,
-            z: eci.vz
-        };
+        var v = new THREE.Vector3(
+            eci.vx,
+            eci.vy,
+            eci.vz
+        );
 
-        var h = MathTools.crossVector(r, v); //Double[3]
-        var hmag = MathTools.magnitudeVector(h); //double
-        var rmag = MathTools.magnitudeVector(r); //double
-        var vmag = MathTools.magnitudeVector(v); //double
+        var h = new THREE.Vector3();
+        h.cross(r, v); //Double[3]
+        var hmag = h.length(); //double
+        var rmag = r.length(); //double
+        var vmag = v.length(); //double
 
-        var khat = {
-            x: 0.0,
-            y: 0.0,
-            z: 1.0
-        };
+        var khat = new THREE.Vector3(
+            0.0,
+            0.0,
+            1.0
+        );
 
-        var n = MathTools.crossVector(khat, h);
+        var n = new THREE.Vector3();
+        n.cross(khat, h);
         
         var coeff1 = vmag * vmag - Constants.muEarth / rmag; //double
-        var coeff2 = MathTools.dotMultiplyVector(r, v);            //double
+        var coeff2 = r.dot(v);            //double
        
-        var e = {
-            x: (1 / Constants.muEarth) * (coeff1 * r.x - coeff2 * v.x),
-            y: (1 / Constants.muEarth) * (coeff1 * r.y - coeff2 * v.y),
-            z: (1 / Constants.muEarth) * (coeff1 * r.z - coeff2 * v.z)
-        };
+        var e = new THREE.Vector3(
+            (1 / Constants.muEarth) * (coeff1 * r.x - coeff2 * v.x),
+            (1 / Constants.muEarth) * (coeff1 * r.y - coeff2 * v.y),
+            (1 / Constants.muEarth) * (coeff1 * r.z - coeff2 * v.z)
+        );
         
-        var emag = MathTools.magnitudeVector(e);                       //double
+        var emag = e.length();                       //double
         var energy = vmag * vmag / 2 - Constants.muEarth / rmag; //double
         
         var p = 0.0; //double
@@ -435,7 +437,7 @@ var CoordinateConversionTools = {
         }
 
         var inc = MathTools.toDegrees(Math.acos(h.z / hmag));                    //double
-        var raan = MathTools.toDegrees(Math.acos(n.x / MathTools.magnitudeVector(n))); //double
+        var raan = MathTools.toDegrees(Math.acos(n.x / n.length())); //double
 
         if (n.y < 0)
         {
@@ -443,8 +445,8 @@ var CoordinateConversionTools = {
         }
         
         
-        var arg = MathTools.toDegrees(Math.acos(MathTools.dotMultiplyVector(n, e) /
-            (MathTools.magnitudeVector(n) * emag)));  //double
+        var arg = MathTools.toDegrees(Math.acos(n.dot(e) /
+            (n.length() * emag)));  //double
 
         if (e.z < 0)
         {
@@ -454,14 +456,14 @@ var CoordinateConversionTools = {
         // console.log("MathTools.dotMultiplyVector(e, r) / (emag * rmag): " + MathTools.dotMultiplyVector(e, r) / (emag * rmag) )
         // console.log("Math.acos(MathTools.dotMultiplyVector(e, r) / (emag * rmag)): " + Math.acos(MathTools.dotMultiplyVector(e, r) / (emag * rmag)));
         
-        var value = MathTools.dotMultiplyVector(e, r) / (emag * rmag);
+        var value = e.dot(r) / (emag * rmag);
         if(value > 1) {
             // console.log("setting to 1");
             value = 1;
         }
         var nu = MathTools.toDegrees(Math.acos(value)); //double
         // console.log("nu: " + nu);
-        if (MathTools.dotMultiplyVector(v, r) < 0)
+        if (v.dot(r) < 0)
         {
             nu = 360 - nu;
         }
