@@ -4,7 +4,6 @@
  *
  * @author Justin
  */
-var UNIVERSE = UNIVERSE || {};
 
 UNIVERSE.Sensor = function(name, shape) {
 
@@ -28,8 +27,7 @@ UNIVERSE.Sensor = function(name, shape) {
     this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.z);
 
     
-    this.rotateSensorAboutRadialVector = function(rotationAngle)
-    {
+    this.rotateSensorAboutRadialVector = function(rotationAngle) {
         if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
@@ -50,8 +48,7 @@ UNIVERSE.Sensor = function(name, shape) {
         }
     };
 
-    this.rotateSensorAboutAlongTrackVector = function(rotationAngle)
-    {
+    this.rotateSensorAboutAlongTrackVector = function(rotationAngle) {
         if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
@@ -72,8 +69,7 @@ UNIVERSE.Sensor = function(name, shape) {
         }
     };
 
-    this.rotateSensorAboutCrossTrackVector = function(rotationAngle)
-    {
+    this.rotateSensorAboutCrossTrackVector = function(rotationAngle) {
         if (rotationAngle && rotationAngle !== 0)
         {
             var rotationQuaternion = new Quaternion();
@@ -94,38 +90,31 @@ UNIVERSE.Sensor = function(name, shape) {
         }
     };
 
-    this.getSensorQuaternionRSW = function()
-    {
+    this.getSensorQuaternionRSW = function() {
         return this.quaternionFromRSWToSensor;
     };
 
-    this.setSensorQuaternionRSW = function(sensorQuaternionRSW)
-    {
+    this.setSensorQuaternionRSW = function(sensorQuaternionRSW) {
         this.quaternionFromRSWToSensor = sensorQuaternionRSW;
     };
 
-    this.getName = function()
-    {
+    this.getName = function() {
         return this.name;
     };
 
-    this.setName = function(name)
-    {
+    this.setName = function(name) {
         this.name = name;
     };
 
-    this.getShape = function()
-    {
+    this.getShape = function() {
         return this.shape;
     };
 
-    this.setShape = function(shape)
-    {
+    this.setShape = function(shape) {
         this.shape = shape;
     };
 
-    this.determineTargetAzElRelativeToSensor = function(satellite, targetPosition)
-    {
+    this.determineTargetAzElRelativeToSensor = function(satellite, targetPosition) {
         //define the target position as a vectors
         //console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
         //            "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
@@ -188,23 +177,23 @@ UNIVERSE.Sensor = function(name, shape) {
         //---determine the three vectors that define the extent of the sensor shape in the sensor coordinate system
         //these are the non-rotated vectors
         //vector along the centerline of the sensor (RSW)
-        var centerline = {
-            x: 1.0,//center (radial)
-            y: 0.0,//left
-            z: 0.0//top
-        };
+        var centerline = new THREE.Vector3(
+            1.0,//center (radial)
+            0.0,//left
+            0.0//top
+        );
 
-        var rightline = {
-            x : 1.0,//center
-            y : -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0))),//left
-            z : 0.0//top
-        };
+        var rightline = new THREE.Vector3(
+            1.0,//center
+            -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0))),//left
+            0.0//top
+        );
 
-        var topline = {
-            x : 1.0,//center
-            y : 0.0,//left
-            z : Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)))//top
-        };
+        var topline = new THREE.Vector3(
+            1.0,//center
+            0.0,//left
+            Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)))//top
+        );
         
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
         //assume it's an oblique spherical triangle
@@ -378,7 +367,7 @@ UNIVERSE.Sensor = function(name, shape) {
         //a set of 'NumPoints' unit vectors from the center of the satellite to the boundaries
         //of the sensor field of view in ECI coordinates
         //it is assumed that each xyz pair 
-        var FOV = new Array(NumPoints);
+        var FOV = []; // new Array(NumPoints);
 //        for(var i = 0; i < NumPoints; i++) {
 //            FOV[i] = new Array(3);
 //        }

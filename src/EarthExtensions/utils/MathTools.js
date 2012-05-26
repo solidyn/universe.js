@@ -1,35 +1,5 @@
 
 var MathTools = {
-
-    /**
-     * returns the product of a vector and a scalar
-     * @param {vector} x (unitless)
-     * @param {Number} a (unitless)
-     *
-     * @returns {vector} product (unitless)
-     */
-//    scalarMultiplyVector: function(x, a)
-//    {
-//        return {
-//            x: x.x * a,
-//            y: x.y * a,
-//            z: x.z * a
-//        };
-//    },
-
-    /**
-     * returns the dot product of two vectors
-     * @param {vector} x (unitless)
-     * @param {vector} y (unitless)
-     *
-     * @returns {Number} dotProduct (unitless)
-     */
-//    dotMultiplyVector: function(x, y)
-//    {
-//        var xDotY = x.x * y.x + x.y * y.y + x.z * y.z;
-//
-//        return xDotY;
-//    },
     
     /**
      * returns the angle between two vectors
@@ -41,9 +11,9 @@ var MathTools = {
     angleBetweenTwoVectorsVector: function(x, y)
     {
         var angle = 0;                 //double
-        var magX = MathTools.magnitudeVector(x);       //double
-        var magY = MathTools.magnitudeVector(y);       //double
-        var xDotY = MathTools.dotMultiplyVector(x, y); //double
+        var magX = x.length();       //double
+        var magY = y.length();       //double
+        var xDotY = x.dot(y); //double
 
         angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
@@ -53,74 +23,6 @@ var MathTools = {
         }
 
         return angle; //deg
-    },
-
-    /**
-    * returns the distance between two points
-    * @param {vector} x (unitless)
-    * @param {vector} y (unitless)
-    * 
-    * @return {Number} distance (unitless)
-    */
-    distanceBetweenTwoPoints: function(x, y)
-    {
-        var vectorBetweenPoints = {
-            x: x.x - y.x,
-            y: x.y - y.y,
-            z: x.z - y.z
-        };
-
-        return MathTools.magnitudeVector(vectorBetweenPoints);
-    },
-
-    /**
-    * an alternate form of 'distanceBetweenTwoPoints', this form takes in six Numbers
-    * assumed to be defining (x,y,z) of point 1 and (x,y,z) of point 2
-    * and returns the distance between the two points
-    * @param {Number} x1 x-coordinate of the first point
-    * @param {Number} y1 y-coordinate of the first point
-    * @param {Number} z1 z-coordinate of the first point
-    * @param {Number} x2 x-coordinate of the second point
-    * @param {Number} y2 y-coordinate of the second point
-    * @param {Number} z2 z-coordinate of the second point
-    * 
-    * @return {Number} distance (unitless)
-    */
-    distanceBetweenTwoPoints: function(x1, y1, z1, x2, y2, z2)
-    {
-        var xdiff = x1 - x2;
-        var ydiff = y1 - y2;
-        var zdiff = z1 - z2;
-        return Math.sqrt(xdiff*xdiff + ydiff*ydiff + zdiff*zdiff);
-    },
-
-    /**
-     * returns the magnitude of a vector
-     * @param {vector} x
-     *
-     * @returns {Number} magnitude magnitude of x
-     */
-    magnitudeVector: function(x)
-    {
-        return Math.sqrt(x.x*x.x + x.y * x.y + x.z * x.z);
-    },
-
-    /**
-     * returns the cross product of two vectors
-     * @param {vector} x
-     * @param {vector} y
-     *
-     * @returns {vector} crossProduct cross product of x and y
-     */
-    crossVector: function(x, y)
-    {
-        var result = {
-            x: x.y * y.z - y.y * x.z,
-            y: -(x.x * y.z - y.x * x.z),
-            z: x.x * y.y - y.x * x.y
-        };
-        
-        return result;
     },
 
     /**

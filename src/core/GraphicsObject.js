@@ -1,5 +1,3 @@
-var UNIVERSE = UNIVERSE || {};
-
 /** 
     A graphics object to be drawn in the Universe
     @constructor

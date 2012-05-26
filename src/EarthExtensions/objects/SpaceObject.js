@@ -1,6 +1,3 @@
-
-var UNIVERSE = UNIVERSE || {};
-
 /** 
     An object to be drawn in orbit around the Earth
     @constructor

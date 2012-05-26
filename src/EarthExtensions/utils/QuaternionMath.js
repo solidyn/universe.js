@@ -74,11 +74,11 @@ var QuaternionMath = {
 
         var matrixProduct = MathTools.multiply2dBy1d(A, [inputVector.x, inputVector.y, inputVector.z]);
 
-        return {
-            x: matrixProduct[0],
-            y: matrixProduct[1],
-            z: matrixProduct[2]
-        };
+        return new THREE.Vector3(
+            matrixProduct[0],
+            matrixProduct[1],
+            matrixProduct[2]
+        );
     },
 
     /**

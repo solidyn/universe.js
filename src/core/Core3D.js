@@ -141,9 +141,7 @@ UNIVERSE.Core3D = function(container) {
         for(var i in drawnObjects) {
             if(drawnObjects[i].scale === true) {
                 var objectPosition = drawnObjects[i].shape.position;
-                var distanceFromCamera = MathTools.distanceBetweenTwoPoints(
-                    objectPosition.x, objectPosition.y, objectPosition.z,
-                    camera.position.x, camera.position.y, camera.position.z);
+                var distanceFromCamera = objectPosition.distanceTo(camera.position);
 
                 var scaleFactor = distanceFromCamera / (6371 * 7);
                 drawnObjects[i].shape.scale.x = drawnObjects[i].shape.scale.y = drawnObjects[i].shape.scale.z = scaleFactor;
@@ -418,8 +416,8 @@ UNIVERSE.Core3D = function(container) {
         // adjust the rotation scaling factor by how close we are to the earth.
         // when we are far away from the earth, we want to rotate faster than
         // when we are closer to the earth.
-        var distanceFromEarth = MathTools.distanceBetweenTwoPoints(0, 0, 0,
-            camera.position.x, camera.position.y, camera.position.z);
+        var centerPoint = new THREE.Vector3(0, 0, 0);
+        var distanceFromEarth = centerPoint.distanceTo(camera.position);
 
         var adjustedRotationScalingFactor = GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR + 
             ((distanceFromEarth / self.maxZoom) * GAMEPAD_CAMERA_ROTATION_DELTA);
