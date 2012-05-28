@@ -3,105 +3,30 @@ layout: default
 title: built with love by Solidyn
 ---
 
-<div class="container">
-    <div class="row">
-        <div class="hero-unit">
-            <h1>Lightweight 3D modeling and simulation framework</h1>
-            <p>easy-mode space modeling. in the browser. no plugins.</p>
-        </div>
+<div class="hero-unit">
+    <h1>Lightweight 3D modeling and simulation framework</h1>
+    <p>easy-mode modeling of space, planets, satellites, whatever. in the browser. no plugins.</p>
+</div>
+
+<div class="row">
+    <div class="span6">
+        <h2>Supported Browsers</h2>
+
+        <h4>universe.js works everywhere WebGL does</h4>
+        <p>
+            <img src="/img/browser_logos-noie-256.png" style="margin-bottom: 20px"/>
+        </p>
+
+        <h4>Want to know if your browser supports WebGL? Check out
+            <a href="http://www.doesmybrowsersupportwebgl.com/" target="_blank">
+                doesmybrowsersupportwebgl.com</a></h4>
     </div>
 
-    <section id="Immersive 3D">
-        <div class="page-header">
-            <h1>Supported Browsers
-                <small>universe.js works everywhere WebGL does</small>
-            </h1>
-        </div>
+    <div class="span6">
+        <h2>Easy to get started</h2>
 
-        <div class="row">
-            <div class="span8">
-                <img src="img/browser_logos-noie-256.png" style="margin-bottom: 20px"/>
-            </div>
-            <div class="span4">
-                <h3>Want to know if your browser supports WebGL? Check out
-                    <a href="http://www.doesmybrowsersupportwebgl.com/" target="_new">
-                        doesmybrowsersupportwebgl.com</a></h3>
-            </div>
-        </div>
-    </section>
-
-    <div class="row">
-        <div class="span6">
-            <div class="page-header">
-                <h1>Screenshots of it in action</h1>
-            </div>
-            <div id="screenshot_container" >
-                <div id="slides" >
-                    <div class="slides_container img_dropshadow">
-                        <div class="slide">
-                            <img src="img/scrn_1.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">GPS Constellation</p>
-                            </div>
-                        </div>
-                        <div class="slide">
-                            <img src="img/scrn_2.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">Orbit Propagation</p>
-                            </div>
-                        </div>
-                        <div class="slide">
-                            <img src="img/scrn_3.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">Space debris</p>
-                            </div>
-                        </div>
-
-                        <div class="slide">
-                            <img src="img/scrn_4.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">Sensor projections</p>
-                            </div>
-                        </div>
-
-                        <div class="slide">
-                            <img src="img/scrn_5.png" width="500" height="382" >
-                        </div>
-
-                        <div class="slide">
-                            <img src="img/scrn_6.png" width="500" height="382" >
-                        </div>
-
-                        <div class="slide">
-                            <img src="img/scrn_7.png" width="500" height="382" >
-                        </div>
-
-                        <div class="slide">
-                            <img src="img/scrn_8.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">Complex, highly eccentric orbits</p>
-                            </div>
-                        </div>
-                        <div class="slide">
-                            <img src="img/scrn_9.png" width="500" height="382" >
-                            <div class="caption" style="bottom:0">
-                                <p class="no_margin">Complex, highly eccentric orbits</p>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#" class="prev"><img src="img/arrow-prev.png" width="24" height="43" alt="Arrow Prev"></a>
-                    <a href="#" class="next"><img src="img/arrow-next.png" width="24" height="43" alt="Arrow Next"></a>
-                </div>        
-            </div>   
-        </div>
-
-        <div class="span6">
-            <div class="page-header">
-                <h1>Easy to get started</h1>
-            </div>
-
-            <div id="code-example">
-                <pre id="codeblock" class="prettyprint linenums:1 img_dropshadow">
+        <div id="code-example">
+            <pre class="prettyprint linenums:1 img_dropshadow">
 universe.addObject({
 	id : 'hotness',
 	update : function(elapsedTime) {
@@ -116,10 +41,63 @@ universe.addObject({
 				
 universe.setCurrentUniverseTime(time);
 				
-universe.play(); 
-                </pre>
-            </div>    
-        </div>
-    </div>
+universe.play();</pre>
+        </div>    
+    </div>   
+</div>
+
+
+<div class="page-header">
+    <h2>Screenshots of it in action</h2>
+</div>
+<div class="row">
+    <ul class="thumbnails">
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_1.png" alt="">
+                <h5>GPS Constellation</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_2.png" alt="">
+                <h5>Orbit Propagation</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_3.png" alt="">
+                <h5>Space debris</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_4.png" alt="">
+                <h5>Sensor projections</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_8.png" alt="">
+                <h5>Complex, highly eccentric orbits</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_9.png" alt="">
+                <h5>Complex, highly eccentric orbits</h5>
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_5.png" alt="">
+            </div>
+        </li>
+        <li class="span6">
+            <div class="thumbnail">
+                <img src="/img/scrn_7.png" alt="">
+            </div>
+        </li>
+    </ul>
 </div>
 
