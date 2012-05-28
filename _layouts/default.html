@@ -8,8 +8,8 @@
         <title>Universe.js - {{ page.title }}</title>
 
         <!--        <link rel="stylesheet" href="/css/style.css">-->
-        <link href="/css/prettify.css" type="text/css" rel="stylesheet" />
-        <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+        <link href="{{site.baseurl}}/css/prettify.css" type="text/css" rel="stylesheet" />
+        <link href="{{site.baseurl}}/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 
         <style>
             footer {
@@ -32,9 +32,9 @@
 
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li><a href="/getting-started">getting started</a></li>
-                            <li><a href="/examples">examples</a></li>
-                            <li><a href="/docs">docs</a></li>
+                            <li><a href="{{site.baseurl}}/getting-started">getting started</a></li>
+                            <li><a href="{{site.baseurl}}/examples">examples</a></li>
+                            <li><a href="{{site.baseurl}}/docs">docs</a></li>
                             <li><a href="https://github.com/solidyn/Universe.js/wiki">wiki</a></li>
                             <li><a href="https://github.com/solidyn/Universe.js/issues">issues</a></li>
                             <li><a href="https://github.com/solidyn/Universe.js">github</a></li>
@@ -49,7 +49,7 @@
 
             <hr/>
             <footer class="footer">
-                <a target="_blank" href="http://solidyn.com"><img class="pull-right" src="/img/ssi.png" /></a>
+                <a target="_blank" href="http://solidyn.com"><img class="pull-right" src="{{site.baseurl}}/img/ssi.png" /></a>
                 <p>A creation of the engineers at <a target="_blank" href="http://solidyn.com">Solidyn</a>.</p>
                 <p>Code licensed under the <a target="_blank" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>.</p>
             </footer>
@@ -59,11 +59,11 @@
 
         <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+        <script>window.jQuery || document.write('<script src="{{site.baseurl}}/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
 
-        <script defer src="/js/plugins.js"></script>
-        <script defer src="/js/libs/prettify.js"></script>
-        <script defer src="/js/libs/bootstrap.min.js"></script>
+        <script defer src="{{site.baseurl}}/js/plugins.js"></script>
+        <script defer src="{{site.baseurl}}/js/libs/prettify.js"></script>
+        <script defer src="{{site.baseurl}}/js/libs/bootstrap.min.js"></script>
         
         <script>
             $(function() {

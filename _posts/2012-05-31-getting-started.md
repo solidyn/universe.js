@@ -16,12 +16,15 @@ Input.js, etc).
 
     <!doctype html>
     <html lang="en">
-        <script src="/js/universe.js"></script>
-        <script src="/js/universe-earth-extensions.js"></script>
-    </head>
+        <head>
+        ...
+            <script src="/js/universe.js"></script>
+            <script src="/js/universe-earth-extensions.js"></script>
+        </head>
 
-    <body>
-    </body>
+        <body>
+        </body>
+    </html>
 
 ### Add a div where the model will be rendered
 
