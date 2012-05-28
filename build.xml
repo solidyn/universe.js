@@ -2,8 +2,8 @@
 <project name="universe" default="dist">
 
     <property name="build.dir" value="build" />
-    <property name="dist.dir" value="${build.dir}/dist" />
-    <property name="docs.dir" value="${build.dir}/docs" />
+    <property name="dist.dir" value="dist" />
+    <property name="docs.dir" value="docs" />
     
     <!-- output files -->
     <property name="universe.libs.file" value="${build.dir}/universe-libs.js" />
@@ -94,10 +94,13 @@
     
     <target name="docs">
         <exec executable="java">
-            <arg line="-jar ./utils/jsdoc/jsrun.jar ./utils/jsdoc/app/run.js" />
-            <arg line="-a ${universe.core.file} ${earthext.file}" />
-            <arg line="-t=utils/jsdoc/templates/universe_web" />
-            <arg line="--suppress -d=${docs.dir}" />
+            <arg line="-jar ./utils/jsdoc/jsrun.jar" />
+            <arg line="./utils/jsdoc/app/run.js" />
+            <arg line="-a -v" />
+            <arg line="-t=utils/jsdoc/templates/jsdoc" />
+            <arg line="--suppress" />
+            <arg line="-d=${docs.dir}" />
+            <arg line="-r src" />
         </exec>
     </target>
     
