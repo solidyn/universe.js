@@ -10,23 +10,24 @@ description: A quick tutorial about modeling with universe.js
 
 ### Include the libraries
 To take full advantage of Universe.js, you need to include two files: 
-`universe.js` and `universe-earth-extensions.js`. All dependencies needed
-by universe.js are included in the `universe.js` files (Three.js, 
-Input.js, etc).
+`universe-min.js` and `universe-earth-extensions-min.js`. All dependencies needed
+by universe.js are already included (Three.js, Input.js, etc).
 
     <!doctype html>
     <html lang="en">
         <head>
-        ...
-            <script src="/js/universe.js"></script>
-            <script src="/js/universe-earth-extensions.js"></script>
+            ...
+            <script src="js/universe-min.js"></script>
+            <script src="js/universe-earth-extensions-min.js"></script>
+            ...
         </head>
 
         <body>
+            ...
         </body>
     </html>
 
-### Add a div where the model will be rendered
+### Add a div where the universe will be rendered
 
     <body>
         ...
