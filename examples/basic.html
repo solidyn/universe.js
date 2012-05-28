@@ -1,60 +1,60 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<title>basic universe.js example</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				background:#000;
-				color:#fff;
-				padding:0;
-				margin:0;
-				overflow:hidden;
-				font-family:georgia;
-				text-align:center;
-			}
-			h1 { }
-			a { color:skyblue }
+    <head>
+        <title>basic universe.js example</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                background:#000;
+                color:#fff;
+                padding:0;
+                margin:0;
+                overflow:hidden;
+                font-family:georgia;
+                text-align:center;
+            }
+            h1 { }
+            a { color:skyblue }
 
-			#d { text-align:center; margin:1em 0 -2.5em 0; z-index:0; position:relative; display:block }
-		</style>
-	</head>
+            #d { text-align:center; margin:1em 0 -2.5em 0; z-index:0; position:relative; display:block }
+        </style>
+    </head>
 
-	<body>
-		<div id="d">
-			<div id="info"><a href="http://universejs.com" target="_blank">universe.js</a> - Basic Example</div>
+    <body>
+        <div id="d">
+            <div id="info"><a href="http://universejs.com" target="_blank">universe.js</a> - Basic Example</div>
 
-			<div id="universe"></div>
-		</div>
+            <div id="universe"></div>
+        </div>
 
-		<script src="../build/dist/universe.js"></script>
+        <script src="../build/dist/universe.js"></script>
 
-		<script>
-			var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
+        <script>
+            var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
 			
-			universe.addJsonGeometryModel("dsp", "models/DSP.js", function() {
-				universe.getObjectFromLibraryById("dsp", function(geometry) {
-					universe.getObjectFromLibraryById("default_material", function(material) {
-						var object = new THREE.Mesh(geometry, material);
-						universe.addObject({
-							id : 'hotness',
-							update : function(elapsedTime) {
-								// move and rotate object
-								object.position.x += 10;
-								object.rotation.y += 0.1
-							},
-							draw : function() {
-								universe.draw(this.id, object, false);
-							}
-						});
-					});
-				});
-			})
+            universe.addJsonGeometryModel("dsp", "models/DSP.json", function() {
+                universe.getObjectFromLibraryById("dsp", function(geometry) {
+                    universe.getObjectFromLibraryById("default_material", function(material) {
+                        var object = new THREE.Mesh(geometry, material);
+                        universe.addObject({
+                            id : 'hotness',
+                            update : function(elapsedTime) {
+                                // move and rotate object
+                                object.position.x += 10;
+                                object.rotation.y += 0.1
+                            },
+                            draw : function() {
+                                universe.draw(this.id, object, false);
+                            }
+                        });
+                    });
+                });
+            })
 			
-			universe.play(new Date(), 20, undefined);
+            universe.play(new Date(), 20, undefined);
 
-		</script>
+        </script>
 
-	</body>
+    </body>
 </html>
