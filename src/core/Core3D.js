@@ -1,79 +1,59 @@
+/*jslint browser: true, undef: true, sloppy: true */
+/*global THREE */
+
 var UNIVERSE = UNIVERSE || {};
 
-UNIVERSE.Core3D = function(container) {
-    var self = this;
-
-    // Variables used to draw the 3D elements
-    var camera, scene, projector, renderer, w, h;
-    var vector, animate;
-    var light;
-
-    var overRenderer;
-
-    // Constants for zooming, rotation, etc.
-    var curZoomSpeed = 0;
-
-    var mouse = {
-        x : 0,
-        y : 0
-    }, mouseOnDown = {
-        x : 0,
-        y : 0
-    };
-    var rotation = {
-        x : 0,
-        y : 0
-    }, target = {
-        x : Math.PI * 3 / 2,
-        y : Math.PI / 6.0
-    }, targetOnDown = {
-        x : 0,
-        y : 0
-    };
-
-    // set initial distance
-    var distance = 50000;
-    var PI_HALF = Math.PI / 2;
-
+UNIVERSE.Core3D = function (container) {
+    var self = this,
+        camera, // Variables used to draw the 3D elements
+        scene,
+        projector,
+        renderer,
+        w,
+        h,
+        vector,
+        animate,
+        light,
+        overRenderer,
+        curZoomSpeed = 0, // Constants for zooming, rotation, etc.
+        mouse = {
+            x : 0,
+            y : 0
+        },
+        mouseOnDown = {
+            x : 0,
+            y : 0
+        },
+        rotation = {
+            x : 0,
+            y : 0
+        },
+        target = {
+            x : Math.PI * 3 / 2,
+            y : Math.PI / 6.0
+        },
+        targetOnDown = {
+            x : 0,
+            y : 0
+        },
+        distance = 50000, // set initial distance
+        PI_HALF = Math.PI / 2,
+		drawnObjects = [],
+        resizeTimeout = null,
+        gamepad, // the first gamepad connected to the browser
+	    GAMEPAD_ZOOM_SCALING_FACTOR = 1500,
+	    GAMEPAD_ZOOM_MIN_SENSITIVITY = 0.1,
+	    GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR = 0.05,
+	    GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR = 0.5,
+	    GAMEPAD_CAMERA_ROTATION_DELTA =
+	        GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR - GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR,
+	    GAMEPAD_CAMERA_MIN_SENSITIVITY = 0.25;
+	    //GAMEPAD_PAN_SCALING_FACTOR = 5000;
 
     self.distanceTarget = 50000;
-    
+
     this.maxZoom = 500000;
     this.minZoom = 7000;
-
-
-    var drawnObjects = [];
-
-    var resizeTimeout = null;
-
-    function init() {
-        w = container.offsetWidth || window.innerWidth;
-        h = container.offsetHeight || window.innerHeight;
-
-        setupRenderer();
-
-        // Field of View (View Angle)
-        // Ratio between width and height, has to match aspect of CanvasRenderer
-        // Near, Far
-        camera = new THREE.PerspectiveCamera(30, w / h, 1, 1000000);
-
-        camera.position.z = distance;
-        vector = new THREE.Vector3();
-
-        // Scene into which the earth and other objects are displayed
-        scene = new THREE.Scene();
-
-        addEventListeners();
-
-        light = new THREE.DirectionalLight( 0xffffff, 0);
-        light.position.set( 0, 0, 0 ).normalize();
-        scene.add( light );
-        //
-        // var ambientLight = new THREE.AmbientLight( 0x000000 );
-        // scene.add( ambientLight );
-
-        animate();
-    }
 
     function setupRenderer() {
         projector = new THREE.Projector();
@@ -94,21 +74,50 @@ UNIVERSE.Core3D = function(container) {
         container.addEventListener('mousedown', onMouseDown, false);
         container.addEventListener('mousewheel', onMouseWheel, false);
         container.addEventListener('DOMMouseScroll', onMouseWheelFF, false);
-        
+
         document.addEventListener('keydown', onDocumentKeyDown, false);
 
         window.addEventListener('resize', onWindowResize, false);
 
-        container.addEventListener('mouseover', function() {
+        container.addEventListener('mouseover', function () {
             overRenderer = true;
         }, false);
 
-        container.addEventListener('mouseout', function() {
+        container.addEventListener('mouseout', function () {
             overRenderer = false;
         }, false);
 
         window.addEventListener("MozGamepadConnected", connectGamepad);
         window.addEventListener("MozGamepadDiconnected", disconnectGamepad);
+    }
+
+    function init() {
+        w = container.offsetWidth || window.innerWidth;
+        h = container.offsetHeight || window.innerHeight;
+
+        setupRenderer();
+
+        // Field of View (View Angle)
+        // Ratio between width and height, has to match aspect of CanvasRenderer
+        // Near, Far
+        camera = new THREE.PerspectiveCamera(30, w / h, 1, 1000000);
+
+        camera.position.z = distance;
+        vector = new THREE.Vector3();
+
+        // Scene into which the earth and other objects are displayed
+        scene = new THREE.Scene();
+
+        addEventListeners();
+
+        light = new THREE.DirectionalLight(0xffffff, 0);
+        light.position.set(0, 0, 0).normalize();
+        scene.add(light);
+        //
+        // var ambientLight = new THREE.AmbientLight( 0x000000 );
+        // scene.add(ambientLight);
+
+        animate();
     }
 
     function animate() {
@@ -138,12 +147,15 @@ UNIVERSE.Core3D = function(container) {
     }
 
     function scaleDrawnObjects() {
-        for(var i in drawnObjects) {
-            if(drawnObjects[i].scale === true) {
-                var objectPosition = drawnObjects[i].shape.position;
-                var distanceFromCamera = objectPosition.distanceTo(camera.position);
-
-                var scaleFactor = distanceFromCamera / (6371 * 7);
+	    var i,
+	        objectPosition,
+	        distanceFromCamera,
+	        scaleFactor;
+        for (i in drawnObjects) {
+            if (drawnObjects[i].scale === true) {
+                objectPosition = drawnObjects[i].shape.position;
+                distanceFromCamera = objectPosition.distanceTo(camera.position);
+                scaleFactor = distanceFromCamera / (6371 * 7);
                 drawnObjects[i].shape.scale.x = drawnObjects[i].shape.scale.y = drawnObjects[i].shape.scale.z = scaleFactor;
             }
         }
@@ -188,7 +200,7 @@ UNIVERSE.Core3D = function(container) {
         container.style.cursor = 'auto';
     }
 
-    function onMouseOut(event) {
+    function onMouseOut() {
         container.removeEventListener('mousemove', onMouseMove, false);
         container.removeEventListener('mouseup', onMouseUp, false);
         container.removeEventListener('mouseout', onMouseOut, false);
@@ -196,16 +208,16 @@ UNIVERSE.Core3D = function(container) {
 
     function onMouseWheel(event) {
         event.preventDefault();
-        if(overRenderer) {
+        if (overRenderer) {
             zoom(event.wheelDeltaY * (10));
         }
         return false;
     }
-    
+
     function onMouseWheelFF(event) {
         event.preventDefault();
-        if(overRenderer) {
-            var delta = event.detail? event.detail*(-120) : event.wheelDelta;
+        if (overRenderer) {
+            var delta = event.detail ? event.detail * (-120) : event.wheelDelta;
             zoom(delta * (10));
         }
         return false;
@@ -213,24 +225,24 @@ UNIVERSE.Core3D = function(container) {
 
     function onDocumentKeyDown(event) {
         switch (event.keyCode) {
-            case 38:
-                zoom(3200);
-                event.preventDefault();
-                break;
-            case 40:
-                zoom(-3200);
-                event.preventDefault();
-                break;
+        case 38:
+            zoom(3200);
+            event.preventDefault();
+            break;
+        case 40:
+            zoom(-3200);
+            event.preventDefault();
+            break;
         }
     }
 
-    function onWindowResize(event) {
+    function onWindowResize() {
         // so right now this event was fired when the entire window was resized,
         // but the individual dom elements haven't been resized yet. We will wait
         // a bit then execute the actual resize code so we can use the updated
         // element sizes.
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(function() {
+        resizeTimeout = setTimeout(function () {
             resize();
         }, 250);
     }
@@ -242,7 +254,7 @@ UNIVERSE.Core3D = function(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
     }
-    
+
     function zoom(delta) {
         self.distanceTarget -= delta;
         self.distanceTarget = self.distanceTarget > self.maxZoom ? self.maxZoom : self.distanceTarget;
@@ -250,9 +262,9 @@ UNIVERSE.Core3D = function(container) {
     }
 
     // Priviledged Methods
-    this.draw = function(id, shape, scale) {
-        if(!drawnObjects[id]) {
-            if(shape) {
+    this.draw = function (id, shape, scale) {
+        if (!drawnObjects[id]) {
+            if (shape) {
                 scene.add(shape);
             }
             drawnObjects[id] = {
@@ -262,85 +274,85 @@ UNIVERSE.Core3D = function(container) {
         }
     };
 
-    this.showObject = function(id, isShown) {
+    this.showObject = function (id, isShown) {
         // if object exists in drawnObjects then add back to scene
         if (drawnObjects[id]) {
-            if(isShown) {
+            if (isShown) {
                 //TODO: Fix so that multiple calls with true don't add the same object over and over'
                 scene.add(drawnObjects[id].shape);
-            }
-            else {
+            } else {
                 scene.remove(drawnObjects[id].shape);
             }
         }
     };
-    
-    this.removeObject = function(id) {
-        if(drawnObjects[id]) {
-            if(drawnObjects[id].shape) {
+
+    this.removeObject = function (id) {
+        if (drawnObjects[id]) {
+            if (drawnObjects[id].shape) {
                 scene.remove(drawnObjects[id].shape);
             }
             delete drawnObjects[id];
         }
     };
-    
-    this.removeAllObjects = function() {
-        for(var i in drawnObjects) {
-            if(drawnObjects[i].shape) {
+
+    this.removeAllObjects = function () {
+        var i;
+        for (i in drawnObjects) {
+            if (drawnObjects[i].shape) {
                 scene.remove(drawnObjects[i].shape);
             }
         }
         drawnObjects = [];
     };
 
-    this.getObjectPosition = function(id) {
-        if(drawnObjects[id] === undefined) {
-            return undefined;
+    this.getObjectPosition = function (id) {
+        var ret;
+        if (drawnObjects[id] !== undefined && drawnObjects[id].shape !== undefined) {
+	        ret = drawnObjects[id].shape.position;
         }
-        else if(drawnObjects[id].shape === undefined) {
-            return undefined;
-        }
-        return drawnObjects[id].shape.position;
+        return ret;
     };
 
-    this.moveCameraTo = function(position_vector) {
+    this.moveCameraTo = function (position_vector) {
         // This method converts a position into the rotation coordinate system used to move the camera
         // The target.x parameter is the rotation angle from the positive Z axis
         // target.y is the rotation angle away from the z-x plane
 
+
+        var cameraVector = new THREE.Vector3(),
+            zAxisVector = new THREE.Vector3(0, 0, 1), // unit vector along the z axis
+            yAxisVector = new THREE.Vector3(0, 1, 0), // unit vector along the y axis
+            positionY0Vector = new THREE.Vector3(),
+            y, // The angle between the positive y axis and the input position vector
+            x; // the angle between the input vector projected on the z-x plane and the z-axis
+
         // copy so we don't stomp on the original
-        var cameraVector = new THREE.Vector3();
         cameraVector.copy(position_vector);
-        
+
         // sets the distance from the center of the scene the camera will end up
         distanceTarget = cameraVector.length();
 
-        // unit vectors along the z and y axis
-        var zAxisVector = new THREE.Vector3(0,0,1);
-        var yAxisVector = new THREE.Vector3(0,1,0);
-
         // vector that removes the y component of the target vector for purpose of calculating the angle
         // between it the input position_vector and the y-z plane
-        var positionY0Vector = new THREE.Vector3();
         positionY0Vector.copy(cameraVector);
-        
+
         // set the y to zero and normalize to unit length
         positionY0Vector.y = 0;
         positionY0Vector.normalize();
-        
+
         //normalize the position_vector to unit length
         cameraVector.normalize();
 
         // calculates the angle between the positive y axis and the input position vector
         // then subtract this from 90 degrees to shift it to be from the z-x plane
-        var y = (Math.PI/2) - Math.acos(yAxisVector.dot(cameraVector));
+        y = (Math.PI / 2) - Math.acos(yAxisVector.dot(cameraVector));
 
         // calculate the angle between the input vector projected on the z-x plane and the z-axis
-        var x = Math.acos(zAxisVector.dot(positionY0Vector));
+        x = Math.acos(zAxisVector.dot(positionY0Vector));
 
         // since the above calculation will return between 0 and 180 degrees, invert it if we're in the
         // negative x direction
-        if(positionY0Vector.x < 0) {
+        if (positionY0Vector.x < 0) {
             x = -x;
         }
 
@@ -348,91 +360,80 @@ UNIVERSE.Core3D = function(container) {
         target.y = isNaN(y) ? 0 : y;
         target.x = isNaN(x) ? 0 : x;
     };
-    
-    this.getCameraPosition = function() {
+
+    this.getCameraPosition = function () {
         return camera.position;
     };
-    
-    this.addRotationToCameraTarget = function(xRotation, yRotation) {
-        if(xRotation) {
+
+    this.addRotationToCameraTarget = function (xRotation, yRotation) {
+        if (xRotation) {
             target.x += xRotation;
         }
-        
-        if(yRotation) {
+
+        if (yRotation) {
             target.y += yRotation;
         }
     };
 
-    this.updateLight = function(position, intensity) {
+    this.updateLight = function (position, intensity) {
         light.position = position;
         light.intensity = intensity;
     };
 
     // shim layer with setTimeout fallback
-    window.requestAnimFrame = (function(){
-      return  window.requestAnimationFrame       ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame    ||
-              window.oRequestAnimationFrame      ||
-              window.msRequestAnimationFrame     ||
-              function( callback ){
+    window.requestAnimFrame = (function () {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback) {
                 window.setTimeout(callback, 1000 / 60);
-              };
-    })();
-
-    // the first gamepad connected to the browser
-    var gamepad;
+            };
+    }());
 
     // called to setup a gamepad
     function connectGamepad(e) {
         // get the connected gamepad
         gamepad = new Input.Device(e.gamepad);
 
-        var iter = Object.keys(gamepad.axes);
-        for (var i in iter) {
+        var iter = Object.keys(gamepad.axes),
+            i;
+        for (i in iter) {
             console.log("Axis [" + iter[i] + "] connected");
         }
-        
+
         window.requestAnimFrame(updateGamepadStatus);
     }
 
     // called when a gamepad is disconnected
-    function disconnectGamepad(e) {
+    function disconnectGamepad() {
     }
 
-    var GAMEPAD_ZOOM_SCALING_FACTOR = 1500;
-    var GAMEPAD_ZOOM_MIN_SENSITIVITY = 0.1;
-    var GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR = 0.05;
-    var GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR = 0.5;
-    var GAMEPAD_CAMERA_ROTATION_DELTA =
-        GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR - GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR;
-    var GAMEPAD_CAMERA_MIN_SENSITIVITY = 0.25;
-    var GAMEPAD_PAN_SCALING_FACTOR = 5000;
-
-    function updateGamepadStatus(e) {
+    function updateGamepadStatus() {
 
         // right stick
 
         // adjust the rotation scaling factor by how close we are to the earth.
         // when we are far away from the earth, we want to rotate faster than
         // when we are closer to the earth.
-        var centerPoint = new THREE.Vector3(0, 0, 0);
-        var distanceFromEarth = centerPoint.distanceTo(camera.position);
+        var centerPoint = new THREE.Vector3(0, 0, 0),
+            distanceFromEarth = centerPoint.distanceTo(camera.position),
+            adjustedRotationScalingFactor = GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR +
+                ((distanceFromEarth / self.maxZoom) * GAMEPAD_CAMERA_ROTATION_DELTA),
+            xRot = gamepad.axes.Right_Stick_X,
+            yRot = gamepad.axes.Right_Stick_Y,
+            zoomInAmount,
+            zoomOutAmount;
 
-        var adjustedRotationScalingFactor = GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR + 
-            ((distanceFromEarth / self.maxZoom) * GAMEPAD_CAMERA_ROTATION_DELTA);
-        //console.log(distanceFromEarth + ", " + self.maxZoom + ", " + adjustedRotationScalingFactor);
-
-        var xRot = gamepad.axes.Right_Stick_X;
         xRot = xRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && xRot < GAMEPAD_CAMERA_MIN_SENSITIVITY ?
-            0 : xRot * adjustedRotationScalingFactor * -1;
-        
-        var yRot = gamepad.axes.Right_Stick_Y;
+                0 : xRot * adjustedRotationScalingFactor * -1;
+
         yRot = yRot > -GAMEPAD_CAMERA_MIN_SENSITIVITY && yRot < GAMEPAD_CAMERA_MIN_SENSITIVITY ?
-            0 : yRot * adjustedRotationScalingFactor;
+                0 : yRot * adjustedRotationScalingFactor;
 
         self.addRotationToCameraTarget(xRot, yRot);
-        
+
         // TODO: left stick
         /*
         var xPan = gamepad.axes["Left_Stick_X"];
@@ -449,12 +450,12 @@ UNIVERSE.Core3D = function(container) {
         */
 
         // zoom in / out
-        var zoomInAmount = gamepad.buttons.Right_Trigger_2;
+        zoomInAmount = gamepad.buttons.Right_Trigger_2;
         if (zoomInAmount > GAMEPAD_ZOOM_MIN_SENSITIVITY) {
             zoom(zoomInAmount * GAMEPAD_ZOOM_SCALING_FACTOR);
         }
 
-        var zoomOutAmount = gamepad.buttons.Left_Trigger_2;
+        zoomOutAmount = gamepad.buttons.Left_Trigger_2;
         if (zoomOutAmount > GAMEPAD_ZOOM_MIN_SENSITIVITY) {
             zoom(zoomOutAmount * -GAMEPAD_ZOOM_SCALING_FACTOR);
         }

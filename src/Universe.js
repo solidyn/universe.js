@@ -10,45 +10,30 @@ var UNIVERSE = UNIVERSE || {};
     @param {double} refreshRate - The refresh rate for the universe in milliseconds
     @param {DOMElement} container - the container where the Universe will be drawn
  */
-UNIVERSE.Universe = function(time, refreshRate, container) {
-    var controller = new UNIVERSE.UniverseController(refreshRate);
-    var core = new UNIVERSE.Core3D(container);
-    var objectLibrary = new UNIVERSE.ObjectLibrary();
-
-    // options
-
-    var currentUniverseTime = time;
-    var playbackSpeed = 1;
-
-    /**
-        function to call when we have a new state object
-        @private
-    */
-    var stateChangedCallback = function() {
-    };
-
-    // milliseconds between updating our state object that we broadcast
-    // to any listeners
-    var timeBetweenStateUpdatesMs = 1000;
-
-    // timeout for updating state
-    var updateStateTimeout;
-
-    var universe = this;
+UNIVERSE.Universe = function (time, refreshRate, container) {
+    var controller = new UNIVERSE.UniverseController(refreshRate),
+        core = new UNIVERSE.Core3D(container),
+        objectLibrary = new UNIVERSE.ObjectLibrary(),
+        currentUniverseTime = time,  // options
+        playbackSpeed = 1,
+        stateChangedCallback = function () {}, //function to call when we have a new state object
+        timeBetweenStateUpdatesMs = 1000, // milliseconds between updating our state object that we broadcast to any listeners
+        updateStateTimeout, // timeout for updating state
+        universe = this;
 
     // OBJECT LIBRARY DEFAULTS
-    
+
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
     objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
 
     // PRIVATE METHODS
-    
+
     /**
         fires a state changed event to the callback
         @private
     */
     function fireStateChanged(state) {
-        if(stateChangedCallback !== null) {
+        if (stateChangedCallback !== null) {
             stateChangedCallback(state);
         }
     }
@@ -61,36 +46,36 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         controller.addGraphicsObject({
             id : "simState",
             objectName : "simState",
-            update : function(elapsedTime) {
-                if(elapsedTime !== null) {
+            update : function (elapsedTime) {
+                if (elapsedTime !== null) {
                     currentUniverseTime.setTime(currentUniverseTime.getTime() + playbackSpeed * elapsedTime);
                 }
             },
-            draw : function() {
+            draw : function () {
             }
         });
     }
 
     /**
-        gets called at our state update interfal and fires the state change callback
+        gets called at our state update interval and fires the state change callback
         @private
     */
     function updateState() {
         //create our state object and notify our listener
-        var universe = this;
-        var state = {};
-        state.currentUniverseTime = new Date(currentUniverseTime);
+        var state = {
+            currentUniverseTime: new Date(currentUniverseTime)
+        };
 
         fireStateChanged(state);
 
         // call update() again in a certain number of milliseconds
-        updateStateTimeout = setTimeout(function() {
+        updateStateTimeout = setTimeout(function () {
             updateState();
         }, timeBetweenStateUpdatesMs);
     }
-    
+
     // PROTECTED METHODS (API METHODS)
-    
+
     /**
         Start playback for the universe
         @public
@@ -98,45 +83,45 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {double} newPlaybackSpeed
         @param {function} newStateChangedCallback
      */
-    this.play = function(startTime, newPlaybackSpeed, newStateChangedCallback) {
-        if(startTime) {
+    this.play = function (startTime, newPlaybackSpeed, newStateChangedCallback) {
+        if (startTime) {
             currentUniverseTime = new Date(startTime);
         }
-         if(newPlaybackSpeed) {
+        if (newPlaybackSpeed) {
             playbackSpeed = newPlaybackSpeed;
-         }
-        
-        if(newStateChangedCallback) {
+        }
+
+        if (newStateChangedCallback) {
             stateChangedCallback = newStateChangedCallback;
         }
-        
+
         // update state our first time
         updateState();
 
         controller.play();
     };
 
-    this.getMinZoomDistance = function() {
+    this.getMinZoomDistance = function () {
         return core.minZoom;
     };
 
-    this.getMaxZoomDistance = function() {
+    this.getMaxZoomDistance = function () {
         return core.maxZoom;
     };
 
-    this.setCurrentZoomDistance = function(newDistanceTarget) {
+    this.setCurrentZoomDistance = function (newDistanceTarget) {
         core.distanceTarget = newDistanceTarget;
     };
 
-    this.getCurrentZoomDistance = function() {
+    this.getCurrentZoomDistance = function () {
         return core.distanceTarget;
     };
-    
+
     /**
         Pause playback for the universe
         @public
     */
-    this.pause = function() {
+    this.pause = function () {
         clearTimeout(updateStateTimeout);
         controller.pause();
     };
@@ -146,7 +131,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {Double} speed
      */
-    this.setPlaybackSpeed = function(speed) {
+    this.setPlaybackSpeed = function (speed) {
         playbackSpeed = speed;
     };
 
@@ -155,7 +140,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {Date} newUniverseTime
      */
-    this.setCurrentUniverseTime = function(newUniverseTime) {
+    this.setCurrentUniverseTime = function (newUniverseTime) {
         currentUniverseTime = new Date(newUniverseTime);
         controller.updateOnce();
     };
@@ -164,7 +149,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         Get the current time of the Universe
         @public
     */
-    this.getCurrentUniverseTime = function() {
+    this.getCurrentUniverseTime = function () {
         return currentUniverseTime;
     };
 
@@ -175,8 +160,8 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {string} modelUrl - URL for the THREE.js format geometry model
         @param {function} callback - callback function that gets called when the geometry is done loading
     */
-    this.addJsonGeometryModel = function(modelId, modelUrl, callback) {
-        if (modelId){
+    this.addJsonGeometryModel = function (modelId, modelUrl, callback) {
+        if (modelId) {
             objectLibrary.addGeometryObjectFromUrl(modelId, modelUrl, callback);
         } else {
             callback();
@@ -188,7 +173,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {UNIVERSE.GraphicsObject} object
     */
-    this.addObject = function(object) {
+    this.addObject = function (object) {
         controller.addGraphicsObject(object);
     };
 
@@ -199,7 +184,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {THREE.Mesh} mesh - THREE.js mesh for the object
         @param {boolean} isScale - specifies whether the object should be scaled to always be the same as the camera moves
     */
-    this.draw = function(id, mesh, isScale) {
+    this.draw = function (id, mesh, isScale) {
         core.draw(id, mesh, isScale);
     };
 
@@ -208,7 +193,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {string} id - identifier for the object
     */
-    this.unDraw = function(id) {
+    this.unDraw = function (id) {
         core.removeObject(id);
     };
 
@@ -219,7 +204,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {string} id - identifier for the object
         @param {Object} object - any object you want to store for later retrieval
     */
-    this.setObjectInLibrary = function(id, object) {
+    this.setObjectInLibrary = function (id, object) {
         objectLibrary.setObject(id, object);
     };
 
@@ -229,7 +214,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {string} id - identifier for the object
         @param {function} callback - method to be called with the retrieved object
     */
-    this.getObjectFromLibraryById = function(id, callback) {
+    this.getObjectFromLibraryById = function (id, callback) {
         objectLibrary.getObjectById(id, callback);
     };
 
@@ -238,7 +223,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {string} id - identifier for the object
     */
-    this.removeObject = function(id) {
+    this.removeObject = function (id) {
         controller.removeGraphicsObject(id);
         core.removeObject(id);
     };
@@ -248,25 +233,23 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {string} id - identifier for the object
     */
-    this.snapToObject = function(id) {
+    this.snapToObject = function (id) {
         // get the object's position and copy it into a vector
-        var position = core.getObjectPosition(id);
-        if(position) {
-            var vector = new THREE.Vector3();
+        var position = core.getObjectPosition(id),
+            vector;
+        if (position) {
+            vector = new THREE.Vector3();
             vector.copy(position);
-    
+
             // move the point the camera will be at out a bit so we are behind the object
             vector.multiplyScalar(1.4);
-    
+
             // tell the core to move to the vector
             core.moveCameraTo(vector);
-        }
-        else {
-            // Object is not added to the core so not doing anything
-        }
+        } // else Object is not added to the core so don't do anything
     };
-    
-    this.addRotationToCamera = function(xRotation, yRotation) {
+
+    this.addRotationToCamera = function (xRotation, yRotation) {
         core.addRotationToCameraTarget(xRotation, yRotation);
     };
 
@@ -274,16 +257,16 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         Remove all objects from the Universe
         @public
     */
-    this.removeAll = function() {
+    this.removeAll = function () {
         core.removeAllObjects();
         controller.removeAllGraphicsObjects();
     };
-    
+
     /**
         Get all of the objects currently in the Universe
         @public
     */
-    this.getGraphicsObjects = function() {
+    this.getGraphicsObjects = function () {
         return controller.getGraphicsObjects();
     };
 
@@ -292,18 +275,18 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @public
         @param {string} id
     */
-    this.getGraphicsObjectById = function(id) {
+    this.getGraphicsObjectById = function (id) {
         return controller.getGraphicsObjectById(id);
     };
 
     /**
         @ignore
     */
-    this.updateObject = function(id, propertyName, propertyValue) {
+//    this.updateObject = function (id, propertyName, propertyValue) {
         // TODO: Implement or delete
-    };
+//    };
 
-    this.updateOnce = function() {
+    this.updateOnce = function () {
         controller.updateOnce();
     };
 
@@ -313,11 +296,11 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         @param {string} id - identifier for the object
         @param {boolean} isEnabled - whether the object is visible or not
     */
-    this.showObject = function(id, isEnabled) {
+    this.showObject = function (id, isEnabled) {
         core.showObject(id, isEnabled);
     };
 
-    this.updateLight = function(x, y, z, intensity) {
+    this.updateLight = function (x, y, z, intensity) {
         core.updateLight(new THREE.Vector3(x, y, z), intensity);
     };
 
@@ -325,7 +308,7 @@ UNIVERSE.Universe = function(time, refreshRate, container) {
         Basic setup method, needs to be called after all objects are removed from the Universe
         @public
     */
-    this.setup = function() {
+    this.setup = function () {
         addSimStateObject();
     };
 
