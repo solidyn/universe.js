@@ -1,17 +1,17 @@
+/*jslint browser: true, sloppy: true */
 
 function Quaternion(wVal, xVal, yVal, zVal) {
 
-    this.w = wVal ? wVal : 0.0;
-    this.x = xVal ? xVal : 0.0;
-    this.y = yVal ? yVal : 0.0;
-    this.z = zVal ? zVal : 0.0;
-    this.q = new Array(4);
+    this.w = wVal || 0.0;
+    this.x = xVal || 0.0;
+    this.y = yVal || 0.0;
+    this.z = zVal || 0.0;
+    this.q = [];
 
     /**
      *
      */
-    this.updateQ = function()
-    {
+    this.updateQ = function () {
         this.q[0] = this.w;
         this.q[1] = this.x;
         this.q[2] = this.y;
@@ -22,17 +22,15 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns
      */
-    this.getQ = function()
-    {
-        return q;
+    this.getQ = function () {
+        return this.q;
     };
 
     /**
      *
      * @param q Double[]
      */
-    this.setQ = function(q)
-    {
+    this.setQ = function (q) {
         this.w = q[0];
         this.x = q[1];
         this.y = q[2];
@@ -45,8 +43,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns double
      */
-    this.getW = function()
-    {
+    this.getW = function () {
         return this.w;
     };
 
@@ -54,8 +51,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @param newW double
      */
-    this.setW = function(newW)
-    {
+    this.setW = function (newW) {
         this.w = newW;
         this.updateQ();
     };
@@ -64,8 +60,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns double
      */
-    this.getX = function()
-    {
+    this.getX = function () {
         return this.x;
     };
 
@@ -73,8 +68,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @param newX double
      */
-    this.setX = function(newX)
-    {
+    this.setX = function (newX) {
         this.x = newX;
         this.updateQ();
     };
@@ -83,8 +77,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns double
      */
-    this.getY = function()
-    {
+    this.getY = function () {
         return this.y;
     };
 
@@ -92,8 +85,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @param newY double
      */
-    this.setY = function(newY)
-    {
+    this.setY = function (newY) {
         this.y = newY;
         this.updateQ();
     };
@@ -102,8 +94,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns double
      */
-    this.getZ = function()
-    {
+    this.getZ = function () {
         return this.z;
     };
 
@@ -111,8 +102,7 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @param newZ double
      */
-    this.setZ = function(newZ)
-    {
+    this.setZ = function (newZ) {
         this.z = newZ;
         this.updateQ();
     };
@@ -121,12 +111,10 @@ function Quaternion(wVal, xVal, yVal, zVal) {
      *
      * @returns boolean
      */
-    this.isZero = function()
-    {
-        for (var i = 0; i < 4; i++)
-        {
-            if (this.q[i] && this.q[i] !== 0)
-            {
+    this.isZero = function () {
+        var i;
+        for (i = 0; i < 4; i += 1) {
+            if (this.q[i] && this.q[i] !== 0) {
                 return false;
             }
         }

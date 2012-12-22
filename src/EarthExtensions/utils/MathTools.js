@@ -1,6 +1,6 @@
-
+/*jslint browser: true, sloppy: true */
+/*global Constants */
 var MathTools = {
-    
     /**
      * returns the angle between two vectors
      * @param {vector} x (unitless)
@@ -8,17 +8,15 @@ var MathTools = {
      *
      * @returns {Number} angle
      */
-    angleBetweenTwoVectorsVector: function(x, y)
-    {
-        var angle = 0;                 //double
-        var magX = x.length();       //double
-        var magY = y.length();       //double
-        var xDotY = x.dot(y); //double
+    angleBetweenTwoVectorsVector: function (x, y) {
+        var angle,                 //double
+            magX = x.length(),       //double
+            magY = y.length(),       //double
+            xDotY = x.dot(y); //double
 
         angle = MathTools.toDegrees(Math.acos(xDotY / (magX * magY)));
 
-        if (angle > 90)
-        {
+        if (angle > 90) {
             angle = 180 - angle;
         }
 
@@ -32,8 +30,7 @@ var MathTools = {
      *
      * @returns {Double[]} result (3x1)
      */
-    rot1: function(x, vec)
-    {
+    rot1: function (x, vec) {
         x = MathTools.toRadians(x);
 
         var result = []; //Double[3];
@@ -51,10 +48,9 @@ var MathTools = {
      *
      * @returns {Double[]} result (3x1)
      */
-    rot2: function(x, vec)
-    {
+    rot2: function (x, vec) {
         x = MathTools.toRadians(x);
-        
+
         var result = []; //Double[3];
 
         result[0] = Math.cos(x) * vec[0] - Math.sin(x) * vec[2];
@@ -71,8 +67,7 @@ var MathTools = {
      *
      * @returns {Double[]} result (3x1)
      */
-    rot3: function(x, vec)
-    {
+    rot3: function (x, vec) {
         x = MathTools.toRadians(x);
 
         var result = []; //Double[3];
@@ -90,10 +85,9 @@ var MathTools = {
      *
      * @returns {Number} valueInRadians
      */
-    toRadians: function(valueInDegrees)
-    {
+    toRadians: function (valueInDegrees) {
         // return valueInDegrees * Math.PI / 180.0;
-            return valueInDegrees * Constants.piOverOneEighty;
+        return valueInDegrees * Constants.piOverOneEighty;
     },
 
     /**
@@ -102,10 +96,9 @@ var MathTools = {
      *
      * @returns {Number} valueInDegrees
      */
-    toDegrees: function(valueInRadians)
-    {
+    toDegrees: function (valueInRadians) {
         //return valueInRadians * 180 / Math.PI;
-          return valueInRadians * Constants.oneEightyOverPi;
+        return valueInRadians * Constants.oneEightyOverPi;
     },
 
     /**
@@ -115,15 +108,13 @@ var MathTools = {
      *
      * @returns {Number[][]} rotationMatrix  (3x3)
      */
-    buildRotationMatrix1: function(x)
-    {
+    buildRotationMatrix1: function (x) {
         x = MathTools.toRadians(x);
-        var result = []; //Double[3][3];
+        var result = [], //Double[3][3];
+            i = 0;
 
-        var i = 0;
-        for(i = 0; i < 3; i++)
-        {
-           result[i] = [];
+        for (i = 0; i < 3; i += 1) {
+            result[i] = [];
         }
 
         result[0][0] = 1.0;
@@ -146,15 +137,12 @@ var MathTools = {
      *
      * @returns {Number[][]} rotationMatrix  (3x3)
      */
-    buildRotationMatrix2: function(x)
-    {
+    buildRotationMatrix2: function (x) {
         x = MathTools.toRadians(x);
-        var result = []; //Double[3][3];
-
-        var i = 0;
-        for(i = 0; i < 3; i++)
-        {
-           result[i] = [];
+        var result = [], //Double[3][3];
+            i = 0;
+        for (i = 0; i < 3; i += 1) {
+            result[i] = [];
         }
 
         result[0][0] = Math.cos(x);
@@ -177,15 +165,13 @@ var MathTools = {
      *
      * @returns {Number[][]} rotationMatrix  (3x3)
      */
-    buildRotationMatrix3: function(x)
-    {
+    buildRotationMatrix3: function (x) {
         x = MathTools.toRadians(x);
-        var result = []; //Double[3][3];
+        var result = [], //Double[3][3];
+            i = 0;
 
-        var i = 0;
-        for(i = 0; i < 3; i++)
-        {
-           result[i] = [];
+        for (i = 0; i < 3; i += 1) {
+            result[i] = [];
         }
 
         result[0][0] = Math.cos(x);
@@ -208,28 +194,16 @@ var MathTools = {
      *
      * @returns {Number[][]} identityMatrix (size NxN)
      */
-    ones: function(N)
-    {
-        var x = []; //Double[N][N];
+    ones: function (N) {
+        var x = [], //Double[N][N];
+            i = 0,
+            j = 0;
 
-        var i = 0;
-        var j = 0;
-
-        for(i = 0; i < N; i++)
-        {
-           result[i] = new Array(N);
-        }
-
-        for (i = 0; i < N; i++)
-        {
-            for (j = 0; j < N; j++)
-            {
-                if (i != j)
-                {
+        for (i = 0; i < N; i += 1) {
+            for (j = 0; j < N; j += 1) {
+                if (i !== j) {
                     x[i][j] = 0.0;
-                }
-                else
-                {
+                } else {
                     x[i][j] = 1.0;
                 }
             }
@@ -244,22 +218,13 @@ var MathTools = {
      *
      * @returns {Number[][]} zerosMatrix (size NxN)
      */
-    zeros: function(N)
-    {
-        var x = new Array(N); //Double[3][3];
+    zeros: function (N) {
+        var x = [], //Double[3][3];
+            i = 0,
+            j = 0;
 
-        var i = 0;
-        var j = 0;
-
-        for(i = 0; i < N; i++)
-        {
-           result[i] = new Array(N);
-        }
-
-        for (i = 0; i < N; i++)
-        {
-            for (j = 0; j < N; j++)
-            {
+        for (i = 0; i < N; i += 1) {
+            for (j = 0; j < N; j += 1) {
                 x[i][j] = 0.0;
             }
         }
@@ -274,22 +239,14 @@ var MathTools = {
      *
      * @returns {Number[][]} zerosMatrix (size MxN)
      */
-    zeros: function(M, N)
-    {
-        var x = new Array(M); //Double[M][N];
+    zeros: function (M, N) {
+        var x = [], //Double[M][N];
 
-        var i = 0;
-        var j = 0;
+            i = 0,
+            j = 0;
 
-        for(i = 0; i < M; i++)
-        {
-           result[i] = new Array(N);
-        }
-
-        for (i = 0; i < M; i++)
-        {
-            for ( j = 0; j < N; j++)
-            {
+        for (i = 0; i < M; i += 1) {
+            for (j = 0; j < N; j += 1) {
                 x[i][j] = 0.0;
             }
         }
@@ -305,25 +262,23 @@ var MathTools = {
      *
      * @returns {Number[]} product 1d array of size (1xM)
      */
-    multiply1dBy2d: function(x, y)
-    {
-        var x1 = x.length;
-        var y1 = y.length;
-        var y2 = y[0].length;
+    multiply1dBy2d: function (x, y) {
+        var x1 = x.length,
+            y1 = y.length,
+            y2 = y[0].length,
+            returnVal = [],
+            i,
+            val,
+            j;
 
-        if (x1 != y1)
-        {
+        if (x1 !== y1) {
             return null;
         }
 
-        var returnVal = new Array(y2); //Double[y2];
+        for (i = 0; i < y2; i += 1) {
+            val = 0;
 
-        for (var i = 0; i < y2; i++)
-        {
-            var val = 0;
-
-            for (var j = 0; j < x1; j++)
-            {
+            for (j = 0; j < x1; j += 1) {
                 val = val + x[j] * y[j][i];
             }
 
@@ -341,26 +296,26 @@ var MathTools = {
      *
      * @returns {Number[]} product 1d array of size (Mx1)
      */
-    multiply2dBy1d: function(x, y)
-    {
+    multiply2dBy1d: function (x, y) {
         //where x is MxN and Y is Nx1
-        var M_x1 = x.length;
-        var N_x2 = x[0].length;
-        var N_y1 = y.length;
+        var M_x1 = x.length,
+            N_x2 = x[0].length,
+            N_y1 = y.length,
+            returnVal,
+            i,
+            val,
+            j;
 
-        if (N_x2 != N_y1)
-        {
+        if (N_x2 !== N_y1) {
             return null;
         }
 
-        var returnVal = new Array(M_x1); //Double[M_x1];
+        returnVal = []; //Double[M_x1];
 
-        for (var i = 0; i < M_x1; i++)
-        {
-            var val = 0;
+        for (i = 0; i < M_x1; i += 1) {
+            val = 0;
 
-            for (var j = 0; j < N_y1; j++)
-            {
+            for (j = 0; j < N_y1; j += 1) {
                 val = val + x[i][j] * y[j];
             }
 
@@ -377,30 +332,23 @@ var MathTools = {
      *
      * @returns {Number[][]} product 2d array of size (MxN)
      */
-    multiplyDoubleBy2d: function(h, x)
-    {
-        var M = x.length;
-        var N = x[0].length;
-        var hTimesX = new Array(M); //Double[M][N];
+    multiplyDoubleBy2d: function (h, x) {
+        var M = x.length,
+            N = x[0].length,
+            hTimesX = [], //Double[M][N];
 
-        var i = 0;
-        var j = 0;
+            i = 0,
+            j = 0;
 
-        for(i = 0; i < M; i++)
-        {
-           hTimesX[i] = new Array(N);
+        for (i = 0; i < M; i += 1) {
+            hTimesX[i] = [];
         }
 
-        for (i = 0; i < M; i++)
-        {
-            for (j = 0; j < N; j++)
-            {
-                if (x[i][j] === 0)
-                {
+        for (i = 0; i < M; i += 1) {
+            for (j = 0; j < N; j += 1) {
+                if (x[i][j] === 0) {
                     hTimesX[i][j] = 0.0;
-                }
-                else
-                {
+                } else {
                     hTimesX[i][j] = h * x[i][j];
                 }
             }
@@ -417,40 +365,35 @@ var MathTools = {
      *
      * @returns {Number[][]} product 2d array of size (MxP)
      */
-    multiply2dBy2d: function(x, y)
-    {
-        var x1 = x.length;
-        var x2 = x[0].length;
-        var y1 = y.length;
-        var y2 = y[0].length;
+    multiply2dBy2d: function (x, y) {
+        var x1 = x.length,
+            x2 = x[0].length,
+            y1 = y.length,
+            y2 = y[0].length,
+            returnVal,
+            i,
+            j,
+            val,
+            k;
 
-        if (x2 != y1)
-        {
+        if (x2 !== y1) {
             return null;
         }
 
-        var returnVal = new Array(x1); //Double[3][3];
+        returnVal = []; //Double[3][3];
 
-        var i = 0;
-        var j = 0;
-
-        for(i = 0; i < x1; i++)
-        {
-           returnVal[i] = new Array(y2);
+        for (i = 0; i < x1; i += 1) {
+            returnVal[i] = [];
         }
 
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {
+        for (i = 0; i < x1; i += 1) {
             //each column of the target matrix
-            for (j = 0; j < y2; j++)
-            {
-                var val = 0;
-                var k = 0;
+            for (j = 0; j < y2; j += 1) {
+                val = 0;
 
                 //the components of the target cell
-                for (k = 0; k < y1; k++)
-                {
+                for (k = 0; k < y1; k += 1) {
                     val = val + x[i][k] * y[k][j];
                 }
 
@@ -468,27 +411,23 @@ var MathTools = {
      *
      * @returns {Number[][]} transpose 2d array of size (NxM)
      */
-    transposeMatrix: function(x)
-    {
-        var x1 = x.length;
-        var x2 = x[0].length;
+    transposeMatrix: function (x) {
+        var x1 = x.length,
+            x2 = x[0].length,
 
-        var returnVal = new Array(x2); //Double[x2][x1];
+            returnVal = [], //Double[x2][x1];
 
-        var i = 0;
-        var j = 0;
+            i = 0,
+            j = 0;
 
-        for(i = 0; i < x2; i++)
-        {
-           returnVal[i] = new Array(x1);
+        for (i = 0; i < x2; i += 1) {
+            returnVal[i] = [];
         }
 
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {  
+        for (i = 0; i < x1; i += 1) {
             //each column of the target matrix
-            for (j = 0; j < x2; j++)
-            { 
+            for (j = 0; j < x2; j += 1) {
                 returnVal[j][i] = x[i][j];
             }
         }
@@ -504,22 +443,20 @@ var MathTools = {
      *
      * @returns {Number[]} sum 1d array of size (Nx1)
      */
-    add1dTo1d: function(x, y)
-    {
-        var x1 = x.length;
-        var y1 = y.length;
+    add1dTo1d: function (x, y) {
+        var x1 = x.length,
+            y1 = y.length,
+            returnVal,
+            i;
 
-        if (x1 != y1)
-        {
+        if (x1 !== y1) {
             return null;
         }
 
-        var returnVal = new Array(x1); //Double[x1];
-        var i = 0;
+        returnVal = []; //Double[x1];
 
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {  
+        for (i = 0; i < x1; i += 1) {
             returnVal[i] = x[i] + y[i];
         }
 
@@ -534,33 +471,27 @@ var MathTools = {
      *
      * @returns {Number[][]} sum 1d array of size (MxN)
      */
-    add2dTo2d: function(x, y)
-    {
-        var x1 = x.length;
-        var x2 = x[0].length;
-        var y1 = y.length;
-        var y2 = y[0].length;
+    add2dTo2d: function (x, y) {
+        var x1 = x.length,
+            x2 = x[0].length,
+            y1 = y.length,
+            y2 = y[0].length,
+            returnVal = [],
+            i,
+            j;
 
-        if ((x1 != y1) || (x2 != y2))
-        {
+        if ((x1 !== y1) || (x2 !== y2)) {
             return null;
         }
 
-        var returnVal = new Array(x1); //Double[x1][x2];
-        var i = 0;
-        var j = 0;
-
-        for(i = 0; i < x1; i++)
-        {
-           returnVal[i] = new Array(x2);
+        for (i = 0; i < x1; i += 1) {
+            returnVal[i] = [];
         }
 
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {
+        for (i = 0; i < x1; i += 1) {
             //each column of the target matrix
-            for (j = 0; j < x2; j++)
-            { 
+            for (j = 0; j < x2; j += 1) {
                 returnVal[i][j] = x[i][j] + y[i][j];
             }
         }
@@ -576,33 +507,27 @@ var MathTools = {
      *
      * @returns {Number[][]} difference 2d array of size (MxN) representing x-y
      */
-    subtract2dMinus2d: function(x, y)
-    {
-        var x1 = x.length;
-        var x2 = x[0].length;
-        var y1 = y.length;
-        var y2 = y[0].length;
+    subtract2dMinus2d: function (x, y) {
+        var x1 = x.length,
+            x2 = x[0].length,
+            y1 = y.length,
+            y2 = y[0].length,
+            returnVal = [],
+            i,
+            j;
 
-        if ((x1 != y1) || (x2 != y2))
-        {
+        if ((x1 !== y1) || (x2 !== y2)) {
             return null;
         }
 
-        var returnVal = new Array(x1); //Double[x1][x2];
-        var i = 0;
-        var j = 0;
-
-        for(i = 0; i < x1; i++)
-        {
-           returnVal[i] = new Array(x2);
+        for (i = 0; i < x1; i += 1) {
+            returnVal[i] = [];
         }
 
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {
+        for (i = 0; i < x1; i += 1) {
             //each column of the target matrix
-            for (j = 0; j < x2; j++)
-            { 
+            for (j = 0; j < x2; j += 1) {
                 returnVal[i][j] = x[i][j] - y[i][j];
             }
         }
@@ -618,22 +543,18 @@ var MathTools = {
      *
      * @returns {Number[]} difference 1d array of size (Nx1) representing x-y
      */
-    subtract1dMinus1d: function(x, y)
-    {
-        var x1 = x.length;
-        var y1 = y.length;
+    subtract1dMinus1d: function (x, y) {
+        var x1 = x.length,
+            y1 = y.length,
+            returnVal = [],
+            i;
 
-        if (x1 != y1)
-        {
+        if (x1 !== y1) {
             return null;
         }
 
-        var returnVal = new Array(x1); //Double[x1];
-        var i = 0;
-
         //each row of the target matrix
-        for (i = 0; i < x1; i++)
-        {  
+        for (i = 0; i < x1; i += 1) {
             returnVal[i] = x[i] - y[i];
         }
 

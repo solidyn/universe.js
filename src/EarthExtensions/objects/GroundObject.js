@@ -1,3 +1,6 @@
+/*jslint browser: true, sloppy: true */
+/*global THREE, Utilities */
+
 var UNIVERSE = UNIVERSE || {};
 
 /** 
@@ -9,21 +12,22 @@ var UNIVERSE = UNIVERSE || {};
     @param {string} modelId - Identifier for the model to use that has been added to the Universe's object library
  */
 
-UNIVERSE.GroundObject = function(id, objectName, modelId, propagator) {
-    if(!id)
-    { 
+UNIVERSE.GroundObject = function (id, objectName, modelId, propagator) {
+    if (!id) {
         return undefined;
     }
     this.id = id;
     this.objectName = objectName || id;
     this.propagator = propagator;
     this.modelId = modelId;
+
+    return this;
 };
 
 UNIVERSE.GroundObject.prototype = {
     constructor: UNIVERSE.GroundObject,
-    
-    set: function ( id, objectName, propagator, modelId ) {
+
+    set: function (id, objectName, propagator, modelId) {
 
         this.id = id;
         this.objectName = objectName || id;
@@ -32,38 +36,37 @@ UNIVERSE.GroundObject.prototype = {
 
         return this;
     },
-        
-        getGraphicsObject: function(objectMaterial, objectGeometry, universe, earthExtensions) {
-            objectGeometry.applyMatrix( new THREE.Matrix4().setRotationFromEuler( new THREE.Vector3( Math.PI / 2, Math.PI, 0 ) ));
-            
-            var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial);
 
-            var groundObject = this;
-            
-            var groundGraphicsObject = new UNIVERSE.GraphicsObject(
+    getGraphicsObject: function (objectMaterial, objectGeometry, universe, earthExtensions) {
+        objectGeometry.applyMatrix(new THREE.Matrix4().setRotationFromEuler(new THREE.Vector3(Math.PI / 2, Math.PI, 0)));
+
+        var groundObjectMesh = new THREE.Mesh(objectGeometry, objectMaterial),
+            groundObject = this,
+
+            groundGraphicsObject = new UNIVERSE.GraphicsObject(
                 this.id,
                 this.objectName,
                 undefined,
-                function(elapsedTime) {
+                function (elapsedTime) {
                     // check earth rotation and update location
-                    var propagatedPosition = groundObject.propagator();
-                    var position = Utilities.eciTo3DCoordinates(propagatedPosition, earthExtensions);
+                    var propagatedPosition = groundObject.propagator(),
+                        position = Utilities.eciTo3DCoordinates(propagatedPosition, earthExtensions),
+                        //http://mrdoob.github.com/three.js/examples/misc_lookat.html
+                        scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
+
                     groundObjectMesh.position.set(position.x, position.y, position.z);
                     this.currentLocation = propagatedPosition;
-
-                    //http://mrdoob.github.com/three.js/examples/misc_lookat.html
-                    var scaled_position_vector = new THREE.Vector3(position.x, position.y, position.z);
 
                     // arbitrary size, just a point along the position vector further out for the object to lookAt
                     scaled_position_vector.multiplyScalar(1.4);
 
                     groundObjectMesh.lookAt(scaled_position_vector);
                 },
-                function() {
+                function () {
                     universe.draw(groundObject.id, groundObjectMesh, true);
                 }
             );
-                
-            return groundGraphicsObject;
-        }
+
+        return groundGraphicsObject;
+    }
 };

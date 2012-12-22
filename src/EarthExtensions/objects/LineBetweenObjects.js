@@ -3,81 +3,91 @@
 /**
  *
  */
+
+/*jslint browser: true, sloppy: true, nomen: true */
+/*global THREE, Utilities */
+
 var UNIVERSE = UNIVERSE || {};
 
-UNIVERSE.LineBetweenObjects = function(object1_id, object2_id, universe, earthExtensions, color, customIdentifier) {
-    var objectGeometry, objectMaterial;
-        
-    if(!color) {
+UNIVERSE.LineBetweenObjects = function (object1_id, object2_id, universe, earthExtensions, color, customIdentifier) {
+    var objectGeometry, objectMaterial,
+        object1 = universe.getGraphicsObjectById(object1_id),
+        object2 = universe.getGraphicsObjectById(object2_id),
+        object1Location,
+        object2Location,
+        line,
+        identifier,
+        lineGraphicsObject;
+
+    if (!color) {
         color = 0x009900;
     }
-        
+
     objectMaterial = new THREE.LineBasicMaterial({
         color : color,
         opacity : 1
     });
-			
-    var object1 = universe.getGraphicsObjectById(object1_id);
-    var object2 = universe.getGraphicsObjectById(object2_id);
-			
-    if(object1 == undefined || object2 == undefined) {
+
+    if (!object1 || !object2) {
         return undefined;
     }
-			
-    var object1Location = Utilities.eciTo3DCoordinates(object1.currentLocation, earthExtensions);
-    var object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
-			
-    if(object1Location == undefined || object2Location == undefined) {
+
+    object1Location = Utilities.eciTo3DCoordinates(object1.currentLocation, earthExtensions);
+    object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
+
+    if (!object1Location || !object2Location) {
         return undefined;
     }
-            
+
     objectGeometry = new THREE.Geometry();
     objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z)));
-                
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
-            
-    var line = new THREE.Line(objectGeometry, objectMaterial);
 
-    var identifier = "_to_"
-    if(customIdentifier)
-    {
+    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
+
+    line = new THREE.Line(objectGeometry, objectMaterial);
+
+    identifier = "_to_";
+    if (customIdentifier) {
         identifier = customIdentifier;
     }
-			
-    var lineGraphicsObject = new UNIVERSE.GraphicsObject(
+
+    lineGraphicsObject = new UNIVERSE.GraphicsObject(
         object1_id + identifier + object2_id,
         undefined,
         undefined,
-        function(elapsedTime) {
-            
-            var object1 = universe.getGraphicsObjectById(object1_id);
-            var object2 = universe.getGraphicsObjectById(object2_id);
-            if(object1 == undefined || object2 == undefined) {
+        function (elapsedTime) {
+            var object1 = universe.getGraphicsObjectById(object1_id),
+                object2 = universe.getGraphicsObjectById(object2_id),
+                object1Location,
+                object2Location;
+
+            if (!object1 || !object2) {
                 return;
             }
-            var object1Location = Utilities.eciTo3DCoordinates(object1.currentLocation, earthExtensions);
-            var object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
-					
-            if(!(object1Location == undefined || object2Location == undefined)) {
+
+            object1Location = Utilities.eciTo3DCoordinates(object1.currentLocation, earthExtensions);
+            object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
+
+            if (object1Location && object2Location) {
                 objectGeometry.vertices[0].position = {
-                    x: object1Location.x, 
-                    y: object1Location.y, 
+                    x: object1Location.x,
+                    y: object1Location.y,
                     z: object1Location.z
                 };
 
                 objectGeometry.vertices[1].position = {
-                    x: object2Location.x, 
-                    y: object2Location.y, 
+                    x: object2Location.x,
+                    y: object2Location.y,
                     z: object2Location.z
                 };
 
                 objectGeometry.__dirtyVertices = true;
             }
         },
-        function() {
-            universe.draw(this.id, line, false)	;
+        function () {
+            universe.draw(this.id, line, false);
         }
     );
-        
+
     return lineGraphicsObject;
 };

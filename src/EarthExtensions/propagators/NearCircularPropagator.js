@@ -1,56 +1,62 @@
+/*jslint browser: true, sloppy: true */
+/*global MathTools, Constants */
 var NearCircularPropagator = {
-    
-    propagateOrbit: function(kep, elapsedTime, dt, timeAtStartOfPropagation) {
+
+    propagateOrbit: function (kep, elapsedTime, dt, timeAtStartOfPropagation) {
         //console.log('keping it up');
-        var MA = kep.getMeanAnomaly() + kep.getMeanMotion() * elapsedTime; //update the mean anomaly (deg)
-        var w = MathTools.toRadians(kep.getArgOfPerigee());
-        var ra = MathTools.toRadians(kep.getRaan());
-        var inc = MathTools.toRadians(kep.getInclination());
-        var ecc = kep.getEccentricity();
-        var mu = Constants.muEarth;
-        //System.out.println("elapsed time: "+elapsedTime+" dt: "+dt+" ecc: "+kep.getEccentricity());
-        //console.log("MA: "+kep.getMeanAnomaly()+" meanMotion: "+kep.getMeanMotion()+" new MA: "+MA + " elapsedTime: " + elapsedTime);
+        var MA = kep.getMeanAnomaly() + kep.getMeanMotion() * elapsedTime, //update the mean anomaly (deg)
+            w = MathTools.toRadians(kep.getArgOfPerigee()),
+            ra = MathTools.toRadians(kep.getRaan()),
+            inc = MathTools.toRadians(kep.getInclination()),
+            ecc = kep.getEccentricity(),
+            mu = Constants.muEarth,
+            EA,
+            errorThreshold = 1e-5,  //how accurately do we need to solve for the eccentric anomaly?
+            i,
+            myerror,
+            f,
+            p,
+            r,
+            h,
+            x,
+            y,
+            z,
+            xdot,
+            ydot,
+            zdot,
+            eciState = new UNIVERSE.ECICoordinates();
+
         MA = MathTools.toRadians(MA);  //convert the mean anomaly to radians
         //iterate to solve for the eccentric anomaly
-        var EA = MA * 0.95; //fist guess at the eccentric anomaly (rads)
-        var errorThreshold = 1e-5;  //how accurately do we need to solve for the eccentric anomaly?
-        for (var i = 0; i < 500; i++)
-        {
-            var myerror = MA - (EA - ecc * Math.sin(EA));
-            if (Math.abs(myerror) > errorThreshold)
-            {
-                if (myerror > 0)
-                {
+        EA = MA * 0.95; //fist guess at the eccentric anomaly (rads)
+
+        for (i = 0; i < 500; i += 1) {
+            myerror = MA - (EA - ecc * Math.sin(EA));
+            if (Math.abs(myerror) > errorThreshold) {
+                if (myerror > 0) {
                     EA = EA + Math.abs(MA - EA) / 2;
-                }
-                else
-                {
-                    if (myerror < 0)
-                    {
+                } else {
+                    if (myerror < 0) {
                         EA = EA - Math.abs(MA - EA) / 2;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 break;
             }
 
         }
 
-        var f = 2 * Math.atan(Math.sqrt((1 + ecc) / (1 - ecc)) * Math.tan(EA / 2));
-        var p = kep.getSemimajorAxis() * (1 - ecc * ecc);
-        var r = kep.getSemimajorAxis() * (1 - ecc* Math.cos(EA)); //radius
-        var h = Math.sqrt(mu * kep.getSemimajorAxis() * (1 - ecc * ecc));
-        var x = r * (Math.cos(ra) * Math.cos(w + f) - Math.sin(ra) * Math.sin(w + f) * Math.cos(inc));
-        var y = r * (Math.sin(ra) * Math.cos(w + f) + Math.cos(ra) * Math.sin(w + f) * Math.cos(inc));
-        var z = r * Math.sin(inc) * Math.sin(w + f);
-        var xdot = ((x * h * ecc) / (r * p)) * Math.sin(f) - (h / r) * (Math.cos(ra) * Math.sin(w + f) + Math.sin(ra) * Math.cos(w + f) * Math.cos(inc));
-        var ydot = ((y * h * ecc) / (r * p)) * Math.sin(f) - (h / r) * (Math.sin(ra) * Math.sin(w + f) - Math.cos(ra) * Math.cos(w + f) * Math.cos(inc));
-        var zdot = ((z * h * ecc) / (r * p)) * Math.sin(f) + (h / r) * (Math.sin(inc) * Math.cos(w + f));
+        f = 2 * Math.atan(Math.sqrt((1 + ecc) / (1 - ecc)) * Math.tan(EA / 2));
+        p = kep.getSemimajorAxis() * (1 - ecc * ecc);
+        r = kep.getSemimajorAxis() * (1 - ecc * Math.cos(EA)); //radius
+        h = Math.sqrt(mu * kep.getSemimajorAxis() * (1 - ecc * ecc));
+        x = r * (Math.cos(ra) * Math.cos(w + f) - Math.sin(ra) * Math.sin(w + f) * Math.cos(inc));
+        y = r * (Math.sin(ra) * Math.cos(w + f) + Math.cos(ra) * Math.sin(w + f) * Math.cos(inc));
+        z = r * Math.sin(inc) * Math.sin(w + f);
+        xdot = ((x * h * ecc) / (r * p)) * Math.sin(f) - (h / r) * (Math.cos(ra) * Math.sin(w + f) + Math.sin(ra) * Math.cos(w + f) * Math.cos(inc));
+        ydot = ((y * h * ecc) / (r * p)) * Math.sin(f) - (h / r) * (Math.sin(ra) * Math.sin(w + f) - Math.cos(ra) * Math.cos(w + f) * Math.cos(inc));
+        zdot = ((z * h * ecc) / (r * p)) * Math.sin(f) + (h / r) * (Math.sin(inc) * Math.cos(w + f));
 
-        //System.out.println(vehicleName+","+x+","+y+","+z+","+xdot+","+ydot+","+zdot);
-        var eciState = new UNIVERSE.ECICoordinates();
 
         eciState.setX(x);
         eciState.setY(y);
