@@ -1,3 +1,6 @@
+/*jslint browser: true, sloppy: true */
+/*global UNIVERSE, Quaternion, MathTools, QuaternionMath, THREE, Constants, CoordinateConversionTools */
+
 // Sensor.js
 
 /**
@@ -5,7 +8,7 @@
  * @author Justin
  */
 
-UNIVERSE.Sensor = function(name, shape) {
+UNIVERSE.Sensor = function (name, shape) {
 
     this.name = name;
     this.shape = shape;
@@ -26,202 +29,208 @@ UNIVERSE.Sensor = function(name, shape) {
     this.quaternionFromRSWToSensor.setY(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.y);
     this.quaternionFromRSWToSensor.setZ(Math.sin(this.rotationRadians / 2.0) * this.rotationAxis.z);
 
-    
-    this.rotateSensorAboutRadialVector = function(rotationAngle) {
-        if (rotationAngle && rotationAngle !== 0)
-        {
-            var rotationQuaternion = new Quaternion();
-            var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = {
-                x: 1.0,
-                y: 0.0,
-                z: 0.0
-            };
-            
+
+    this.rotateSensorAboutRadialVector = function (rotationAngle) {
+        if (rotationAngle && rotationAngle !== 0) {
+            var rotationQuaternion = new Quaternion(),
+                rotationRadians = MathTools.toRadians(rotationAngle),
+                rotationAxis = {
+                    x: 1.0,
+                    y: 0.0,
+                    z: 0.0
+                };
+
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
             rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
             rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
-            
+
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
     };
 
-    this.rotateSensorAboutAlongTrackVector = function(rotationAngle) {
-        if (rotationAngle && rotationAngle !== 0)
-        {
-            var rotationQuaternion = new Quaternion();
-            var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = {
-                x: 0.0,
-                y: 1.0,
-                z: 0.0
-            };
-            
+    this.rotateSensorAboutAlongTrackVector = function (rotationAngle) {
+        if (rotationAngle && rotationAngle !== 0) {
+            var rotationQuaternion = new Quaternion(),
+                rotationRadians = MathTools.toRadians(rotationAngle),
+                rotationAxis = {
+                    x: 0.0,
+                    y: 1.0,
+                    z: 0.0
+                };
+
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
             rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
             rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
-            
+
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
     };
 
-    this.rotateSensorAboutCrossTrackVector = function(rotationAngle) {
-        if (rotationAngle && rotationAngle !== 0)
-        {
-            var rotationQuaternion = new Quaternion();
-            var rotationRadians = MathTools.toRadians(rotationAngle);
-            var rotationAxis = {
-                x: 0.0,
-                y: 0.0,
-                z: 1.0
-            };
-            
+    this.rotateSensorAboutCrossTrackVector = function (rotationAngle) {
+        if (rotationAngle && rotationAngle !== 0) {
+            var rotationQuaternion = new Quaternion(),
+                rotationRadians = MathTools.toRadians(rotationAngle),
+                rotationAxis = {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 1.0
+                };
+
             rotationQuaternion.setW(Math.cos(rotationRadians / 2.0));
             rotationQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
             rotationQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
             rotationQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
-            
+
             //figure out the new quaternion for the sensor coordinate system
             this.quaternionFromRSWToSensor = QuaternionMath.multiplyQuaternions(rotationQuaternion, this.quaternionFromRSWToSensor);
         }
     };
 
-    this.getSensorQuaternionRSW = function() {
+    this.getSensorQuaternionRSW = function () {
         return this.quaternionFromRSWToSensor;
     };
 
-    this.setSensorQuaternionRSW = function(sensorQuaternionRSW) {
+    this.setSensorQuaternionRSW = function (sensorQuaternionRSW) {
         this.quaternionFromRSWToSensor = sensorQuaternionRSW;
     };
 
-    this.getName = function() {
+    this.getName = function () {
         return this.name;
     };
 
-    this.setName = function(name) {
+    this.setName = function (name) {
         this.name = name;
     };
 
-    this.getShape = function() {
+    this.getShape = function () {
         return this.shape;
     };
 
-    this.setShape = function(shape) {
+    this.setShape = function (shape) {
         this.shape = shape;
     };
 
-    this.determineTargetAzElRelativeToSensor = function(satellite, targetPosition) {
+    this.determineTargetAzElRelativeToSensor = function (satellite, targetPosition) {
         //define the target position as a vectors
         //console.log("satellite: " + satellite.getEci().getX() + ", " + satellite.getEci().getY() + ", " + satellite.getEci().getZ() +  '      ' + 
         //            "targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
         //System.out.println("targetpos: " + targetPosition.getX() + ", " + targetPosition.getY() + ", " + targetPosition.getZ());
-        
-        var satelliteEci = satellite.getEci();
-        var deltaECI = new THREE.Vector3(
-            targetPosition.x - satelliteEci.getX(),
-            targetPosition.y - satelliteEci.getY(),
-            targetPosition.z - satelliteEci.getZ()
-        );
-        
-        //console.log("delta ECI: " + deltaECI[0] + ", " + deltaECI[1] + ", " + deltaECI[2]);
-        
-        var r = new THREE.Vector3(
-            satelliteEci.getX(), 
-            satelliteEci.getY(), 
-            satelliteEci.getZ()
-        );
-        
-        var v = new THREE.Vector3(
-            satelliteEci.getVX(),
-            satelliteEci.getVY(),
-            satelliteEci.getVZ()
-        );
-        
-        var rmag = r.length();
-        
-        var rcrossv = new THREE.Vector3();
-        rcrossv.cross(r, v);            
-        
-        var rvec = new THREE.Vector3();
+
+        var satelliteEci = satellite.getEci(),
+            deltaECI = new THREE.Vector3(
+                targetPosition.x - satelliteEci.getX(),
+                targetPosition.y - satelliteEci.getY(),
+                targetPosition.z - satelliteEci.getZ()
+            ),
+            r = new THREE.Vector3(
+                satelliteEci.getX(),
+                satelliteEci.getY(),
+                satelliteEci.getZ()
+            ),
+            v = new THREE.Vector3(
+                satelliteEci.getVX(),
+                satelliteEci.getVY(),
+                satelliteEci.getVZ()
+            ),
+            rmag = r.length(),
+            rcrossv = new THREE.Vector3(),
+            rvec = new THREE.Vector3(),
+            w = new THREE.Vector3(),
+            s = new THREE.Vector3(),
+            deltaECIdotR,
+            deltaECIdotS,
+            deltaECIdotW,
+            targetInRSWCoordinates,
+            targetInSensorCoordinates,
+            centerline,
+            rightline,
+            topline,
+            a,
+            b,
+            c,
+            d,
+            e,
+            S,
+            C,
+            az,
+            el;
+
+        rcrossv.cross(r, v);
+
         rvec.copy(r);
         rvec.divideScalar(rmag);
-        
-        var w = new THREE.Vector3();
+
         w.copy(rcrossv);
         w.divideScalar(rcrossv.length());
-        
-        var s = new THREE.Vector3();
+
         s.cross(w, r);
-        
-        var deltaECIdotR = deltaECI.dot(rvec);
-        
-        var deltaECIdotS = deltaECI.dot(s);
-                
-        var deltaECIdotW = deltaECI.dot(w);
-        
-        var targetInRSWCoordinates = new THREE.Vector3(
-            deltaECIdotR/rvec.length(),
-            deltaECIdotS/s.length(),
-            deltaECIdotW/w.length()
+
+        deltaECIdotR = deltaECI.dot(rvec);
+
+        deltaECIdotS = deltaECI.dot(s);
+
+        deltaECIdotW = deltaECI.dot(w);
+
+        targetInRSWCoordinates = new THREE.Vector3(
+            deltaECIdotR / rvec.length(),
+            deltaECIdotS / s.length(),
+            deltaECIdotW / w.length()
         );
 
         //get the quaternion to convert the ECI coordinate of the target into an RSW coordinate triplet
-        var targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
-        
-        //console.log("targetInSensorCoordinates: " + JSON.stringify(targetInSensorCoordinates));
+        targetInSensorCoordinates = QuaternionMath.applyQuaternionRotation(this.quaternionFromRSWToSensor, targetInRSWCoordinates);
 
         //---determine the three vectors that define the extent of the sensor shape in the sensor coordinate system
         //these are the non-rotated vectors
         //vector along the centerline of the sensor (RSW)
-        var centerline = new THREE.Vector3(
+        centerline = new THREE.Vector3(
             1.0,//center (radial)
             0.0,//left
             0.0//top
         );
 
-        var rightline = new THREE.Vector3(
+        rightline = new THREE.Vector3(
             1.0,//center
             -Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(0.0))),//left
             0.0//top
         );
 
-        var topline = new THREE.Vector3(
+        topline = new THREE.Vector3(
             1.0,//center
             0.0,//left
             Math.tan(MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(90.0)))//top
         );
-        
+
         //calculate the azimuth and elevation angles of the target relative to the centerline of the sensor FOV
         //assume it's an oblique spherical triangle
         //reference http://mathworld.wolfram.com/SphericalTrigonometry.html
         //a is the angle between the centerline and the right hand side
-        var a = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, rightline));//radians
-        
-        //b is the angle between the centerline and the target
-        var b = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, targetInSensorCoordinates));//radians
-        
-        //c is the angle between the right hand side and the target
-        var c = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(rightline, targetInSensorCoordinates));//radians
-        
-        //d is the angle between the top side and the target
-        var d = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, targetInSensorCoordinates));//radians
-        
-        //e is the angle between the top side and the target
-        var e = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, centerline));//radians
+        a = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, rightline));//radians
 
-        var S = 0.5 * (a + b + c);
-        var C = 2 * Math.asin(Math.sqrt((Math.sin(Math.abs(S - a)) * Math.sin(Math.abs(S - b)) / (Math.sin(a) * Math.sin(b)))));
+        //b is the angle between the centerline and the target
+        b = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(centerline, targetInSensorCoordinates));//radians
+
+        //c is the angle between the right hand side and the target
+        c = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(rightline, targetInSensorCoordinates));//radians
+
+        //d is the angle between the top side and the target
+        d = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, targetInSensorCoordinates));//radians
+
+        //e is the angle between the top side and the target
+        e = MathTools.toRadians(MathTools.angleBetweenTwoVectorsVector(topline, centerline));//radians
+
+        S = 0.5 * (a + b + c);
+        C = 2 * Math.asin(Math.sqrt((Math.sin(Math.abs(S - a)) * Math.sin(Math.abs(S - b)) / (Math.sin(a) * Math.sin(b)))));
 
         //double C=Math.acos(Math.cos(c)-Math.cos(a)*Math.cos(b))/(Math.sin(a)*Math.sin(b));//radians
-        var az = MathTools.toDegrees(C);
-        var el = MathTools.toDegrees(b);
+        az = MathTools.toDegrees(C);
+        el = MathTools.toDegrees(b);
 
-        if (d > b && d > e)
-        {
+        if (d > b && d > e) {
             az = 360 - az;
         }
         //correct the azimuth
@@ -230,49 +239,43 @@ UNIVERSE.Sensor = function(name, shape) {
 
         //return the azimuth and elevation
         return {
-            az: az, 
+            az: az,
             el: el
         };
     };
 
-    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetSphericalEarth = function(satellite, targetPosition)
-    {
+    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetSphericalEarth = function (satellite, targetPosition) {
         //sight algorithm Vallado 295
-        var haveSight = false;
-        var radEarth = Constants.radiusEarth;
-        var satelliteEci = satellite.getEci();
-        var r1 = new THREE.Vector3(
-            satelliteEci.getX() / radEarth,
-            satelliteEci.getY() / radEarth,
-            satelliteEci.getZ() / radEarth
-        );
-        var r2 = new THREE.Vector3(
-            targetPosition.getX() / radEarth,
-            targetPosition.getY() / radEarth,
-            targetPosition.getZ() / radEarth
-        );
-        
-        var r1mag = r1.length();
-        var r2mag = r2.length();
-        var tmin = 0.5;
-        var ctmin = 0.0;
-        if (r1mag < 1 || r2mag < 1)
-        { //one of the points is inside the earth
+        var haveSight = false,
+            radEarth = Constants.radiusEarth,
+            satelliteEci = satellite.getEci(),
+            r1 = new THREE.Vector3(
+                satelliteEci.getX() / radEarth,
+                satelliteEci.getY() / radEarth,
+                satelliteEci.getZ() / radEarth
+            ),
+            r2 = new THREE.Vector3(
+                targetPosition.getX() / radEarth,
+                targetPosition.getY() / radEarth,
+                targetPosition.getZ() / radEarth
+            ),
+
+            r1mag = r1.length(),
+            r2mag = r2.length(),
+            tmin = 0.5,
+            ctmin = 0.0,
+            r1DotR2;
+
+        if (r1mag < 1 || r2mag < 1) { //one of the points is inside the earth
             haveSight = false;
-        }
-        else
-        {
-            var r1DotR2 = r1.dot(r2);
+        } else {
+            r1DotR2 = r1.dot(r2);
             tmin = (r1mag * r1mag - r1DotR2) / (r1mag * r1mag + r2mag * r2mag - 2 * r1DotR2);
-            if (tmin < 0 || tmin > 1)
-            {
+            if (tmin < 0 || tmin > 1) {
                 haveSight = true;
-            }
-            else
-            {
+            } else {
                 ctmin = (1 - tmin) * r1mag * r1mag + r1DotR2 * tmin;
-                if (ctmin >= 1.0)
-                {
+                if (ctmin >= 1.0) {
                     haveSight = true;
                 }
             }
@@ -281,27 +284,27 @@ UNIVERSE.Sensor = function(name, shape) {
         return !haveSight;
     };
 
-    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth = function(satellite, targetPosition)
-    {
+    this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth = function (satellite, targetPosition) {
 
         //sight algorithm Vallado 295
-        var haveSight = false;
-        var radEarth = Constants.radiusEarth;
-        var satelliteEci = satellite.getEci();
-        var r1 = new THREE.Vector3(
-            satelliteEci.getX() / radEarth,
-            satelliteEci.getY() / radEarth,
-            satelliteEci.getZ() / radEarth
-        );
-        var r2 = new THREE.Vector3(
-            targetPosition.getX() / radEarth,
-            targetPosition.getY() / radEarth,
-            targetPosition.getZ() / radEarth
-        );
-        var r1mag = r1.length();
-        var r2mag = r2.length();
-        var tmin = 0.5;
-        var ctmin = 0.0;
+        var haveSight = false,
+            radEarth = Constants.radiusEarth,
+            satelliteEci = satellite.getEci(),
+            r1 = new THREE.Vector3(
+                satelliteEci.getX() / radEarth,
+                satelliteEci.getY() / radEarth,
+                satelliteEci.getZ() / radEarth
+            ),
+            r2 = new THREE.Vector3(
+                targetPosition.getX() / radEarth,
+                targetPosition.getY() / radEarth,
+                targetPosition.getZ() / radEarth
+            ),
+            r1mag = r1.length(),
+            r2mag = r2.length(),
+            tmin = 0.5,
+            ctmin = 0.0,
+            r1DotR2;
 
         //disable the radius magnitude check because it doesn't account for the oblateness of the earth which the LLAcoordinates do account for
         //this can cause points on the surface of the earth to appear inside of a non-oblate earth, causing this check to fail
@@ -311,17 +314,13 @@ UNIVERSE.Sensor = function(name, shape) {
         //}
         //else
         //{
-        var r1DotR2 = r1.dot(r2);
+        r1DotR2 = r1.dot(r2);
         tmin = (r1mag * r1mag - r1DotR2) / (r1mag * r1mag + r2mag * r2mag - 2 * r1DotR2);
-        if (tmin < 0 || tmin > 1)
-        {
+        if (tmin < 0 || tmin > 1) {
             haveSight = true;
-        }
-        else
-        {
+        } else {
             ctmin = (1 - tmin) * r1mag * r1mag + r1DotR2 * tmin;
-            if (ctmin >= 1.0)
-            {
+            if (ctmin >= 1.0) {
                 haveSight = true;
             }
         }
@@ -330,68 +329,60 @@ UNIVERSE.Sensor = function(name, shape) {
         return !haveSight;
     };
 
-    this.checkSensorVisibilityOfTargetPoint = function(satellite, targetPosition)
-    {
-        //console.log("targetPosition: " + JSON.stringify(targetPosition));
-        //console.log("satellite.getECI: " + JSON.stringify(satellite.getEci()));
+    this.checkSensorVisibilityOfTargetPoint = function (satellite, targetPosition) {
         //first, correct the target azimuth and elevation to be in the same frame of reference as the sensor FOV
-        var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition);
-        
-        //console.log("az: " + azel[0] + " el: " + azel[1] + " shape El extent: " + this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(azel[0]));
+        var azel = this.determineTargetAzElRelativeToSensor(satellite, targetPosition),
 
         //then check to see if this point is in the field of view of the sensor
-        var inFOV = this.shape.canSensorSeePointAtAzEl(azel.az, azel.el);
-        var earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth(satellite, targetPosition);
+            inFOV = this.shape.canSensorSeePointAtAzEl(azel.az, azel.el),
+            earthObscured = this.checkToSeeIfEarthObscuresLineBetweenSatelliteAndTargetOblateEarth(satellite, targetPosition);
 
         //console.log("earth obscured:" + earthObscured + "    inFOV:" + inFOV);
-        if (earthObscured)
-        {
+        if (earthObscured) {
             return false;
-        }
-        else
-        {
-            if (inFOV === true && earthObscured === false)  //if it's in the field of view and not obscured, indicate that you can see the target
-            {
+        } else {
+            if (inFOV === true && earthObscured === false) { //if it's in the field of view and not obscured, indicate that you can see the target
                 return true;
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
     };
 
-    this.buildPointsToDefineSensorShapeInECI = function(NumPoints, satellite)
-    {
+    this.buildPointsToDefineSensorShapeInECI = function (NumPoints, satellite) {
         //returns the instantaneous field of view of the sensor as represented by 
         //a set of 'NumPoints' unit vectors from the center of the satellite to the boundaries
         //of the sensor field of view in ECI coordinates
         //it is assumed that each xyz pair 
-        var FOV = []; // new Array(NumPoints);
-//        for(var i = 0; i < NumPoints; i++) {
-//            FOV[i] = new Array(3);
-//        }
+        var FOV = [],
+            azimuthStep = 360.0 / NumPoints, //the azimuth separation between each point
+            i,
+            az,
+            el,
+            FOVboundary,
+            FOVmagnitude,
+            rswPoint,
+            satelliteEci,
+            satXpos,
+            satYpos,
+            satZpos,
+            eciTemp;
 
-        var azimuthStep = 360.0 / NumPoints; //the azimuth separation between each point
-        for (var i = 0; i < NumPoints; i++)
-        {
-            var az = i * azimuthStep;
-            var el = MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(az));
-
-            //console.log("az: " + az + " el: " + el);
-
+        for (i = 0; i < NumPoints; i += 1) {
+            az = i * azimuthStep;
+            el = MathTools.toRadians(this.shape.getAngularExtentOfSensorAtSpecifiedAzimuth(az));
             //build the sensor field of view vector in RSW
 
             //define the vector to the sensor boundary
-            var FOVboundary = new THREE.Vector3(
+            FOVboundary = new THREE.Vector3(
                 1.0, // radial
                 el * Math.cos(MathTools.toRadians(az)), //along
                 el * Math.sin(MathTools.toRadians(az))  //cross
             );
 
             //ensure that it is a unit vector
-            var FOVmagnitude = FOVboundary.length();
-            
+            FOVmagnitude = FOVboundary.length();
+
             FOVboundary = FOVboundary.divideScalar(FOVmagnitude);
 
             //console.log("FOVboundary1: " + JSON.stringify(FOVboundary));
@@ -400,17 +391,15 @@ UNIVERSE.Sensor = function(name, shape) {
 
             //console.log("FOVboundary2: " + JSON.stringify(FOVboundary));
 
-            var rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary.x, FOVboundary.y, FOVboundary.z);
-            
-            //console.log("rswPoint: " + JSON.stringify(rswPoint));
+            rswPoint = new UNIVERSE.RSWCoordinates(FOVboundary.x, FOVboundary.y, FOVboundary.z);
 
-            var satelliteEci = satellite.getEci();
-            var satXpos = satelliteEci.getX();
-            var satYpos = satelliteEci.getY();
-            var satZpos = satelliteEci.getZ();
-    
+            satelliteEci = satellite.getEci();
+            satXpos = satelliteEci.getX();
+            satYpos = satelliteEci.getY();
+            satZpos = satelliteEci.getZ();
+
             //convert the RSW to ECI
-            var eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
+            eciTemp = CoordinateConversionTools.convertRSWToECI(satellite, rswPoint);
             FOV[i] = new THREE.Vector3(
                 satXpos + eciTemp.getX(),
                 satYpos + eciTemp.getY(),
@@ -421,98 +410,117 @@ UNIVERSE.Sensor = function(name, shape) {
         return FOV;
     };
 
-    this.findProjectionPoints = function(endpoints, satellite, distancePastEarthToDraw) {
-        var satellitePositionTemp = satellite.getEci();
-        var satellitePosition = new THREE.Vector3(satellitePositionTemp.x, satellitePositionTemp.y, satellitePositionTemp.z);
+    this.findProjectionPoints = function (endpoints, satellite, distancePastEarthToDraw) {
+        var satellitePositionTemp = satellite.getEci(),
+            satellitePosition = new THREE.Vector3(satellitePositionTemp.x, satellitePositionTemp.y, satellitePositionTemp.z),
 
-        var shiftedEarthCenter = new THREE.Vector3(
-            - satellitePosition.x,
-            - satellitePosition.y,
-            - satellitePosition.z
-        );
+            shiftedEarthCenter = new THREE.Vector3(
+                -satellitePosition.x,
+                -satellitePosition.y,
+                -satellitePosition.z
+            ),
 
-        var pointsOnEarth = [];
+            pointsOnEarth = [],
 
-        var endPointLen = endpoints.length;
-        for(var i = 0; i < endPointLen; i++) {
+            endPointLen = endpoints.length,
+            i,
+            shiftedBoundaryPoint,
+            satelliteDistanceFromCenterOfEarth,
+            depth,
+            I,
+            c,
+            aboveTheEarth = 100,
+            r = Constants.radiusEarth + aboveTheEarth, // r is the radius above the earth to project the points....this adds an arbitrary number above the earth to minimize drawing collisions
+            Idotc,
+            cdotc,
+            valueToBeSqrtd,
+            sqrtValue,
+            distanceToIntersectionPlus,
+            distanceToIntersectionMinus,
+            pointOnEarth,
+            extendedEndPoint,
+            unitShiftedEarthCenter,
+            angleBetweenEarthCenterAndExtendedEndPoint,
+            height,
+            distanceToTangentPoint,
+            scaleFromEndPointToTangentPoint,
+            tangentPoint,
+            tangentPointMagnitude,
+            scaleToEarthSurface,
+            tangentPointOnSurface;
+
+        for (i = 0; i < endPointLen; i += 1) {
             // shift everything to the satellite position as the origin
-            var shiftedBoundaryPoint = new THREE.Vector3(
+            shiftedBoundaryPoint = new THREE.Vector3(
                 endpoints[i].x - satellitePosition.x,
                 endpoints[i].y - satellitePosition.y,
                 endpoints[i].z - satellitePosition.z
             );
 
-            var satelliteDistanceFromCenterOfEarth = satellitePosition.length();
-            var depth = satelliteDistanceFromCenterOfEarth + distancePastEarthToDraw;
+            satelliteDistanceFromCenterOfEarth = satellitePosition.length();
+            depth = satelliteDistanceFromCenterOfEarth + distancePastEarthToDraw;
 
             // Based on this: http://en.wikipedia.org/wiki/Line%E2%80%93sphere_intersection
             // d = ((I*c) +/- sqrt((I*c)^2 - c*c + r*r))
-            var I = shiftedBoundaryPoint;
-            var c = shiftedEarthCenter;
+            I = shiftedBoundaryPoint;
+            c = shiftedEarthCenter;
 
-            var aboveTheEarth = 100;
-            // r is the radius above the earth to project the points....this adds an arbitrary number above the earth to minimize drawing collisions
-            var r = Constants.radiusEarth + aboveTheEarth;
+            Idotc = I.dot(c);
 
-            var Idotc = I.dot(c);
+            cdotc = c.dot(c);
 
-            var cdotc = c.dot(c);
-
-            var valueToBeSqrtd = Idotc*Idotc - cdotc + r*r;
+            valueToBeSqrtd = Idotc * Idotc - cdotc + r * r;
 
             // Line does intersect the earth so find the point
-            if(valueToBeSqrtd >= 0) {
-                var sqrtValue = Math.sqrt(Idotc*Idotc - cdotc + r*r);
-                var distanceToIntersectionPlus = Idotc + sqrtValue;
-                var distanceToIntersectionMinus = Idotc - sqrtValue;
+            if (valueToBeSqrtd >= 0) {
+                sqrtValue = Math.sqrt(Idotc * Idotc - cdotc + r * r);
+                distanceToIntersectionPlus = Idotc + sqrtValue;
+                distanceToIntersectionMinus = Idotc - sqrtValue;
 
-                var pointOnEarth = new THREE.Vector3(
+                pointOnEarth = new THREE.Vector3(
                     shiftedBoundaryPoint.x * distanceToIntersectionMinus + satellitePosition.x,
                     shiftedBoundaryPoint.y * distanceToIntersectionMinus + satellitePosition.y,
                     shiftedBoundaryPoint.z * distanceToIntersectionMinus + satellitePosition.z
                 );
-                if(pointOnEarth.x) {
+                if (pointOnEarth.x) {
                     pointsOnEarth.push(pointOnEarth);
                 }
 
-            }
-            // This means the line does not intersect the earth and we will find the nearest tangent point
-            else {
+            } else { // This means the line does not intersect the earth and we will find the nearest tangent point
                 // Scale the boundary point out to the depth
-                
-                var extendedEndPoint = new THREE.Vector3();
+                extendedEndPoint = new THREE.Vector3();
                 extendedEndPoint.copy(shiftedBoundaryPoint);
                 extendedEndPoint.multiplyScalar(depth);
 
                 // Get a unit vector pointed at the earth center from the satellite coordinate system
-                var unitShiftedEarthCenter = new THREE.Vector3();
+                unitShiftedEarthCenter = new THREE.Vector3();
                 unitShiftedEarthCenter.copy(shiftedEarthCenter);
                 unitShiftedEarthCenter.divideScalar(satelliteDistanceFromCenterOfEarth);
 
                 // Find the angle between the two
-                var angleBetweenEarthCenterAndExtendedEndPoint = Math.acos(shiftedBoundaryPoint.dot(unitShiftedEarthCenter));
+                angleBetweenEarthCenterAndExtendedEndPoint = Math.acos(shiftedBoundaryPoint.dot(unitShiftedEarthCenter));
 
                 // http://www.algebralab.org/studyaids/studyaid.aspx?file=Trigonometry_LawSines.xml
-                var height = satelliteDistanceFromCenterOfEarth * Math.sin(angleBetweenEarthCenterAndExtendedEndPoint);
+                height = satelliteDistanceFromCenterOfEarth * Math.sin(angleBetweenEarthCenterAndExtendedEndPoint);
 
                 // Distance along the line where the tangent point is.  i.e. where the height touches the line
-                var distanceToTangentPoint = height / Math.atan(angleBetweenEarthCenterAndExtendedEndPoint);
+                distanceToTangentPoint = height / Math.atan(angleBetweenEarthCenterAndExtendedEndPoint);
 
                 // Scale to the point and then shift back to earth-centered
-                var scaleFromEndPointToTangentPoint = distanceToTangentPoint/ depth;
-                var tangentPoint = new THREE.Vector3(
-                    (extendedEndPoint.x)*scaleFromEndPointToTangentPoint + satellitePosition.x,
-                    (extendedEndPoint.y)*scaleFromEndPointToTangentPoint + satellitePosition.y,
-                    (extendedEndPoint.z)*scaleFromEndPointToTangentPoint + satellitePosition.z
+                scaleFromEndPointToTangentPoint = distanceToTangentPoint / depth;
+                tangentPoint = new THREE.Vector3(
+                    (extendedEndPoint.x) * scaleFromEndPointToTangentPoint + satellitePosition.x,
+                    (extendedEndPoint.y) * scaleFromEndPointToTangentPoint + satellitePosition.y,
+                    (extendedEndPoint.z) * scaleFromEndPointToTangentPoint + satellitePosition.z
                 );
 
                 // scale down to the earth's surface, plus an arbitrary distance above the earth
-                var tangentPointMagnitude = tangentPoint.length();
-                var scaleToEarthSurface = (Constants.radiusEarth + aboveTheEarth)/tangentPointMagnitude;
+                tangentPointMagnitude = tangentPoint.length();
+                scaleToEarthSurface = (Constants.radiusEarth + aboveTheEarth) / tangentPointMagnitude;
 
-                var tangentPointOnSurface = new THREE.Vector3();
+                tangentPointOnSurface = new THREE.Vector3();
                 tangentPointOnSurface.copy(tangentPoint);
-                tangentPointOnSurface.multiplyScalar(scaleToEarthSurface)
+                tangentPointOnSurface.multiplyScalar(scaleToEarthSurface);
 
                 pointsOnEarth.push(tangentPointOnSurface);
             }
@@ -521,58 +529,4 @@ UNIVERSE.Sensor = function(name, shape) {
 
         return pointsOnEarth;
     };
-
-    // TODO: This method is not currently used by anything...  Do not know for sure that it works or what it would be used for
-//    this.getQuaternionFromECIToSensor = function(eciXYZvector, satellite)
-//    {
-//        var refMagnitude = MathTools.magnitudeVector(eciXYZvector);
-//        var startVec = {
-//            x: eciXYZvector.x / refMagnitude,
-//            y: eciXYZvector.y / refMagnitude,
-//            z: eciXYZvector.z / refMagnitude
-//        };
-//        
-//        //determine the quaternion from the reference vector to the satellite position vector
-//        
-//        var satelliteEci = satellite.getEci();
-//        var x = satelliteEci.getX();
-//        var y = satelliteEci.getY();
-//        var z = satelliteEci.getZ();
-//        var satelliteMagnitude = Math.sqrt(x*x+y*y+z*z);
-//        
-//        var satelliteVec = {
-//            x: x / satelliteMagnitude,
-//            y: y / satelliteMagnitude,
-//            z: z / satelliteMagnitude
-//        };
-//        
-//        //figure out the quaternion from RSW to the default sensor axis (nadir)
-//        var nadirQuaternion = new Quaternion();
-//        var rotationRadians = MathTools.toRadians(180.0);
-//        var rotationAxis = {
-//            x: 0.0,
-//            y: 0.0,
-//            z: 1.0
-//        };
-//        
-//        nadirQuaternion.setW(Math.cos(rotationRadians / 2.0));
-//        nadirQuaternion.setX(Math.sin(rotationRadians / 2.0) * rotationAxis.x);
-//        nadirQuaternion.setY(Math.sin(rotationRadians / 2.0) * rotationAxis.y);
-//        nadirQuaternion.setZ(Math.sin(rotationRadians / 2.0) * rotationAxis.z);
-//
-//        //figure out the quaternion from the satellite's coordinate system to the sensor
-//        var crossproduct = MathTools.crossVector(startVec, satelliteVec);
-//        var crossproductmagnitude = MathTools.magnitudeVector(crossproduct);
-//        var quaternionFromECIToRSW = new Quaternion();
-//        
-//        quaternionFromECIToRSW.setX(crossproduct.x / crossproductmagnitude);
-//        quaternionFromECIToRSW.setY(crossproduct.y / crossproductmagnitude);
-//        quaternionFromECIToRSW.setZ(crossproduct.z / crossproductmagnitude);
-//        quaternionFromECIToRSW.setW(Math.acos(MathTools.dotMultiplyVector(startVec, satelliteVec)));
-//        
-//        var result = QuaternionMath.multiplyQuaternions(quaternionFromECIToRSW,nadirQuaternion);
-//        result = QuaternionMath.multiplyQuaternions(result,this.quaternionFromRSWToSensor);
-//
-//        return result;
-//    };
 };

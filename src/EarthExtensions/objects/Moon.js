@@ -1,65 +1,71 @@
-UNIVERSE.Moon = function(universe, earthExtensions, moonImageURL) {
+/*jslint browser: true, sloppy: true */
+/*global UNIVERSE, THREE, CoordinateConversionTools, Utilities */
 
-    var moonSphereSegments = 40, moonSphereRings = 30;
-    var moonSphereRadius = 1737.1;
+UNIVERSE.Moon = function (universe, earthExtensions, moonImageURL) {
 
-    // Create the sphere
-    var geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings);
+    var moonSphereSegments = 40,
+        moonSphereRings = 30,
+        moonSphereRadius = 1737.1,
 
-    var moonTexture = THREE.ImageUtils.loadTexture(moonImageURL);
+        // Create the sphere
+        geometry = new THREE.SphereGeometry(moonSphereRadius, moonSphereSegments, moonSphereRings),
 
-    var dayMaterial = new THREE.MeshPhongMaterial({
-        map: moonTexture,
-        color: 0xffffff,
-        // specular: 0xffffff,
-        //ambient: 0xffffff,
-        // shininess: 15,
-        //opacity: 0.5,
-        transparent: true,
-        // reflectivity: 1
-        blending: THREE.AdditiveBlending
-    });
+        moonTexture = THREE.ImageUtils.loadTexture(moonImageURL),
 
-    var dayMoonMesh = new THREE.Mesh(geometry, dayMaterial);
+        dayMaterial = new THREE.MeshPhongMaterial({
+            map: moonTexture,
+            color: 0xffffff,
+            // specular: 0xffffff,
+            //ambient: 0xffffff,
+            // shininess: 15,
+            //opacity: 0.5,
+            transparent: true,
+            // reflectivity: 1
+            blending: THREE.AdditiveBlending
+        }),
 
-    var moonMaterial = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        overdraw: true,
-        map: moonTexture,
-        blending: THREE.AdditiveBlending
-    });
+        dayMoonMesh = new THREE.Mesh(geometry, dayMaterial),
 
-    var moonMesh = new THREE.Mesh(geometry, moonMaterial);
+        moonMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            overdraw: true,
+            map: moonTexture,
+            blending: THREE.AdditiveBlending
+        }),
 
-    var moonObject = new UNIVERSE.GraphicsObject(
-        "moon", 
-        "moon",
-        undefined,
-        function(elapsedTime) {
-            var time = new Date(universe.getCurrentUniverseTime());
-            var propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time);
-            var convertedLocation = Utilities.eciTo3DCoordinates({
-                x: propagatedValue.x, 
-                y: propagatedValue.y, 
-                z: propagatedValue.z
-            }, earthExtensions);
-            dayMoonMesh.position = {
-                x: convertedLocation.x, 
-                y: convertedLocation.y, 
-                z: convertedLocation.z
-            }; 
-            moonMesh.position = {
-                x: convertedLocation.x, 
-                y: convertedLocation.y, 
-                z: convertedLocation.z
-            };
-            this.currentLocation = propagatedValue;
-        },
-        function() {
-            universe.draw(this.id + "_day", dayMoonMesh, false);
-            universe.draw(this.id, moonMesh, false);
-            earthExtensions.setSunLighting(earthExtensions.useSunLighting);
-        }
-    );
+        moonMesh = new THREE.Mesh(geometry, moonMaterial),
+
+        moonObject = new UNIVERSE.GraphicsObject(
+            "moon",
+            "moon",
+            undefined,
+            function (elapsedTime) {
+                var time = new Date(universe.getCurrentUniverseTime()),
+                    propagatedValue = CoordinateConversionTools.getMoonPositionECIAtCurrentTime(time),
+                    convertedLocation = Utilities.eciTo3DCoordinates({
+                        x: propagatedValue.x,
+                        y: propagatedValue.y,
+                        z: propagatedValue.z
+                    }, earthExtensions);
+
+                dayMoonMesh.position = {
+                    x: convertedLocation.x,
+                    y: convertedLocation.y,
+                    z: convertedLocation.z
+                };
+
+                moonMesh.position = {
+                    x: convertedLocation.x,
+                    y: convertedLocation.y,
+                    z: convertedLocation.z
+                };
+                this.currentLocation = propagatedValue;
+            },
+            function () {
+                universe.draw(this.id + "_day", dayMoonMesh, false);
+                universe.draw(this.id, moonMesh, false);
+                earthExtensions.setSunLighting(earthExtensions.useSunLighting);
+            }
+        );
     return moonObject;
 };

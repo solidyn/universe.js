@@ -1077,7 +1077,7 @@ Copyright (c) 2011 Jon Buckley
     });
   };
 }());
-/*jslint browser: true, undef: true */
+/*jslint browser: true, undef: true, sloppy: true */
 /*global THREE */
 
 var UNIVERSE = UNIVERSE || {};
@@ -1547,17 +1547,20 @@ UNIVERSE.Core3D = function (container) {
 
     return this;
 
-};
+};/*jslint browser: true, sloppy: true */
+/*global UNIVERSE */
+
 /** 
     A graphics object to be drawn in the Universe
     @constructor
     @param {string} id - Identifier for the object to be referenced later
-    @param {string} objectName - A name for the object if different than id.  Set to the id if not defined
     @param {function} updateFunction - A function(elapsedTime) that gets called each time the Universe time changes
     @param {function} drawFunction - A function that should call Universe.draw with the object's model
+    @param {string} modelName - A name for the object if different than id.  Set to the id if not defined
+    @param {Object} currentLocation
  */
 
-UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunction, drawFunction) {
+UNIVERSE.GraphicsObject = function (id, modelName, currentLocation, updateFunction, drawFunction) {
     this.id = id;
     this.modelName = modelName || id;
     this.currentLocation = currentLocation;
@@ -1567,24 +1570,26 @@ UNIVERSE.GraphicsObject = function(id, modelName, currentLocation, updateFunctio
 
 UNIVERSE.GraphicsObject.prototype = {
     constructor: UNIVERSE.GraphicsObject
-};
+};/*jslint browser: true, sloppy: true */
+/*global THREE */
+
 var UNIVERSE = UNIVERSE || {};
 
-UNIVERSE.ObjectLibrary = function() {
-    var objects = [];
-    var numberOfElements = 0;
+UNIVERSE.ObjectLibrary = function () {
+    var objects = [],
+        numberOfElements = 0;
 
     // adds a mesh object to the object library
     // id -> unique id of the object
     // url -> url used to retrieve the json of the model
     // material -> material to apply to the model's geometry
-    this.addGeometryObjectFromUrl = function(id, url, callback) {
+    this.addGeometryObjectFromUrl = function (id, url, callback) {
         // if we have already loaded an onject with this id, return
         if (objects[id]) {
             callback();
             return;
         }
-        
+
         // Have to do this to avoid a race condition and avoid requesting it every time
         objects[id] = "loading";
 
@@ -1592,9 +1597,9 @@ UNIVERSE.ObjectLibrary = function() {
         var jsonLoader = new THREE.JSONLoader();
         jsonLoader.load({
             model : url,
-            callback : function(geometry) {
+            callback : function (geometry) {
                 //var mesh = new THREE.Mesh(geometry, material);
-                
+
                 // add the object to our list of objects
                 objects[id] = geometry;
                 //numberOfElements++;
@@ -1605,68 +1610,71 @@ UNIVERSE.ObjectLibrary = function() {
                 callback();
             }
         });
-        
+
     };
 
     // gets an object from the library based on the given id
-    this.getObjectById = function(id, callback) {
+    this.getObjectById = function (id, callback) {
         //console.log("number of elements: " + numberOfElements);
-        var object = objects[id];
-        
+        var object = objects[id],
+            objectLib;
+
         if (!object) {
             throw "Tried to retrieve object [" + id + "] from object library but didn't exist";
-        }
-        else if(object == "loading") {
-            var objectLib = this;
-            setTimeout(function() {
+        } else if (object === "loading") {
+            objectLib = this;
+            setTimeout(function () {
                 objectLib.getObjectById(id, callback);
             }, 1000);
-        }
-        else {
+        } else {
             callback(object);
         }
     };
-    
-    this.setObject = function(id, object) {
+
+    this.setObject = function (id, object) {
         objects[id] = object;
     };
-};
+};/*jslint browser: true, sloppy: true */
+/*global THREE */
 var UNIVERSE = UNIVERSE || {};
 
-UNIVERSE.UniverseController = function(theRefreshRate) {
-    var graphicsObjects = [];
+UNIVERSE.UniverseController = function (theRefreshRate) {
+    var graphicsObjects = [],
 
-    // Timeout that runs the animation, will be cleared when paused
-    var refreshTimeout;
+        // Timeout that runs the animation, will be cleared when paused
+        refreshTimeout,
 
-    // number of milliseconds between calls to update() (frame rate / refresh rate)
-    var refreshRate = theRefreshRate || 30;
+        // number of milliseconds between calls to update() (frame rate / refresh rate)
+        refreshRate = theRefreshRate || 30,
 
-    // the last time we called update() in ms since jsDate epoch
-    var lastUpdateMs = 0;
+        // the last time we called update() in ms since jsDate epoch
+        lastUpdateMs = 0;
 
     function update() {
         // determine how much time has elapsed since update has last been called
-        var nowMs = (new Date()).getTime();
-        var elapsedTime = nowMs - lastUpdateMs;
+        var nowMs = (new Date()).getTime(),
+            elapsedTime = nowMs - lastUpdateMs,
+            i;
         // save now as the last time we've updated
         lastUpdateMs = nowMs;
+
         // causes terrible performance... only enable if needed for debugging!
         // logger.debug("now [" + nowMs + "] elapsed ms [" + elapsedTime + "]");
         // update and draw all graphics objects
-        for(var i in graphicsObjects) {
+        for (i in graphicsObjects) {
             graphicsObjects[i].update(elapsedTime);
             graphicsObjects[i].draw();
         }
 
         // call update() again in a certain number of milliseconds
-        refreshTimeout = setTimeout(function() {
+        refreshTimeout = setTimeout(function () {
             update();
         }, refreshRate);
     }
 
-    this.updateOnce =function() {
-        for(var i in graphicsObjects) {
+    this.updateOnce = function () {
+        var i;
+        for (i in graphicsObjects) {
             graphicsObjects[i].update(null);
             graphicsObjects[i].draw();
         }
@@ -1675,34 +1683,34 @@ UNIVERSE.UniverseController = function(theRefreshRate) {
     // id
     // objectName
     // updateFunction
-    this.addGraphicsObject = function(graphicsObject) {
+    this.addGraphicsObject = function (graphicsObject) {
         graphicsObjects[graphicsObject.id] = graphicsObject;
         //this.updateOnce();
     };
-    
-    this.removeGraphicsObject = function(id) {
+
+    this.removeGraphicsObject = function (id) {
         delete graphicsObjects[id];
     };
 
-    this.play = function() {
+    this.play = function () {
         // set our last update time to now since this is the first update
         lastUpdateMs = (new Date()).getTime();
         update();
     };
 
-    this.pause = function() {
+    this.pause = function () {
         clearTimeout(refreshTimeout);
     };
-    
+
     this.removeAllGraphicsObjects = function () {
         graphicsObjects = [];
     };
-    
-    this.getGraphicsObjects = function() {
+
+    this.getGraphicsObjects = function () {
         return graphicsObjects;
     };
 
-    this.getGraphicsObjectById = function(id) {
+    this.getGraphicsObjectById = function (id) {
         return graphicsObjects[id];
     };
 };/**

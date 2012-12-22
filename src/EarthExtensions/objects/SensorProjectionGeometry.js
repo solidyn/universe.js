@@ -1,3 +1,6 @@
+/*jslint browser: true, sloppy: true, nomen: true */
+/*global THREE */
+
 /**
  * Based HEAVILY on the CylinderGeometry.js file from Three.js (mr.doob mrdoob.com)
  * @author Brian Davis
@@ -25,25 +28,43 @@ var UNIVERSE = UNIVERSE || {};
 // // call with a set of points on the earth and a sensor origin
 // points is an array with .x, .y. z and the vehicle origin is also an object with just an .x, .y and .z
 // Assume that passed in points are all in THREE.js
-UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
+UNIVERSE.SensorProjectionGeometry = function (sensorOrigin, groundPoints) {
 
-    THREE.Geometry.call( this );
+    THREE.Geometry.call(this);
 
-    var segmentsY = 1;
-    var x, y, vertices = [], uvs = [];
+    var segmentsY = 1,
+        x,
+        y,
+        vertices = [],
+        uvs = [],
+        segmentsX,
+        xpos,
+        ypos,
+        zpos,
+        u,
+        v = 0,
+        verticesRow = [],
+        uvsRow = [],
+        v1,
+        v2,
+        v3,
+        v4,
+        n1,
+        n2,
+        n3,
+        n4,
+        uv1,
+        uv2,
+        uv3,
+        uv4;
 
     // tack on the initial ground point back to the end of the groundpoints array
     groundPoints.push(groundPoints[0]);
-    var segmentsX = groundPoints.length - 1;
-
-    var xpos, ypos, zpos, u;
+    segmentsX = groundPoints.length - 1;
 
     // Create the top points around the vehicle
-    var v = 0;
 
-    var verticesRow = [];
-    var uvsRow = [];
-    for ( x = 0; x <= segmentsX; x ++ ) {
+    for (x = 0; x <= segmentsX; x += 1) {
         u = x / segmentsX;
 
         xpos = sensorOrigin.x;
@@ -51,19 +72,19 @@ UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
         zpos = sensorOrigin.z;
 
         //console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push( new THREE.Vertex( new THREE.Vector3( xpos, ypos, zpos ) ) );
-        verticesRow.push( this.vertices.length - 1 );
-        uvsRow.push( new THREE.UV( u, v ) );
+        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        verticesRow.push(this.vertices.length - 1);
+        uvsRow.push(new THREE.UV(u, v));
     }
 
-    vertices.push( verticesRow );
-    uvs.push( uvsRow );
+    vertices.push(verticesRow);
+    uvs.push(uvsRow);
 
     // Now create the ground lines
     v = 1;
     verticesRow = [];
     uvsRow = [];
-    for ( x = 0; x <= segmentsX; x ++ ) {
+    for (x = 0; x <= segmentsX; x += 1) {
         u = x / segmentsX;
 
         xpos = groundPoints[x].x;
@@ -71,38 +92,37 @@ UNIVERSE.SensorProjectionGeometry = function ( sensorOrigin, groundPoints ) {
         zpos = groundPoints[x].z;
 
         //        console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push( new THREE.Vertex( new THREE.Vector3( xpos, ypos, zpos ) ) );
-        verticesRow.push( this.vertices.length - 1 );
-        uvsRow.push( new THREE.UV( u, v ) );
+        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        verticesRow.push(this.vertices.length - 1);
+        uvsRow.push(new THREE.UV(u, v));
 
     }
-    vertices.push( verticesRow );
-    uvs.push( uvsRow );
+    vertices.push(verticesRow);
+    uvs.push(uvsRow);
 
-    for ( y = 0; y < segmentsY; y ++ ) {
+    for (y = 0; y < segmentsY; y += 1) {
 
-        for ( x = 0; x < segmentsX; x ++ ) {
+        for (x = 0; x < segmentsX; x += 1) {
 
-            var v1 = vertices[ y ][ x ];
-            var v2 = vertices[ y + 1 ][ x ];
-            var v3 = vertices[ y + 1 ][ x + 1 ];
-            var v4 = vertices[ y ][ x + 1 ];
+            v1 = vertices[y][x];
+            v2 = vertices[y + 1][x];
+            v3 = vertices[y + 1][x + 1];
+            v4 = vertices[y][x + 1];
 
             // FIXME: These normals aren't right for cones.
 
-            var n1 = this.vertices[ v1 ].position.clone().setY( 0 ).normalize();
-            var n2 = this.vertices[ v2 ].position.clone().setY( 0 ).normalize();
-            var n3 = this.vertices[ v3 ].position.clone().setY( 0 ).normalize();
-            var n4 = this.vertices[ v4 ].position.clone().setY( 0 ).normalize();
+            n1 = this.vertices[v1].position.clone().setY(0).normalize();
+            n2 = this.vertices[v2].position.clone().setY(0).normalize();
+            n3 = this.vertices[v3].position.clone().setY(0).normalize();
+            n4 = this.vertices[v4].position.clone().setY(0).normalize();
 
-            var uv1 = uvs[ y ][ x ].clone();
-            var uv2 = uvs[ y + 1 ][ x ].clone();
-            var uv3 = uvs[ y + 1 ][ x + 1 ].clone();
-            var uv4 = uvs[ y ][ x + 1 ].clone();
+            uv1 = uvs[y][x].clone();
+            uv2 = uvs[y + 1][x].clone();
+            uv3 = uvs[y + 1][x + 1].clone();
+            uv4 = uvs[y][x + 1].clone();
 
-            this.faces.push( new THREE.Face4( v1, v2, v3, v4, [ n1, n2, n3, n4 ] ) );
-            this.faceVertexUvs[ 0 ].push( [ uv1, uv2, uv3, uv4 ] );
-
+            this.faces.push(new THREE.Face4(v1, v2, v3, v4, [n1, n2, n3, n4]));
+            this.faceVertexUvs[0].push([uv1, uv2, uv3, uv4]);
         }
 
     }
@@ -115,20 +135,22 @@ UNIVERSE.SensorProjectionGeometry.prototype = new THREE.Geometry();
 UNIVERSE.SensorProjectionGeometry.prototype.constructor = UNIVERSE.SensorProjectionGeometry;
 
 
-UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sensorOrigin, groundPoints)
-{
+UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sensorOrigin, groundPoints) {
 
     groundPoints.push(groundPoints[0]);
 
     this.dynamic = true;
     // Create the top points around the vehicle
-    var segmentsX = groundPoints.length;
-    var segmentsY = 1;
+    var segmentsX = groundPoints.length,
+        segmentsY = 1,
+        xpos,
+        ypos,
+        zpos,
+        u,
+        x;
     // tack on the initial ground point back to the end of the groundpoints array
-    
-    var xpos, ypos, zpos, u;
-    for ( x = 0; x < segmentsX; x ++ ) {
-        
+
+    for (x = 0; x < segmentsX; x += 1) {
         u = x / segmentsX;
 
         xpos = sensorOrigin.x;
@@ -136,28 +158,27 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         zpos = sensorOrigin.z;
 
         this.vertices[x].position = {
-            x: xpos, 
-            y:ypos, 
-            z:zpos
-        }; 
+            x: xpos,
+            y: ypos,
+            z: zpos
+        };
     }
 
     // Now create the ground lines
-    for ( x = 0; x < segmentsX; x ++ ) {
+    for (x = 0; x < segmentsX; x += 1) {
         u = x / segmentsX;
 
         xpos = groundPoints[x].x;
         ypos = groundPoints[x].y;
         zpos = groundPoints[x].z;
 
-        //                console.log("updating vertice point " + ( x + segmentsX )+ " to Vertice point: " + xpos + "," + ypos + "," + zpos);
         this.vertices[x + segmentsX].position = {
-            x: xpos, 
-            y:ypos, 
-            z:zpos
-        }; 
+            x: xpos,
+            y: ypos,
+            z: zpos
+        };
     }
 
-          
-    this.__dirtyVertices=true;
+
+    this.__dirtyVertices = true;
 };
