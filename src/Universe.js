@@ -24,7 +24,7 @@ UNIVERSE.Universe = function (time, refreshRate, container) {
     // OBJECT LIBRARY DEFAULTS
 
     objectLibrary.setObject("default_geometry", new THREE.Geometry());
-    objectLibrary.setObject("default_material", new THREE.MeshFaceMaterial());
+    objectLibrary.setObject("default_material", new THREE.MeshBasicMaterial());
 
     // PRIVATE METHODS
 

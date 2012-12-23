@@ -28,7 +28,7 @@
             <div id="universe"></div>
         </div>
 
-        <script src="../build/dist/universe.js"></script>
+        <script src="../dist/universe.js"></script>
 
         <script>
             var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
@@ -47,11 +47,11 @@
                             draw : function() {
                                 universe.draw(this.id, object, false);
                             }
-                        });
+                        });         
                     });
                 });
             })
-			
+            		
             universe.play(new Date(), 20, undefined);
 
         </script>

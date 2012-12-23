@@ -28,8 +28,8 @@
             <div id="universe"></div>
         </div>
 
-        <script src="../build/dist/universe.js"></script>
-        <script src="../build/dist/earth-extensions.js"></script>
+        <script src="../dist/universe.js"></script>
+        <script src="../dist/earth-extensions.js"></script>
 
         <script>
             var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
@@ -55,23 +55,29 @@
             var epoch = new Date(date);
 
             universe.addJsonGeometryModel("dsp", "models/DSP.json", function() {
+                var spaceObject = new UNIVERSE.SpaceObject(
+                    "space_object_id",
+                    "space_object_name",
+                    "dsp",
+                    function(time, updateState) {
+                        time = new Date(universe.getCurrentUniverseTime());
+                        var elapsedTime = time - epoch;
+                        dt = 100;
+                        var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
+                        //console.log(JSON.stringify(location));
+                        return location;
+                    },
+                    true,
+                    true,
+                    [],
+                    initialPosition,
+                    universe,
+                    earthExtensions
+                );
+                spaceObject.showVehicle = true;
 
-                earthExtensions.addSpaceObject(new UNIVERSE.SpaceObject(
-                "space_object_id",
-                "space_object_name",
-                "dsp",
-                function(time, updateState) {
-                    time = new Date(universe.getCurrentUniverseTime());
-                    var elapsedTime = time - epoch;
-                    dt = 100;
-                    var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
-                    //console.log(JSON.stringify(location));
-                    return location;
-                },
-                true,
-                true,
-                new Array()
-            ))
+                earthExtensions.addSpaceObject(spaceObject, function() {earthExtensions.showAllOrbitLines(true)});
+                    
             });
 
             universe.play(date, 500, undefined);
