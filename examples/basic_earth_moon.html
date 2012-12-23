@@ -79,6 +79,24 @@
                 earthExtensions.addSpaceObject(spaceObject, function() {earthExtensions.showAllOrbitLines(true)});
                     
             });
+            
+            
+            var groundObject = new UNIVERSE.GroundObject("blue_dot", "blue_dot", null, function() {
+                return CoordinateConversionTools.convertLLAtoECI(
+                    new UNIVERSE.LLACoordinates(40, -104, 1), 
+                    CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
+                );
+            })
+            earthExtensions.addGroundDot(groundObject, 0x0000FF, function () {});
+            
+            var groundObject2 = new UNIVERSE.GroundObject("green_dot", "green_dot", null, function() {
+                return CoordinateConversionTools.convertLLAtoECI(
+                    new UNIVERSE.LLACoordinates(50, -95, 1), 
+                    CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
+                );
+            })
+            
+            earthExtensions.addGroundDot(groundObject2, 0x00FF00, function () {});
 
             universe.play(date, 500, undefined);
 

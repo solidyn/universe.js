@@ -120,6 +120,24 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
         });
     };
 
+    this.addGroundDot = function (groundObject, color, callback) {
+        universe.getObjectFromLibraryById("default_ground_object_geometry", function (retrieved_geometry) {
+            try {
+                universe.getObjectFromLibraryById("dot_" + color, function (retrieved_material) {
+                    universe.addObject(groundObject.getGraphicsObject(retrieved_material, retrieved_geometry, universe, earthExtensions));
+                    universe.updateOnce();
+                    callback();
+                });
+            } catch (err) {
+                // the object wasn't in the library so add it and try to add the dot again'
+                universe.setObjectInLibrary("dot_" + color, new THREE.MeshBasicMaterial({
+                    color : color
+                }));
+                earthExtensions.addGroundDot(groundObject, color, callback);
+            }
+        });
+    };
+
     /**
         Add a Ground Track Point for an Object
         @public
