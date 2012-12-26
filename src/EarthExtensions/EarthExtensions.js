@@ -120,10 +120,10 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
         });
     };
 
-    this.addStaticGroundDot = function (id, name, color, size, lat, lon, callback) {
+    this.addStaticGroundDot = function (id, name, color, size, lat, lon, alt, callback) {
         var groundObject = new UNIVERSE.GroundObject(id, name, null, function () {
             return CoordinateConversionTools.convertLLAtoECI(
-                new UNIVERSE.LLACoordinates(lat, lon, 1),
+                new UNIVERSE.LLACoordinates(lat, lon, alt),
                 CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
             );
         });
