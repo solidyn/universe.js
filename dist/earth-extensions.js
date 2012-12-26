@@ -619,7 +619,7 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
  */
 UNIVERSE.DefaultObjects = function (universe) {
     universe.setObjectInLibrary("default_ground_object_geometry", new THREE.SphereGeometry(200, 20, 10));
-    universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshLambertMaterial({
+    universe.setObjectInLibrary("default_ground_object_material", new THREE.MeshBasicMaterial({
         color : 0xCC0000
     }));
 
