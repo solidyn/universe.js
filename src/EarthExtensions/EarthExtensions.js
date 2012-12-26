@@ -1,6 +1,6 @@
 // EarthExtensions.js
 /*jslint browser: true, sloppy: true */
-/*global THREE, UNIVERSE, Utilities, Constants */
+/*global THREE, UNIVERSE, Utilities, Constants, CoordinateConversionTools */
 
 /** 
     Extensions for doing Earth-based 3D modeling with Universe.js
@@ -120,22 +120,48 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
         });
     };
 
-    this.addGroundDot = function (groundObject, color, callback) {
-        universe.getObjectFromLibraryById("default_ground_object_geometry", function (retrieved_geometry) {
-            try {
-                universe.getObjectFromLibraryById("dot_" + color, function (retrieved_material) {
-                    universe.addObject(groundObject.getGraphicsObject(retrieved_material, retrieved_geometry, universe, earthExtensions));
-                    universe.updateOnce();
-                    callback();
-                });
-            } catch (err) {
-                // the object wasn't in the library so add it and try to add the dot again'
-                universe.setObjectInLibrary("dot_" + color, new THREE.MeshBasicMaterial({
-                    color : color
-                }));
-                earthExtensions.addGroundDot(groundObject, color, callback);
-            }
+    this.addStaticGroundDot = function (id, name, color, size, lat, lon, callback) {
+        var groundObject = new UNIVERSE.GroundObject(id, name, null, function () {
+            return CoordinateConversionTools.convertLLAtoECI(
+                new UNIVERSE.LLACoordinates(lat, lon, 1),
+                CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
+            );
         });
+        
+        this.addGroundDot(groundObject, color, size, callback);
+    };
+
+    this.addGroundDot = function (groundObject, color, size, callback) {
+        var groundObjectGeometryString,
+            groundObjectMaterialString = "dot_" + color;
+
+        if (size) {
+            groundObjectGeometryString = "ground_dot_size_" + size;
+        } else {
+            groundObjectGeometryString = "default_ground_object_geometry";
+        }
+
+        try {
+            universe.getObjectFromLibraryById(groundObjectGeometryString, function (retrieved_geometry) {
+                try {
+                    universe.getObjectFromLibraryById(groundObjectMaterialString, function (retrieved_material) {
+                        universe.addObject(groundObject.getGraphicsObject(retrieved_material, retrieved_geometry, universe, earthExtensions));
+                        universe.updateOnce();
+                        callback();
+                    });
+                } catch (err) {
+                    // the object wasn't in the library so add it and try to add the dot again'
+                    universe.setObjectInLibrary(groundObjectMaterialString, new THREE.MeshBasicMaterial({
+                        color : color
+                    }));
+                    earthExtensions.addGroundDot(groundObject, color, size, callback);
+                }
+            });
+        } catch (err) {
+            // the object wasn't in the library so add it and try to add the dot again'
+            universe.setObjectInLibrary(groundObjectGeometryString, new THREE.SphereGeometry(size, size / 10, size / 20));
+            earthExtensions.addGroundDot(groundObject, color, size, callback);
+        }
     };
 
     /**

@@ -87,7 +87,7 @@
                     CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
                 );
             })
-            earthExtensions.addGroundDot(groundObject, 0x0000FF, function () {});
+            earthExtensions.addGroundDot(groundObject, 0x0000FF, 500, function () {});
             
             var groundObject2 = new UNIVERSE.GroundObject("green_dot", "green_dot", null, function() {
                 return CoordinateConversionTools.convertLLAtoECI(
@@ -96,7 +96,9 @@
                 );
             })
             
-            earthExtensions.addGroundDot(groundObject2, 0x00FF00, function () {});
+            earthExtensions.addGroundDot(groundObject2, 0x00FF00, 300, function () {});
+            
+            earthExtensions.addStaticGroundDot("static_object", "name", 0xFF0000, 400, 45, 15, function () {});
 
             universe.play(date, 500, undefined);
 
