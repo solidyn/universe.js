@@ -23,9 +23,9 @@ UNIVERSE.ObjectLibrary = function () {
 
         // use a JSON loader to load the mesh from JSON
         var jsonLoader = new THREE.JSONLoader();
-        jsonLoader.load({
-            model : url,
-            callback : function (geometry) {
+        jsonLoader.load(
+            url,
+            function (geometry) {
                 //var mesh = new THREE.Mesh(geometry, material);
 
                 // add the object to our list of objects
@@ -37,7 +37,7 @@ UNIVERSE.ObjectLibrary = function () {
                 // execute the callback
                 callback();
             }
-        });
+        );
 
     };
 

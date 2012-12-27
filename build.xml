@@ -27,9 +27,10 @@
     <target name="-build-universe">
         <concat destfile="${universe.libs.file}">
             <filelist dir="lib">
-                <file name="Three/ThreeWebGL.js"/>
+                <!--file name="Three/ThreeWebGL.js"/-->
                 <file name="Three/Detector.js"/>
-                <file name="Three/ThreeExtras.js"/>
+                <file name="Three/three.min.js"/>
+                <!--file name="Three/ThreeExtras.js"/-->
                 <file name="Three/RequestAnimationFrame.js"/>
                 <file name="Input/input.js"/>
             </filelist>
