@@ -1179,8 +1179,9 @@ UNIVERSE.Core3D = function (container) {
 	    GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR = 0.5,
 	    GAMEPAD_CAMERA_ROTATION_DELTA =
 	        GAMEPAD_CAMERA_ROTATION_MAX_SCALING_FACTOR - GAMEPAD_CAMERA_ROTATION_MIN_SCALING_FACTOR,
-	    GAMEPAD_CAMERA_MIN_SENSITIVITY = 0.25;
+	    GAMEPAD_CAMERA_MIN_SENSITIVITY = 0.25,
 	    //GAMEPAD_PAN_SCALING_FACTOR = 5000;
+	    intersectionListeners = [];
 
     self.distanceTarget = 50000;
 
@@ -1330,7 +1331,78 @@ UNIVERSE.Core3D = function (container) {
         container.removeEventListener('mouseup', onMouseUp, false);
         container.removeEventListener('mouseout', onMouseOut, false);
         container.style.cursor = 'auto';
+
+		var mouseOnUp = {
+			x: -event.clientX,
+            y: event.clientY
+		};
+
+        // If this was a click without movement look for intersecting objects
+        if (mouseOnUp.x === mouseOnDown.x && mouseOnUp.y === mouseOnDown.y) {
+	
+			var mouseCoordinates = relMouseCoords(event);
+			// var vector = new THREE.Vector3( ( mouseCoordinates.x / w ) * 2 - 1, - ( mouseCoordinates.y / h ) * 2 + 1, 0.5 );
+			// console.log("vector: " + JSON.stringify(vector));
+			// console.log("camera: " + JSON.stringify(camera.position));
+			// projector.unprojectVector( vector, camera );
+			// console.log("vector after unproject: " + JSON.stringify(vector));
+			// 								console.log("vector subself: " + JSON.stringify(vector.subSelf( camera.position ).normalize()));
+			// 								console.log("w: " + w);
+			// 								console.log("X: " + mouseCoordinates.x);
+	
+			// var raycaster = new THREE.Raycaster( camera.position, vector.subSelf( camera.position ).normalize() );
+			
+			var mouse2D = new THREE.Vector3( ( mouseCoordinates.x / w ) * 2 - 1, - ( mouseCoordinates.y / h ) * 2 + 1, 0.5 );
+			var raycaster = projector.pickingRay( mouse2D.clone(), camera );
+			
+			var intersects = raycaster.intersectObjects(scene.children);
+
+			if ( intersects.length > 0 ) {
+				notifyIntersectionListeners(intersects);
+			}
+		}
     }
+
+    // This: http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+	function relMouseCoords(event) {
+		if (event.offsetX !== undefined && event.offsetY !== undefined) { 
+			return {x: event.offsetX, y: event.offsetY}; 
+		}
+	    var totalOffsetX = 0;
+	    var totalOffsetY = 0;
+	    var canvasX = 0;
+	    var canvasY = 0;
+	    var currentElement = this;
+
+	    do{
+	        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+	        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+	    }
+	    while(currentElement = currentElement.offsetParent)
+
+	    canvasX = event.pageX - totalOffsetX;
+	    canvasY = event.pageY - totalOffsetY;
+
+	    return {x:canvasX, y:canvasY}
+	}
+
+	function notifyIntersectionListeners(intersects) {
+		var i,
+		    j,
+		    intersectedObjects = [];
+		
+		for (j = 0; j < intersects.length; j += 1) {
+			intersectedObjects.push(getObjectForShape(intersects[j]));
+		}
+
+		for (i = 0; i < intersectionListeners.length; i += 1) {
+			intersectionListeners[i](intersectedObjects);
+		}
+	}
+	
+	this.addIntersectionListener = function (callback) {
+		intersectionListeners.push(callback);
+	}
 
     function onMouseOut() {
         container.removeEventListener('mousemove', onMouseMove, false);
@@ -1444,6 +1516,15 @@ UNIVERSE.Core3D = function (container) {
         }
         return ret;
     };
+
+	function getObjectForShape(shape) {
+		var i;
+		for (i in drawnObjects) {
+			if (drawnObjects[i].shape && drawnObjects[i].shape.id === shape.object.id) {
+				return i;
+			}
+		}
+	}
 
     this.moveCameraTo = function (position_vector) {
         // This method converts a position into the rotation coordinate system used to move the camera
@@ -2071,6 +2152,10 @@ UNIVERSE.Universe = function (time, refreshRate, container) {
     this.updateLight = function (x, y, z, intensity) {
         core.updateLight(new THREE.Vector3(x, y, z), intensity);
     };
+
+    this.addIntersectionListener = function(callback) {
+	    core.addIntersectionListener(callback);
+    }
 
     /**
         Basic setup method, needs to be called after all objects are removed from the Universe

@@ -304,6 +304,10 @@ UNIVERSE.Universe = function (time, refreshRate, container) {
         core.updateLight(new THREE.Vector3(x, y, z), intensity);
     };
 
+    this.addIntersectionListener = function(callback) {
+	    core.addIntersectionListener(callback);
+    }
+
     /**
         Basic setup method, needs to be called after all objects are removed from the Universe
         @public
