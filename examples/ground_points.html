@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Universe.js Ground Point Demo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style>
+            body {
+                background:#000;
+                color:#fff;
+                padding:0;
+                margin:0;
+                overflow:hidden;
+                font-family:georgia;
+                text-align:center;
+            }
+            h1 { }
+            a { color:skyblue }
+
+            #d { text-align:center; margin:1em 0 -2.5em 0; z-index:0; position:relative; display:block }
+
+        </style>
+    </head>
+    <body>
+        <div id="info"><a href="http://universejs.com" target="_blank">universe.js</a> - Ground Points Example</div>
+
+        <div id="universe"></div>
+    </body>
+
+    <script src="dist/universe.js"></script>
+    <script src="dist/earth-extensions.js"></script>
+
+    <script type="text/javascript">
+        var universe = new UNIVERSE.Universe(new Date(), 100000, document.getElementById("universe")), 
+            earth = new UNIVERSE.EarthExtensions(universe, false);
+            
+        earth.addEarth("img/world3000.jpg", "img/world3000.jpg");
+        
+        earth.addSun();
+        earth.setSunLighting(false);
+            
+        universe.addIntersectionListener(function (intersectedObjects) {
+            if (intersectedObjects.length > 0 && intersectedObjects[0].indexOf("earth") === -1 && intersectedObjects[0].indexOf("moon") === -1) {
+                self.setSelectedPoint(self.getPointById(intersectedObjects[0]));
+            }
+        });
+    </script>
+
+</html>

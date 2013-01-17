@@ -21,8 +21,6 @@
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="/css/style.css">
   <link href="/css/prettify.css" type="text/css" rel="stylesheet" />
-
-  <script src="/js/libs/modernizr-2.0.6.min.js"></script>
 </head>
 
 <body onload="prettyPrint();">
@@ -42,7 +40,21 @@
 	
 	
 	
+	<li><a href="../symbols/UNIVERSE.html">UNIVERSE</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.DefaultObjects.html">UNIVERSE.DefaultObjects</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.Earth.html">UNIVERSE.Earth</a></li>
+	
 	<li><a href="../symbols/UNIVERSE.EarthExtensions.html">UNIVERSE.EarthExtensions</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.EllipseSensorShape.html">UNIVERSE.EllipseSensorShape</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.GraphicsObject.html">UNIVERSE.GraphicsObject</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.GroundObject.html">UNIVERSE.GroundObject</a></li>
+	
+	<li><a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a></li>
 	
 	<li><a href="../symbols/UNIVERSE.Universe.html">UNIVERSE.Universe</a></li>
 	
@@ -131,7 +143,16 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addGroundObject">addGroundObject</a></b>(groundObject)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addGroundDot">addGroundDot</a></b>(groundObject, color, size, callback)
+								</div>
+								<div class="description">Add an existing {UNIVERSE.GroundObject} as a static "ground dot".</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addGroundObject">addGroundObject</a></b>(groundObject, callback)
 								</div>
 								<div class="description">Add a Ground Object to the Earth</div>
 							</td>
@@ -140,7 +161,7 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addGroundTrackPointForObject">addGroundTrackPointForObject</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addGroundTrackPointForObject">addGroundTrackPointForObject</a></b>(object, callback)
 								</div>
 								<div class="description">Add a Ground Track Point for an Object</div>
 							</td>
@@ -149,7 +170,7 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addLineBetweenObjects">addLineBetweenObjects</a></b>(object1_id, object2_id)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addLineBetweenObjects">addLineBetweenObjects</a></b>(object1_id, object2_id, color, customIdentifier)
 								</div>
 								<div class="description">Add a Line between two graphics objects</div>
 							</td>
@@ -167,7 +188,7 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addPropogationLineForObject">addPropogationLineForObject</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addPropogationLineForObject">addPropogationLineForObject</a></b>(object, callback)
 								</div>
 								<div class="description">Add a Propagation Line for an Object</div>
 							</td>
@@ -176,7 +197,25 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorProjection">addSensorProjection</a></b>(object)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorFootprintProjection">addSensorFootprintProjection</a></b>(spaceObject, callback)
+								</div>
+								<div class="description">Add sensor projection footprints for a specific sensor on a space object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorFootprintProjections">addSensorFootprintProjections</a></b>(spaceObject, callback)
+								</div>
+								<div class="description">Add sensor projection footprints for all sensors on a space object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorProjection">addSensorProjection</a></b>(object, spaceObject)
 								</div>
 								<div class="description">Add a Sensor Projection for an Object</div>
 							</td>
@@ -185,9 +224,36 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSpaceObject">addSpaceObject</a></b>(spaceObject)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorProjections">addSensorProjections</a></b>(spaceObject, callback)
+								</div>
+								<div class="description">Add sensor projections for a space object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSensorVisibilityLines">addSensorVisibilityLines</a></b>(spaceObject, callback)
+								</div>
+								<div class="description">Add Lines from a space object to objects in it's sensor FOVs to the Universe</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addSpaceObject">addSpaceObject</a></b>(spaceObject, callback)
 								</div>
 								<div class="description">Add a Space Object to the Universe</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#addStaticGroundDot">addStaticGroundDot</a></b>(id, name, color, size, lat, lon, alt, callback)
+								</div>
+								<div class="description">Add a non-moving ground point to the universe.</div>
 							</td>
 						</tr>
 					
@@ -221,6 +287,16 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#lockCameraPositionRelativeToEarth">lockCameraPositionRelativeToEarth</a></b>(isLocked)
+								</div>
+								<div class="description">Lock the position of the camera relative to the Earth so that it appears
+        that the Earth is not spinning</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#removeAllExceptEarthAndMoon">removeAllExceptEarthAndMoon</a></b>()
 								</div>
 								<div class="description">Remove all objects from the Universe except the Earth and Moon</div>
@@ -230,9 +306,27 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#removeLineBetweenObjects">removeLineBetweenObjects</a></b>(object1_id, object2_id)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#removeAllLinesBetweenObjects">removeAllLinesBetweenObjects</a></b>()
+								</div>
+								<div class="description">Remove all Lines between two graphics objects</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#removeLineBetweenObjects">removeLineBetweenObjects</a></b>(object1_id, object2_id, customIdentifier)
 								</div>
 								<div class="description">Remove a Line between two graphics objects</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#setSunLighting">setSunLighting</a></b>(isSunLighting)
+								</div>
+								<div class="description">Turn on or off sun lighting</div>
 							</td>
 						</tr>
 					
@@ -275,9 +369,27 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllSensorFootprintProjections">showAllSensorFootprintProjections</a></b>(isEnabled)
+								</div>
+								<div class="description">Enable or disable display of all sensor projections</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllSensorProjections">showAllSensorProjections</a></b>(isEnabled)
 								</div>
 								<div class="description">Enable or disable display of all sensor projections</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showAllSensorVisibilityLines">showAllSensorVisibilityLines</a></b>(isEnabled)
+								</div>
+								<div class="description">Enable or disable display of all lines between objects</div>
 							</td>
 						</tr>
 					
@@ -320,6 +432,15 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showSensorFootprintProjectionsForId">showSensorFootprintProjectionsForId</a></b>(id, isEnabled)
+								</div>
+								<div class="description">Enable or disable display of sensor projections for an object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showSensorProjectionForId">showSensorProjectionForId</a></b>(id, isEnabled)
 								</div>
 								<div class="description">Enable or disable display of sensor projections for an object</div>
@@ -329,9 +450,9 @@
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#useSunLighting">useSunLighting</a></b>(isSunLighting)
+								<div class="fixedFont"><b><a href="../symbols/UNIVERSE.EarthExtensions.html#showSensorVisibilityLinesForId">showSensorVisibilityLinesForId</a></b>(id, isEnabled)
 								</div>
-								<div class="description">Turn on or off sun lighting</div>
+								<div class="description">Enable or disable display of sensor projections for an object</div>
 							</td>
 						</tr>
 					
@@ -420,7 +541,7 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.SpaceObject}</span> <b>object</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>object</b>
 									
 								</dt>
 								<dd>- A Space Object to add a tracing line to the closest ground object for</dd>
@@ -478,11 +599,65 @@
 
 					<hr />
 				
+					<a name="addGroundDot"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addGroundDot</b>(groundObject, color, size, callback)
+					
+					</div>
+					<div class="description">
+						Add an existing {UNIVERSE.GroundObject} as a static "ground dot".
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.GroundObject.html">UNIVERSE.GroundObject</a>}</span> <b>groundObject</b>
+									
+								</dt>
+								<dd>- the GroundObject to be placed</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>color</b>
+									
+								</dt>
+								<dd>- the Hex RGB color to display the ground object with</dd>
+							
+								<dt>
+									<span class="light fixedFont">{integer}</span> <b>size</b>
+									
+								</dt>
+								<dd>- the size of the "dot"</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- a function to be called when the dot is added</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="addGroundObject"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>addGroundObject</b>(groundObject)
+					<b>addGroundObject</b>(groundObject, callback)
 					
 					</div>
 					<div class="description">
@@ -498,10 +673,16 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.GroundObject}</span> <b>groundObject</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.GroundObject.html">UNIVERSE.GroundObject</a>}</span> <b>groundObject</b>
 									
 								</dt>
 								<dd>- an object to display on the Earth</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
 							
 							</dl>
 						
@@ -518,7 +699,7 @@
 					<div class="fixedFont">
 					
 					
-					<b>addGroundTrackPointForObject</b>(object)
+					<b>addGroundTrackPointForObject</b>(object, callback)
 					
 					</div>
 					<div class="description">
@@ -534,10 +715,16 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.SpaceObject}</span> <b>object</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>object</b>
 									
 								</dt>
 								<dd>- The Space Object to add a ground track point for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
 							
 							</dl>
 						
@@ -554,7 +741,7 @@
 					<div class="fixedFont">
 					
 					
-					<b>addLineBetweenObjects</b>(object1_id, object2_id)
+					<b>addLineBetweenObjects</b>(object1_id, object2_id, color, customIdentifier)
 					
 					</div>
 					<div class="description">
@@ -580,6 +767,18 @@
 									
 								</dt>
 								<dd>- end object of the line</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>color</b>
+									
+								</dt>
+								<dd>- color code in hex of the line between objects</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>customIdentifier</b>
+									
+								</dt>
+								<dd>- a specific identifier to put between objects in the id</dd>
 							
 							</dl>
 						
@@ -632,7 +831,7 @@
 					<div class="fixedFont">
 					
 					
-					<b>addPropogationLineForObject</b>(object)
+					<b>addPropogationLineForObject</b>(object, callback)
 					
 					</div>
 					<div class="description">
@@ -648,10 +847,100 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.SpaceObject}</span> <b>object</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>object</b>
 									
 								</dt>
 								<dd>- A Space Object to add a propagation line for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorFootprintProjection"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorFootprintProjection</b>(spaceObject, callback)
+					
+					</div>
+					<div class="description">
+						Add sensor projection footprints for a specific sensor on a space object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>spaceObject</b>
+									
+								</dt>
+								<dd>- An orbiting object to add projections for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorFootprintProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorFootprintProjections</b>(spaceObject, callback)
+					
+					</div>
+					<div class="description">
+						Add sensor projection footprints for all sensors on a space object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>spaceObject</b>
+									
+								</dt>
+								<dd>- An orbiting object to add projections for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
 							
 							</dl>
 						
@@ -668,7 +957,7 @@
 					<div class="fixedFont">
 					
 					
-					<b>addSensorProjection</b>(object)
+					<b>addSensorProjection</b>(object, spaceObject)
 					
 					</div>
 					<div class="description">
@@ -684,10 +973,100 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.SpaceObject}</span> <b>object</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>object</b>
 									
 								</dt>
 								<dd>- A Space Object to add a Sensor Projection for</dd>
+							
+								<dt>
+									<b>spaceObject</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorProjections</b>(spaceObject, callback)
+					
+					</div>
+					<div class="description">
+						Add sensor projections for a space object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>spaceObject</b>
+									
+								</dt>
+								<dd>- An orbiting object to add projections for</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addSensorVisibilityLines"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addSensorVisibilityLines</b>(spaceObject, callback)
+					
+					</div>
+					<div class="description">
+						Add Lines from a space object to objects in it's sensor FOVs to the Universe
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>spaceObject</b>
+									
+								</dt>
+								<dd>- An orbiting object to add to the Universe</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
 							
 							</dl>
 						
@@ -704,7 +1083,7 @@
 					<div class="fixedFont">
 					
 					
-					<b>addSpaceObject</b>(spaceObject)
+					<b>addSpaceObject</b>(spaceObject, callback)
 					
 					</div>
 					<div class="description">
@@ -720,10 +1099,98 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{UNIVERSE.SpaceObject}</span> <b>spaceObject</b>
+									<span class="light fixedFont">{<a href="../symbols/UNIVERSE.SpaceObject.html">UNIVERSE.SpaceObject</a>}</span> <b>spaceObject</b>
 									
 								</dt>
 								<dd>- An orbiting object to add to the Universe</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- A function called at completion of the addition</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="addStaticGroundDot"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addStaticGroundDot</b>(id, name, color, size, lat, lon, alt, callback)
+					
+					</div>
+					<div class="description">
+						Add a non-moving ground point to the universe. This creates a new UNIVERSE.GroundObject for 
+        you, using the LLA coordinates given as parameters.
+        Note that "ground point" can actually be
+        off the surface of the earth (or, under, really). This function quickly lets you set
+        various colors and sizes for the dot.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{object}</span> <b>id</b>
+									
+								</dt>
+								<dd>- a unique identifier for the dot</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>name</b>
+									
+								</dt>
+								<dd>- a human-readable name for the dot</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>color</b>
+									
+								</dt>
+								<dd>- a hex value RGB color of the dot</dd>
+							
+								<dt>
+									<span class="light fixedFont">{integer}</span> <b>size</b>
+									
+								</dt>
+								<dd>- a size for the dot</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>lat</b>
+									
+								</dt>
+								<dd>- the LLA latitude coordinate</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>lon</b>
+									
+								</dt>
+								<dd>- the LLA longitude coordinate</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>alt</b>
+									
+								</dt>
+								<dd>- the LLA altitude coordinate</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function}</span> <b>callback</b>
+									
+								</dt>
+								<dd>- a function called once the dot has been added</dd>
 							
 							</dl>
 						
@@ -833,6 +1300,43 @@
 
 					<hr />
 				
+					<a name="lockCameraPositionRelativeToEarth"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>lockCameraPositionRelativeToEarth</b>(isLocked)
+					
+					</div>
+					<div class="description">
+						Lock the position of the camera relative to the Earth so that it appears
+        that the Earth is not spinning
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isLocked</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="removeAllExceptEarthAndMoon"> </a>
 					<div class="fixedFont">
 					
@@ -858,11 +1362,36 @@
 
 					<hr />
 				
+					<a name="removeAllLinesBetweenObjects"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeAllLinesBetweenObjects</b>()
+					
+					</div>
+					<div class="description">
+						Remove all Lines between two graphics objects
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="removeLineBetweenObjects"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>removeLineBetweenObjects</b>(object1_id, object2_id)
+					<b>removeLineBetweenObjects</b>(object1_id, object2_id, customIdentifier)
 					
 					</div>
 					<div class="description">
@@ -888,6 +1417,48 @@
 									
 								</dt>
 								<dd>- end object of the line</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>customIdentifier</b>
+									
+								</dt>
+								<dd>- a specific identifier to put between objects in the id</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setSunLighting"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setSunLighting</b>(isSunLighting)
+					
+					</div>
+					<div class="description">
+						Turn on or off sun lighting
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isSunLighting</b>
+									
+								</dt>
+								<dd></dd>
 							
 							</dl>
 						
@@ -1033,6 +1604,42 @@
 
 					<hr />
 				
+					<a name="showAllSensorFootprintProjections"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllSensorFootprintProjections</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of all sensor projections
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="showAllSensorProjections"> </a>
 					<div class="fixedFont">
 					
@@ -1042,6 +1649,42 @@
 					</div>
 					<div class="description">
 						Enable or disable display of all sensor projections
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="showAllSensorVisibilityLines"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showAllSensorVisibilityLines</b>(isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of all lines between objects
 						
 						
 					</div>
@@ -1237,6 +1880,48 @@
 
 					<hr />
 				
+					<a name="showSensorFootprintProjectionsForId"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>showSensorFootprintProjectionsForId</b>(id, isEnabled)
+					
+					</div>
+					<div class="description">
+						Enable or disable display of sensor projections for an object
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="showSensorProjectionForId"> </a>
 					<div class="fixedFont">
 					
@@ -1279,15 +1964,15 @@
 
 					<hr />
 				
-					<a name="useSunLighting"> </a>
+					<a name="showSensorVisibilityLinesForId"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>useSunLighting</b>(isSunLighting)
+					<b>showSensorVisibilityLinesForId</b>(id, isEnabled)
 					
 					</div>
 					<div class="description">
-						Turn on or off sun lighting
+						Enable or disable display of sensor projections for an object
 						
 						
 					</div>
@@ -1299,7 +1984,13 @@
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>isSunLighting</b>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>- identifier for the object</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>isEnabled</b>
 									
 								</dt>
 								<dd></dd>
@@ -1327,13 +2018,13 @@
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Dec 23 2011 15:29:56 GMT-0700 (MST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Jan 16 2013 21:54:23 GMT-0700 (MST)
 		</div>
 
                
     </div>
     <footer>
-        <p>Copyright 2011 Solidyn Solutions, Inc.</p>
+        <p>Copyright 2013 Solidyn Solutions, Inc.</p>
     </footer>
   </div> <!--! end of #container -->
 
@@ -1341,17 +2032,15 @@
   <!-- JavaScript at the bottom for fast page loading -->
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.9.0.min.js"><\/script>')</script>
 
 
   <!-- scripts concatenated and minified via ant build script-->
   <script defer src="/js/plugins.js"></script>
   <script defer src="/js/script.js"></script>
   
-  <script defer src="/js/libs/prettify.js"></script>
-  
-  <script src="/js/libs/slides.min.jquery.js"></script>
+  <script defer src="/js/libs/prettify.js"></script>  
   <!-- end scripts-->
 
 	

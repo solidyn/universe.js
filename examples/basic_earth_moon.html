@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>basic universe.js example</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                background:#000;
+                color:#fff;
+                padding:0;
+                margin:0;
+                overflow:hidden;
+                font-family:georgia;
+                text-align:center;
+            }
+            h1 { }
+            a { color:skyblue }
+
+            #d { text-align:center; margin:1em 0 -2.5em 0; z-index:0; position:relative; display:block }
+            #universe {
+				height: 0px;
+				width: 0px;
+			}
+        </style>
+    </head>
+
+    <body>
+        <div id="d">
+            <div id="info"><a href="http://universejs.com" target="_blank">universe.js</a> - Basic Earth and Moon Example</div>
+
+            <div id="universe"></div>
+        </div>
+
+        <script src="dist/universe.js"></script>
+        <script src="dist/earth-extensions.js"></script>
+
+        <script>
+            var universe = new UNIVERSE.Universe(new Date(), 30, document.getElementById("universe"));
+
+            var earthExtensions = new UNIVERSE.EarthExtensions(universe, false);
+
+            earthExtensions.addEarth("img/world3000.jpg", "img/earth_lights_lrg-dim.png")
+
+            earthExtensions.addMoon("img/moon_1024.jpg")
+
+            earthExtensions.addSun();
+
+            var initialPosition = new UNIVERSE.ECICoordinates(
+                -14213.99162,
+                -39987.86471,
+                -1115.314875,
+                2.865601523,
+                -1.007157587,
+                -0.410247122
+            );
+
+            var date = new Date();
+            var epoch = new Date(date);
+
+            universe.addJsonGeometryModel("dsp", "models/DSP.json", function() {
+                var spaceObject = new UNIVERSE.SpaceObject(
+                    "space_object_id",
+                    "space_object_name",
+                    "dsp",
+                    function(time, updateState) {
+                        time = new Date(universe.getCurrentUniverseTime());
+                        var elapsedTime = time - epoch;
+                        dt = 100;
+                        var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
+                        //console.log(JSON.stringify(location));
+                        return location;
+                    },
+                    true,
+                    true,
+                    [],
+                    initialPosition,
+                    universe,
+                    earthExtensions
+                );
+                spaceObject.showVehicle = true;
+
+                earthExtensions.addSpaceObject(spaceObject, function() {earthExtensions.showAllOrbitLines(true)});
+                    
+            });
+            
+            
+            var groundObject = new UNIVERSE.GroundObject("blue_dot", "blue_dot", null, function() {
+                return CoordinateConversionTools.convertLLAtoECI(
+                    new UNIVERSE.LLACoordinates(40, -104, 1), 
+                    CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
+                );
+            })
+            earthExtensions.addGroundDot(groundObject, 0x0000FF, 500, function () {});
+            
+            var groundObject2 = new UNIVERSE.GroundObject("green_dot", "green_dot", null, function() {
+                return CoordinateConversionTools.convertLLAtoECI(
+                    new UNIVERSE.LLACoordinates(50, -95, 1), 
+                    CoordinateConversionTools.convertTimeToGMST(universe.getCurrentUniverseTime())
+                );
+            })
+            
+            earthExtensions.addGroundDot(groundObject2, 0x00FF00, 300, function () {});
+            
+            earthExtensions.addStaticGroundDot("static_object", "name", 0xFF0000, 400, 45, 15, 1000, function () {});
+
+            universe.play(date, 500, undefined);
+
+            document.getElementById("universe").getElementsByTagName("canvas")[0].style.position="";
+        </script>
+
+    </body>
+</html>
