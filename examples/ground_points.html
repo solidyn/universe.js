@@ -15,7 +15,10 @@
             }
             h1 { }
             a { color:skyblue }
-
+            #universe {
+                height: 0px;
+                width: 0px; 
+            }
             #d { text-align:center; margin:1em 0 -2.5em 0; z-index:0; position:relative; display:block }
 
         </style>
@@ -31,18 +34,54 @@
 
     <script type="text/javascript">
         var universe = new UNIVERSE.Universe(new Date(), 100000, document.getElementById("universe")), 
-            earth = new UNIVERSE.EarthExtensions(universe, false);
+            earth = new UNIVERSE.EarthExtensions(universe, false),
+            pointData = {},
+            xmlhttp,
+            i,
+            getPointById;
             
         earth.addEarth("img/world3000.jpg", "img/world3000.jpg");
         
         earth.addSun();
         earth.setSunLighting(false);
-            
+        
+        getPointById = function(selectedObject) {
+            var x;
+            for (x = 0; x < pointData.points.length; ++x) {
+                if (pointData.points[x].id === selectedObject) {
+                    return pointData.points[x];
+                }
+            }
+        };
         universe.addIntersectionListener(function (intersectedObjects) {
             if (intersectedObjects.length > 0 && intersectedObjects[0].indexOf("earth") === -1 && intersectedObjects[0].indexOf("moon") === -1) {
-                self.setSelectedPoint(self.getPointById(intersectedObjects[0]));
+                var selected = getPointById(intersectedObjects[0]);
+                alert(new Date(selected.time).toUTCString());
             }
         });
+        
+        xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "models/groundpoints.json", true);
+        xmlhttp.onreadystatechange = function() {
+            if( xmlhttp.readyState === 4 ) {
+                pointData = JSON.parse(xmlhttp.responseText);
+
+                for(i = 0; i<pointData.count; ++i ){
+                    var point = pointData.points[i];
+                    var color = 0;
+                    if( point.type === "TYPE1" )
+                        color = 0x07B807;
+                    if( point.type === "TYPE2" )
+                        color = 0xE81010;
+                    if( point.type === "TYPE3" )
+                        color = 0x6E0B80;
+                    earth.addStaticGroundDot(point.id, point.id, color, 100, point.geo.lat, point.geo.lon, point.geo.alt, function(){});
+
+                }
+
+            }
+        };
+        xmlhttp.send(null);
     </script>
 
 </html>
