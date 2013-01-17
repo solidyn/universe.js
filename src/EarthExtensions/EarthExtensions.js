@@ -120,6 +120,22 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
         });
     };
 
+    /**
+        Add a non-moving ground point to the universe. This creates a new UNIVERSE.GroundObject for 
+        you, using the LLA coordinates given as parameters.
+        Note that "ground point" can actually be
+        off the surface of the earth (or, under, really). This function quickly lets you set
+        various colors and sizes for the dot.
+        @public
+        @param {object} id - a unique identifier for the dot
+        @param {string} name - a human-readable name for the dot
+        @param {number} color - a hex value RGB color of the dot
+        @param {integer} size - a size for the dot
+        @param {number} lat - the LLA latitude coordinate
+        @param {number} lon - the LLA longitude coordinate
+        @param {number} alt - the LLA altitude coordinate
+        @param {function} callback - a function called once the dot has been added
+     */
     this.addStaticGroundDot = function (id, name, color, size, lat, lon, alt, callback) {
         var groundObject = new UNIVERSE.GroundObject(id, name, null, function () {
             return CoordinateConversionTools.convertLLAtoECI(
@@ -131,6 +147,14 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
         this.addGroundDot(groundObject, color, size, callback);
     };
 
+    /**
+        Add an existing {UNIVERSE.GroundObject} as a static "ground dot".
+        @public
+        @param {UNIVERSE.GroundObject} groundObject - the GroundObject to be placed
+        @param {number} color - the Hex RGB color to display the ground object with
+        @param {integer} size - the size of the "dot"
+        @param {function} callback - a function to be called when the dot is added
+     */
     this.addGroundDot = function (groundObject, color, size, callback) {
         var groundObjectGeometryString,
             groundObjectMaterialString = "dot_" + color;
