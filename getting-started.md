@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Getting Started
+title: - Getting Started
 description: A quick tutorial about modeling with universe.js
 ---
 

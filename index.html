@@ -1,15 +1,84 @@
 ---
 layout: default
-title: built with love by Solidyn
+title: by Solidyn
 ---
 
 <div class="hero-unit">
     <h1>Lightweight 3D modeling and simulation framework</h1>
-    <p>easy-mode modeling of space, planets, satellites, whatever. in the browser. no plugins.</p>
+    <p>easy modeling of space, planets, satellites... whatever.<br>in the browser. no plugins.</p>
 </div>
 
 <div class="row">
-    <div class="span6">
+
+    <div class="span5">
+        <dl>
+            <dt>Lightweight, Full 3D Modeling &amp; Simulation Framework</dt>
+            <dd>Runs in modern browsers <strong>without</strong> plugins</dd>
+            <dd>Focuses on ease of development, deploymet and use</dd>
+            <dd>Pure Javascript API to easily incorporate <strong>your</strong> data</dd>
+            <br>
+            <dt>Capabilities</dt>
+            <dd>Rich 3D features (zoom, rotate, selction)</dd>
+            <dd>3D Models for Space&#47;Ground objects</dd>
+            <dd>Orbit lines, ground tracks, footprint projections</dd>
+            <dd>Metadata correlation between objects</dd>
+            <dd>Load data from any data source</dd>
+            <dd>Time controls to move objects (orbits, points, etc)</dd>
+            <dd>Earth, Moon and Sun modeling</dd>
+            <br>
+            <dt>Simple API</dt>
+            <dd>Callbacks to allow customizations</dd>
+            <dd>&quot;Earth Extensions&quot; provide Earth-based propogators</dd>
+            <dd>Retrieve any object by ID for maniupation</dd>
+            <span class="pull-right"><a href="getting-started.html">See how easy it is...</a></span>
+        </dl>
+    </div>
+    <div id="screenshots" class="carousel slide span7" style="background: black;">
+        <div class="carousel-inner" style="text-align: center;">
+            <div class="active item"><img src="assets/img/scrn_1.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>GPS Constellation</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_2.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Orbit Propogation</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_3.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Space Debris</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_4.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Sensor Projections</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_8.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Complex, highly eccentric orbits</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_10.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Ground points of various data</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_9.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Complex, highly eccentric orbits</h4></div>
+            </div>
+
+            <div class="item"><img src="assets/img/scrn_5.png" alt="" style="display: inline-block;">
+                <div class="carousel-caption"><h4>Sensor coverage</h4></div>
+            </div>
+
+            <!-- <div class="item"><img src="assets/img/scrn_7.png" alt="" style="display: inline-block;">
+                    <div class="carousel-caption"><h4></h4></div>
+            </div> -->
+        </div>
+        <!-- Carousel nav -->
+        <a class="carousel-control left" href="#screenshots" data-slide="prev">&lsaquo;</a>
+        <a class="carousel-control right" href="#screenshots" data-slide="next">&rsaquo;</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span6 offset3">
         <h2>Supported Browsers</h2>
 
         <h4>universe.js works everywhere WebGL does</h4>
@@ -18,87 +87,9 @@ title: built with love by Solidyn
                  style="margin-bottom: 20px"/>
         </p>
 
-        <h4>Want to know if your browser supports WebGL? Check out
+        <h4>Want to know if your browser supports WebGL?<br> Check out
             <a href="http://www.doesmybrowsersupportwebgl.com/" target="_blank">
-                doesmybrowsersupportwebgl.com</a></h4>
+                doesmybrowsersupportwebgl.com</a>
+        </h4>
     </div>
-
-    <div class="span6">
-        <h2>Easy to get started</h2>
-
-        <div id="code-example">
-            <pre class="prettyprint linenums:1 img_dropshadow">
-universe.addObject({
-	id : 'hotness',
-	update : function(elapsedTime) {
-		// move and rotate object
-		object.position.x += 10;
-		object.rotation.y += 0.1
-	},
-	draw : function() {
-		universe.draw(this.id, object, isScaled);
-	}
-});
-				
-universe.setCurrentUniverseTime(time);
-				
-universe.play();</pre>
-        </div>    
-    </div>   
 </div>
-
-
-<div class="page-header">
-    <h2>Screenshots of it in action</h2>
-</div>
-<div class="row">
-    <ul class="thumbnails">
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_1.png" alt="">
-                <h5>GPS Constellation</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_2.png" alt="">
-                <h5>Orbit Propagation</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_3.png" alt="">
-                <h5>Space debris</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_4.png" alt="">
-                <h5>Sensor projections</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_8.png" alt="">
-                <h5>Complex, highly eccentric orbits</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_9.png" alt="">
-                <h5>Complex, highly eccentric orbits</h5>
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_5.png" alt="">
-            </div>
-        </li>
-        <li class="span6">
-            <div class="thumbnail">
-                <img src="assets/img/scrn_7.png" alt="">
-            </div>
-        </li>
-    </ul>
-</div>
-
