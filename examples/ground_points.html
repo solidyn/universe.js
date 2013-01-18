@@ -56,7 +56,7 @@
         universe.addIntersectionListener(function (intersectedObjects) {
             if (intersectedObjects.length > 0 && intersectedObjects[0].indexOf("earth") === -1 && intersectedObjects[0].indexOf("moon") === -1) {
                 var selected = getPointById(intersectedObjects[0]);
-                alert(new Date(selected.time).toUTCString());
+                alert("ID: " + selected.id + "\nDate: " + new Date(selected.time).toUTCString() + "\nCoords: " + parseInt(selected.geo.lat, 10) + " , " + parseInt(selected.geo.lon,10));
             }
         });
         
