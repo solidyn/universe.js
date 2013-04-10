@@ -57,6 +57,7 @@ UNIVERSE.UniverseController = function (theRefreshRate) {
     };
 
     this.play = function () {
+		clearTimeout(refreshTimeout);
         // set our last update time to now since this is the first update
         lastUpdateMs = (new Date()).getTime();
         update();

@@ -84,6 +84,7 @@ UNIVERSE.Universe = function (time, refreshRate, container) {
         @param {function} newStateChangedCallback
      */
     this.play = function (startTime, newPlaybackSpeed, newStateChangedCallback) {
+    	clearTimeout(updateStateTimeout);
         if (startTime) {
             currentUniverseTime = new Date(startTime);
         }
