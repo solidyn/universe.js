@@ -79,6 +79,90 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
     };
 
     /**
+        Add a default space object to the universe. This creates a new UNIVERSE.SpaceObject for 
+        you, using the State Vector coordinates given as parameters with the default orbit propagator.
+        @public
+        @param {object} id - a unique identifier for the dot
+        @param {string} name - a human-readable name for the dot
+        @param {number} color - a hex value RGB color of the dot
+        @param {integer} size - a size for the dot
+        @param {number} xVal - the ECI x coordinate
+        @param {number} yVal - the ECI y coordinate
+        @param {number} zVal - the ECI z coordinate
+        @param {number} vxVal - the ECI vx parameter
+        @param {number} vyVal - the ECI vy parameter
+        @param {number} vzVal - the ECI vz parameter
+        @param {function} callback - a function called once the dot has been added
+     */
+    this.addDefaultSpaceObject = function (id, name, color, size, xVal, yVal, zVal, vxVal, vyVal, vzVal, epoch, callback) {
+		var initialPosition = new UNIVERSE.ECICoordinates(xVal, yVal, zVal, vxVal, vyVal, vzVal, 0, 0, 0);
+		var spaceObject = new UNIVERSE.SpaceObject(id,
+			name,
+			"",
+			function(time, updateState) {
+	                time = new Date(universe.getCurrentUniverseTime());
+	                var elapsedTime = time - epoch;
+	                dt = 100;
+	                var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
+	                //console.log(JSON.stringify(location));
+	                return location;
+	            },
+	 			true, 
+			true,
+			[],
+			initialPosition,
+			universe,
+			earthExtensions
+		);
+		spaceObject.showVehicle = true;
+			        
+		this.addSpaceDot(spaceObject, color, size, callback);
+    };
+
+    /**
+        Add an existing {UNIVERSE.SpaceObject} as a "space dot".
+        @public
+        @param {UNIVERSE.SpaceObject} spaceObject - the SpaceObject to be placed
+        @param {number} color - the Hex RGB color to display the ground object with
+        @param {integer} size - the size of the "dot"
+        @param {function} callback - a function to be called when the dot is added
+     */
+    this.addSpaceDot = function (spaceObject, color, size, callback) {
+        var groundObjectGeometryString,
+            groundObjectMaterialString = "dot_" + color;
+
+		// Use the ground object geometry since they are just dots
+		// TODO: Make the names less specific
+        if (size) {
+            groundObjectGeometryString = "ground_dot_size_" + size;
+        } else {
+            groundObjectGeometryString = "default_ground_object_geometry";
+        }
+
+        try {
+            universe.getObjectFromLibraryById(groundObjectGeometryString, function (retrieved_geometry) {
+                try {
+                    universe.getObjectFromLibraryById(groundObjectMaterialString, function (retrieved_material) {
+                        universe.addObject(spaceObject.getGraphicsObject(retrieved_material, retrieved_geometry, universe, earthExtensions));
+                        universe.updateOnce();
+                        callback();
+                    });
+                } catch (err) {
+                    // the object wasn't in the library so add it and try to add the dot again'
+                    universe.setObjectInLibrary(groundObjectMaterialString, new THREE.MeshBasicMaterial({
+                        color : color
+                    }));
+                    earthExtensions.addSpaceDot(spaceObject, color, size, callback);
+                }
+            });
+        } catch (err) {
+            // the object wasn't in the library so add it and try to add the dot again'
+            universe.setObjectInLibrary(groundObjectGeometryString, new THREE.SphereGeometry(size, size / 10, size / 20));
+            earthExtensions.addSpaceDot(spaceObject, color, size, callback);
+        }
+    };
+
+    /**
         Add Lines from a space object to objects in it's sensor FOVs to the Universe
         @public
         @param {UNIVERSE.SpaceObject} spaceObject - An orbiting object to add to the Universe
