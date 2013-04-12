@@ -16,7 +16,6 @@ UNIVERSE.PropogationLine = function (object, universe, earthExtensions, material
         location,
         convertedLocation,
         vector,
-        THREE,
         lineS,
         lineGraphicsObject;
 
@@ -30,7 +29,7 @@ UNIVERSE.PropogationLine = function (object, universe, earthExtensions, material
         convertedLocation = Utilities.eciTo3DCoordinates(location, earthExtensions);
         if (convertedLocation) {
             vector = new THREE.Vector3(convertedLocation.x, convertedLocation.y, convertedLocation.z);
-            geometry.vertices.push(new THREE.Vertex(vector));
+            geometry.vertices.push(vector);
         }
 
         timeToPropogate.setMinutes(timeToPropogate.getMinutes() + 5);

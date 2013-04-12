@@ -100,7 +100,9 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
 			name,
 			"",
 			function(time, updateState) {
-	                time = new Date(universe.getCurrentUniverseTime());
+					if (!time) {
+						time = universe.getCurrentUniverseTime();
+					}
 	                var elapsedTime = time - epoch;
 	                dt = 100;
 	                var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
@@ -117,6 +119,8 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
 		spaceObject.showVehicle = true;
 			        
 		this.addSpaceDot(spaceObject, color, size, callback);
+		
+		return spaceObject;
     };
 
     /**
