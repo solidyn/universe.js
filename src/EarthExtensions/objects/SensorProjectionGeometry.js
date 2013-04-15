@@ -72,7 +72,7 @@ UNIVERSE.SensorProjectionGeometry = function (sensorOrigin, groundPoints) {
         zpos = sensorOrigin.z;
 
         //console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        this.vertices.push(new THREE.Vector3(xpos, ypos, zpos));
         verticesRow.push(this.vertices.length - 1);
         uvsRow.push(new THREE.UV(u, v));
     }
@@ -92,7 +92,7 @@ UNIVERSE.SensorProjectionGeometry = function (sensorOrigin, groundPoints) {
         zpos = groundPoints[x].z;
 
         //        console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        this.vertices.push(new THREE.Vector3(xpos, ypos, zpos));
         verticesRow.push(this.vertices.length - 1);
         uvsRow.push(new THREE.UV(u, v));
 
@@ -157,11 +157,11 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         ypos = sensorOrigin.y;
         zpos = sensorOrigin.z;
 
-        this.vertices[x].position = {
-            x: xpos,
-            y: ypos,
-            z: zpos
-        };
+        this.vertices[x] = new THREE.Vector3(
+            xpos,
+            ypos,
+            zpos
+        );
     }
 
     // Now create the ground lines
@@ -172,13 +172,13 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         ypos = groundPoints[x].y;
         zpos = groundPoints[x].z;
 
-        this.vertices[x + segmentsX].position = {
-            x: xpos,
-            y: ypos,
-            z: zpos
-        };
+        this.vertices[x + segmentsX] = new THREE.Vector3(
+            xpos,
+            ypos,
+            zpos
+        );
     }
 
 
-    this.__dirtyVertices = true;
+    this.verticesNeedUpdate = true;
 };

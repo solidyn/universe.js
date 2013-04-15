@@ -107,6 +107,7 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
 	                dt = 100;
 	                var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
 	                //console.log(JSON.stringify(location));
+					this.currentLocation = location;
 	                return location;
 	            },
 	 			true, 
@@ -1107,9 +1108,9 @@ UNIVERSE.LineBetweenObjects = function (object1_id, object2_id, universe, earthE
     }
 
     objectGeometry = new THREE.Geometry();
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z)));
+    objectGeometry.vertices.push(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z));
 
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
+    objectGeometry.vertices.push(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z));
 
     line = new THREE.Line(objectGeometry, objectMaterial);
 
@@ -1136,19 +1137,19 @@ UNIVERSE.LineBetweenObjects = function (object1_id, object2_id, universe, earthE
             object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
 
             if (object1Location && object2Location) {
-                objectGeometry.vertices[0].position = {
-                    x: object1Location.x,
-                    y: object1Location.y,
-                    z: object1Location.z
-                };
+                objectGeometry.vertices[0].position = new THREE.Vector3(
+                    object1Location.x,
+                    object1Location.y,
+                    object1Location.z
+                );
 
-                objectGeometry.vertices[1].position = {
-                    x: object2Location.x,
-                    y: object2Location.y,
-                    z: object2Location.z
-                };
+                objectGeometry.vertices[1] = new THREE.Vector3(
+                    object2Location.x,
+                    object2Location.y,
+                    object2Location.z
+                );
 
-                objectGeometry.__dirtyVertices = true;
+                objectGeometry.verticesNeedUpdate = true;
             }
         },
         function () {
@@ -1279,14 +1280,14 @@ UNIVERSE.PropogationLine = function (object, universe, earthExtensions, material
                 for (i = 0; i < length; i += 1) {
                     convertedLocation = Utilities.eciTo3DCoordinates(eciLocations[i], earthExtensions);
                     if (convertedLocation && lineS.geometry.vertices[i]) {
-                        lineS.geometry.vertices[i].position = {
-                            x: convertedLocation.x,
-                            y: convertedLocation.y,
-                            z: convertedLocation.z
-                        };
+                        lineS.geometry.vertices[i] = new THREE.Vector3(
+                            convertedLocation.x,
+                            convertedLocation.y,
+                            convertedLocation.z
+                        );
                     }
                 }
-                lineS.geometry.__dirtyVertices = true;
+				lineS.geometry.verticesNeedUpdate = true;
             }
 
         },
@@ -1934,10 +1935,10 @@ UNIVERSE.SensorFootprintProjection = function (sensor, object, universe, earthEx
 
     for (j = 0; j < extendedPoints.length; j += 1) {
         vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
-        objectGeometry.vertices.push(new THREE.Vertex(vector));
+        objectGeometry.vertices.push(vector);
     }
 
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+    objectGeometry.vertices.push(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y));
 
     line = new THREE.Line(objectGeometry, objectMaterial);
  
@@ -1955,21 +1956,21 @@ UNIVERSE.SensorFootprintProjection = function (sensor, object, universe, earthEx
 
                 for (k = 0; k < extendedPoints.length; k += 1) {
                     convertedLocation = Utilities.eciTo3DCoordinates(extendedPoints[k], earthExtensions);
-                    line.geometry.vertices[k].position = {
-                        x: convertedLocation.x,
-                        y: convertedLocation.y,
-                        z: convertedLocation.z
-                    };
+                    line.geometry.vertices[k] = new THREE.Vector3(
+                        convertedLocation.x,
+                        convertedLocation.y,
+                        convertedLocation.z
+					);
                 }
 
                 convertedLastPoint = Utilities.eciTo3DCoordinates(extendedPoints[0], earthExtensions);
-                line.geometry.vertices[extendedPoints.length].position = {
-                    x: convertedLastPoint.x,
-                    y: convertedLastPoint.y,
-                    z: convertedLastPoint.z
-                };
+                line.geometry.vertices[extendedPoints.length] = new THREE.Vector3(
+                    convertedLastPoint.x,
+                    convertedLastPoint.y,
+                    convertedLastPoint.z
+                );
 
-                line.geometry.__dirtyVertices = true;
+				line.geometry.verticesNeedUpdate = true;
             }
         },
         function () {
@@ -2130,7 +2131,7 @@ UNIVERSE.SensorProjectionGeometry = function (sensorOrigin, groundPoints) {
         zpos = sensorOrigin.z;
 
         //console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        this.vertices.push(new THREE.Vector3(xpos, ypos, zpos));
         verticesRow.push(this.vertices.length - 1);
         uvsRow.push(new THREE.UV(u, v));
     }
@@ -2150,7 +2151,7 @@ UNIVERSE.SensorProjectionGeometry = function (sensorOrigin, groundPoints) {
         zpos = groundPoints[x].z;
 
         //        console.log("Vertice point: " + xpos + "," + ypos + "," + zpos);
-        this.vertices.push(new THREE.Vertex(new THREE.Vector3(xpos, ypos, zpos)));
+        this.vertices.push(new THREE.Vector3(xpos, ypos, zpos));
         verticesRow.push(this.vertices.length - 1);
         uvsRow.push(new THREE.UV(u, v));
 
@@ -2215,11 +2216,11 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         ypos = sensorOrigin.y;
         zpos = sensorOrigin.z;
 
-        this.vertices[x].position = {
-            x: xpos,
-            y: ypos,
-            z: zpos
-        };
+        this.vertices[x] = new THREE.Vector3(
+            xpos,
+            ypos,
+            zpos
+        );
     }
 
     // Now create the ground lines
@@ -2230,15 +2231,15 @@ UNIVERSE.SensorProjectionGeometry.prototype.recalculateVertices = function (sens
         ypos = groundPoints[x].y;
         zpos = groundPoints[x].z;
 
-        this.vertices[x + segmentsX].position = {
-            x: xpos,
-            y: ypos,
-            z: zpos
-        };
+        this.vertices[x + segmentsX] = new THREE.Vector3(
+            xpos,
+            ypos,
+            zpos
+        );
     }
 
 
-    this.__dirtyVertices = true;
+    this.verticesNeedUpdate = true;
 };/*jslint browser: true, sloppy: true, nomen: true */
 /*global THREE */
 
@@ -4986,6 +4987,7 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
 	                dt = 100;
 	                var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
 	                //console.log(JSON.stringify(location));
+					this.currentLocation = location;
 	                return location;
 	            },
 	 			true, 

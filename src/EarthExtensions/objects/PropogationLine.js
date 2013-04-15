@@ -49,14 +49,14 @@ UNIVERSE.PropogationLine = function (object, universe, earthExtensions, material
                 for (i = 0; i < length; i += 1) {
                     convertedLocation = Utilities.eciTo3DCoordinates(eciLocations[i], earthExtensions);
                     if (convertedLocation && lineS.geometry.vertices[i]) {
-                        lineS.geometry.vertices[i].position = {
-                            x: convertedLocation.x,
-                            y: convertedLocation.y,
-                            z: convertedLocation.z
-                        };
+                        lineS.geometry.vertices[i] = new THREE.Vector3(
+                            convertedLocation.x,
+                            convertedLocation.y,
+                            convertedLocation.z
+                        );
                     }
                 }
-                lineS.geometry.__dirtyVertices = true;
+				lineS.geometry.verticesNeedUpdate = true;
             }
 
         },

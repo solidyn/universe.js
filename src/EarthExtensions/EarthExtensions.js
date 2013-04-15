@@ -107,6 +107,7 @@ UNIVERSE.EarthExtensions = function (universe, isSunLighting) {
 	                dt = 100;
 	                var location = OrbitPropagator.propagateOrbit(initialPosition, elapsedTime/1000, dt, epoch);
 	                //console.log(JSON.stringify(location));
+					this.currentLocation = location;
 	                return location;
 	            },
 	 			true, 

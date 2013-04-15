@@ -27,10 +27,10 @@ UNIVERSE.SensorFootprintProjection = function (sensor, object, universe, earthEx
 
     for (j = 0; j < extendedPoints.length; j += 1) {
         vector = new THREE.Vector3(-extendedPoints[j].x, extendedPoints[j].z, extendedPoints[j].y);
-        objectGeometry.vertices.push(new THREE.Vertex(vector));
+        objectGeometry.vertices.push(vector);
     }
 
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y)));
+    objectGeometry.vertices.push(new THREE.Vector3(-extendedPoints[0].x, extendedPoints[0].z, extendedPoints[0].y));
 
     line = new THREE.Line(objectGeometry, objectMaterial);
  
@@ -48,21 +48,21 @@ UNIVERSE.SensorFootprintProjection = function (sensor, object, universe, earthEx
 
                 for (k = 0; k < extendedPoints.length; k += 1) {
                     convertedLocation = Utilities.eciTo3DCoordinates(extendedPoints[k], earthExtensions);
-                    line.geometry.vertices[k].position = {
-                        x: convertedLocation.x,
-                        y: convertedLocation.y,
-                        z: convertedLocation.z
-                    };
+                    line.geometry.vertices[k] = new THREE.Vector3(
+                        convertedLocation.x,
+                        convertedLocation.y,
+                        convertedLocation.z
+					);
                 }
 
                 convertedLastPoint = Utilities.eciTo3DCoordinates(extendedPoints[0], earthExtensions);
-                line.geometry.vertices[extendedPoints.length].position = {
-                    x: convertedLastPoint.x,
-                    y: convertedLastPoint.y,
-                    z: convertedLastPoint.z
-                };
+                line.geometry.vertices[extendedPoints.length] = new THREE.Vector3(
+                    convertedLastPoint.x,
+                    convertedLastPoint.y,
+                    convertedLastPoint.z
+                );
 
-                line.geometry.__dirtyVertices = true;
+				line.geometry.verticesNeedUpdate = true;
             }
         },
         function () {

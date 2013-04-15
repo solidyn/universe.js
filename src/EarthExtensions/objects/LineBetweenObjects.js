@@ -40,9 +40,9 @@ UNIVERSE.LineBetweenObjects = function (object1_id, object2_id, universe, earthE
     }
 
     objectGeometry = new THREE.Geometry();
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z)));
+    objectGeometry.vertices.push(new THREE.Vector3(object1Location.x, object1Location.y, object1Location.z));
 
-    objectGeometry.vertices.push(new THREE.Vertex(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z)));
+    objectGeometry.vertices.push(new THREE.Vector3(object2Location.x, object2Location.y, object2Location.z));
 
     line = new THREE.Line(objectGeometry, objectMaterial);
 
@@ -69,19 +69,19 @@ UNIVERSE.LineBetweenObjects = function (object1_id, object2_id, universe, earthE
             object2Location = Utilities.eciTo3DCoordinates(object2.currentLocation, earthExtensions);
 
             if (object1Location && object2Location) {
-                objectGeometry.vertices[0].position = {
-                    x: object1Location.x,
-                    y: object1Location.y,
-                    z: object1Location.z
-                };
+                objectGeometry.vertices[0].position = new THREE.Vector3(
+                    object1Location.x,
+                    object1Location.y,
+                    object1Location.z
+                );
 
-                objectGeometry.vertices[1].position = {
-                    x: object2Location.x,
-                    y: object2Location.y,
-                    z: object2Location.z
-                };
+                objectGeometry.vertices[1] = new THREE.Vector3(
+                    object2Location.x,
+                    object2Location.y,
+                    object2Location.z
+                );
 
-                objectGeometry.__dirtyVertices = true;
+                objectGeometry.verticesNeedUpdate = true;
             }
         },
         function () {
