@@ -1,3 +1,4 @@
 _site/
 nbproject/private/
 .DS_Store
+Gemfile.lock
